@@ -287,6 +287,25 @@ ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
 f
 
+# ### Hotspots
+
+# Nous allons enfin nous intéresser à la propagation spatio-temporelle de
+# l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
+# position de chaque infection:
+
+t = [event.time for event in events];
+pos = [(event.x, event.y) for event in events];
+
+#
+
+f = Figure()
+ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm = scatter!(ax, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
+Colorbar(f[1, 2], hm, label="Time of infection")
+hidedecorations!(ax)
+current_figure()
+
+
 #############################################################
 # # Présentation des résultats
 
