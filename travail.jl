@@ -112,6 +112,15 @@ rand(Agent, L, 3)
 # On peut maintenant exprimer l'opération de déplacer un agent dans le paysage.
 # Puisque la position de l'agent va changer, notre fonction se termine par `!`:
 
+"""
+    move!(A::Agent, L::Landscape; torus=true)
+
+Cette fonction fait bouger les agents au fils en mettant à jour leurs positions dans l'environnement à chaque pas de temps.
+
+'A' doit être de type Agent.
+'L' doit être de type Landscape.
+'torus' est de type bool et par défaut true.
+"""
 function move!(A::Agent, L::Landscape; torus=true)
     A.x += rand(-1:1)
     A.y += rand(-1:1)
@@ -133,10 +142,24 @@ end
 # simplifier la rédaction du code. Par exemple, on peut vérifier si un agent est
 # infectieux:
 
+"""
+    isinfectious(agent::Agent)
+
+Cette fonction renvoie true si l'agent est infecté, elle permet de vérifier l'état infectieux de l'agent.
+    
+'agent' doit être de type Agent.
+"""
 isinfectious(agent::Agent) = agent.infectious
 
 # Et on peut donc vérifier si un agent est sain:
 
+"""
+    ishealthy(agent::Agent)
+
+Cette fonction renvoie true si l'agent est sain, elle permet de vérifier l'état de santé de l'agent.
+
+'agent' doit être de type Agent
+"""
 ishealthy(agent::Agent) = !isinfectious(agent)
 
 # On peut maintenant définir une fonction pour prendre uniquement les agents qui
@@ -144,12 +167,36 @@ ishealthy(agent::Agent) = !isinfectious(agent)
 # un _alias_, `Population`, qui voudra dire `Vector{Agent}`:
 
 const Population = Vector{Agent}
+
+"""
+    infectious(pop::Population)
+
+Cette fonction permet de filtrer les agents selon leurs états de santé et ne garde en mémoir que les individus infectés.
+
+'pop' doit être de type Population.
+"""
 infectious(pop::Population) = filter(isinfectious, pop)
+
+"""
+    healthy(pop::Population)
+
+Cette fonction permet de filtrer les agents selon leurs états de santé et ne garde en mémoir que les individus sains.
+
+'pop' doit être de type Population.
+"""
 healthy(pop::Population) = filter(ishealthy, pop)
 
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
 # population qui sont dans la même cellule qu'un agent:
 
+"""
+   incell(target::Agent, pop::Population)
+ 
+Cette fonction permet de  trouver l'ensemble des agents d'une population qui sont dans la même cellule qu'un agent donné.
+
+'target' doit être de type Agent.
+'pop' doit être de type Population.
+"""
 incell(target::Agent, pop::Population) = filter(ag -> (ag.x, ag.y) == (target.x, target.y), pop)
 
 # ## Paramètres initiaux
@@ -157,6 +204,14 @@ incell(target::Agent, pop::Population) = filter(ag -> (ag.x, ag.y) == (target.x,
 # Notez qu'on peut réutiliser notre _alias_ pour écrire une fonction beaucoup plus
 # expressive pour générer une population:
 
+"""
+    Population(L::Landscape, n::Integer)
+
+Cette fonction permet de générer aléatoirement n agents différents dans l'espace L.
+
+'L' doit être de type Landscape.
+'n' doit être de type Integer.
+"""
 function Population(L::Landscape, n::Integer)
     return rand(Agent, L, n)
 end
