@@ -67,6 +67,7 @@ Base.@kwdef mutable struct Agent
     clock::Int64 = 20 #temps qui leur reste
     infectious::Bool = false
     id::UUIDs.UUID = UUIDs.uuid4() # identiffiant unique
+    vaccine::Bool = false
 end
 
 # On peut créer un agent pour vérifier:
