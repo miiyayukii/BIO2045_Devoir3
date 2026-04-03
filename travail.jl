@@ -39,17 +39,13 @@ using StatsBase
 
 include("code/01_test.jl")
 
-# ## Une autre section
+# ## Variables
+Budget_initiale = 21000
+Cout_vaccin = 17
+Cout_test = 4
+duree_maladie = 21 
+delai_vaccin = 2 #2 jours avant que ça devient actif
 
-"""
-    foo(x, y)
-
-Cette fonction ne fait rien.
-"""
-function foo(x, y)
-    ## Cette ligne est un commentaire
-    return nothing
-end
 
 #############################################################
 
