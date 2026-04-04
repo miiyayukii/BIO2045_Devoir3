@@ -64,7 +64,7 @@ UUIDs.uuid4()
 Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
-    clock::Int64 = 20 #temps qui leur reste
+    clock::Int64 = 21 #temps qui leur reste
     infectious::Bool = false
     id::UUIDs.UUID = UUIDs.uuid4() # identiffiant unique
     vaccine::Bool = false
@@ -159,7 +159,13 @@ Si l'agent est sain le test est toujours fiable (renvoie false).
 'budget' doit être un chiffre.
 """
 function RAT!(agent::Agent, cout, budget)
+
+    ## deducction du cout d'utilisation du RAT du budget
+    
     budget = budget-cout
+
+    ## Probabilité de faire un faux négatif 
+    
     if isinfectious(agent)
         if rand()<=0.05
             test= false
@@ -302,35 +308,47 @@ events = InfectionEvent[]
 while (length(infectious(population)) != 0) & (tick < maxlength)
 
     ## On spécifie que nous utilisons les variables définies plus haut
+    
     global tick, population
 
     tick += 1
 
     ## Movement
+    
     for agent in population
         move!(agent, L; torus=false)
     end
 
     ## Infection
+    
     for agent in Random.shuffle(infectious(population))
         neighbors = healthy(incell(agent, population))
         for neighbor in neighbors
+
+            ## Probabilité de contagiant lors de l'exposition à un malade 
+            
             if rand() <= 0.4
                 neighbor.infectious = true
+
+                ## Ajout de l'évènement d'infection à la fiche des évènements
+                
                 push!(events, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
             end
         end
     end
 
     ## Change in survival
+    
     for agent in infectious(population)
         agent.clock -= 1
     end
 
     ## Remove agents that died
+    
     population = filter(x -> x.clock > 0, population)
 
     ## Store population size
+    
     S[tick] = length(healthy(population))
     I[tick] = length(infectious(population))
 
