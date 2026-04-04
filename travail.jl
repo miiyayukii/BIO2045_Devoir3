@@ -65,7 +65,7 @@ Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
     clock::Int64 = 20 #temps qui leur reste
-    infectious::Bool = false
+    infectious::Bool = true
     id::UUIDs.UUID = UUIDs.uuid4() # identiffiant unique
     vaccine::Bool = false
 end
@@ -100,7 +100,7 @@ Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:
 
 # Cette fonction nous permet donc de générer un nouvel agent dans un paysage:
 
-rand(Agent, L)
+agent = rand(Agent, L)
 
 # Mais aussi de générer plusieurs agents:
 
@@ -147,6 +147,44 @@ Cette fonction renvoie true si l'agent est infecté, elle permet de vérifier l'
 'agent' doit être de type Agent.
 """
 isinfectious(agent::Agent) = agent.infectious
+
+"""
+    RAT(agent::Agent)
+
+Cette fonction simule un test de dépistage de la maladie. Si l'agent est infecté, le test a 95% de chance de renvoyer true et 5% de chance de faire un faux négatif. 
+Si l'agent est sain le test est toujours fiable (renvoie false).
+
+'agent' doit être de type Agent.
+"""
+function RAT(agent::Agent)
+    if isinfectious(agent)
+        if rand()<=0.05
+            return false
+        else
+            return true            
+        end
+    else 
+        return false
+    end
+end
+
+"""
+    test()
+
+Cette fonction permet de tester sur 100 combien de fois on a un positif.
+"""
+function test()
+    max =100
+    s=0
+    while max > 0
+        if RAT(agent) 
+            s+=1 
+        end
+    max-= 1 
+    end
+    return s
+end
+test()
 
 # Et on peut donc vérifier si un agent est sain:
 
