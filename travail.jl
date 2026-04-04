@@ -40,9 +40,9 @@ using StatsBase
 include("code/01_test.jl")
 
 # ## Variables
-Budget_initiale = 21000
-Cout_vaccin = 17
-Cout_test = 4
+budget_initiale = 21000
+cout_vaccin = 17
+cout_test = 4
 duree_maladie = 21 
 delai_vaccin = 2 #2 jours avant que ça devient actif
 
@@ -149,23 +149,27 @@ Cette fonction renvoie true si l'agent est infecté, elle permet de vérifier l'
 isinfectious(agent::Agent) = agent.infectious
 
 """
-    RAT(agent::Agent)
+    RAT(agent::Agent, cout, Budget)
 
 Cette fonction simule un test de dépistage de la maladie. Si l'agent est infecté, le test a 95% de chance de renvoyer true et 5% de chance de faire un faux négatif. 
 Si l'agent est sain le test est toujours fiable (renvoie false).
 
 'agent' doit être de type Agent.
+'cout' doit être un chiffre.
+'budget' doit être un chiffre.
 """
-function RAT(agent::Agent)
+function RAT!(agent::Agent, cout, budget)
+    budget = budget-cout
     if isinfectious(agent)
         if rand()<=0.05
-            return false
+            test= false
         else
-            return true            
+            test= true            
         end
     else 
-        return false
+        test= false
     end
+    return test, budget
 end
 
 """
@@ -173,18 +177,19 @@ end
 
 Cette fonction permet de tester sur 100 combien de fois on a un positif.
 """
-function test()
+function test(cout_test, budget_initiale)
+    maladie, budget_initiale =RAT!(agent, cout_test, budget_initiale) 
     max =100
     s=0
     while max > 0
-        if RAT(agent) 
+        if maladie
             s+=1 
         end
     max-= 1 
     end
     return s
 end
-test()
+test(cout_test, budget_initiale)
 
 # Et on peut donc vérifier si un agent est sain:
 
