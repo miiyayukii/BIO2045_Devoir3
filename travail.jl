@@ -14,6 +14,35 @@
 
 # # Introduction
 
+# La propagation rapide des maladies infectieuses constitue un défi majeur en santé publique, en raison de la complexité des interactions 
+# entre individus et des dynamiques de transmission.  La compréhension de ces dynamiques est essentielle afin de mettre en place des 
+# stratégies efficaces pour limiter la propagation d’un agent pathogène. La modélisation constitue un outil important en épidémiologie, 
+# permettant de simplifier la réalité pour étudier l’impact de différents paramètres sur l’évolution d’une épidémie (Keeling & Rohani, 2008).
+
+# Dans ce travail, nous simulons la propagation d’une maladie infectieuse au sein d’une population d’individus mobiles, qui entrent en contact 
+# les uns avec les autres. La transmission survient lors de ces interactions, selon une probabilité fixe, ce qui permet de représenter 
+# simplement le processus de contagion tout en conservant les mécanismes essentiels de propagation. Dans ce cas, la maladie est supposée 
+# être toujours fatale après une durée déterminée, pour permettre de simplifier la dynamique du modèle et de se concentrer sur l’évolution 
+# de l’infection dans la population.
+
+# Plusieurs contraintes ont été intégrées à la simulation afin de représenter des conditions proches de la réalité. Premièrement, les 
+# individus infectés sont asymptomatiques, ce qui signifie qu’ils peuvent être détectés seulement à l’aide de tests diagnostiques. En effet, 
+# une proportion importante des infections peut se produire sans symptômes, rendant leur identification difficile sans dépistage (Oran et Topol, 2020). 
+# De plus, les tests utilisés ne sont pas parfaitement fiables et peuvent produire des faux négatifs, ce qui introduit une incertitude 
+# supplémentaire dans la prise de décision. Deuxièmement, la vaccination constitue le principal moyen d’intervention dans le modèle. Une fois 
+# ative, elle empêche les individus de contracter la maladie et de contribuer à sa propagation. Toutefois, un délai est nécessaire avant 
+# que la vaccination ne devienne active, ce qui correspond au temps requis pour que le système immunitaire développe une réponse protectrice 
+# (Nikoloudis et al., 2025). Cette contrainte est essentielle parce qu’elle influence directement l’efficacité des stratégies mises en place. 
+# Enfin, un budget limité est imposé pour la réalisation des tests et l’administration des vaccins. Cette contrainte reflète les réalités des 
+# systèmes de santé, où selon l’Organisation mondiale de la santé, les ressources sont restreintes et doivent être utilisées de manière optimale. 
+# Ainsi, les décisions de dépistage et de vaccination doivent être prises de façon stratégique afin de maximiser la réduction de la propagation 
+# de la maladie.
+
+# L’objectif de ce travail est donc d’évaluer l’impact d’une stratégie de dépistage et de vaccination sur la propagation d’une maladie infectieuse, 
+# en tenant compte de contraintes biologiques et économiques réalistes. Cette approche permet de mieux comprendre comment différentes décisions 
+# d’intervention influencent l’évolution d’une épidémie.
+
+
 # # Présentation du modèle
 
 # # Implémentation
