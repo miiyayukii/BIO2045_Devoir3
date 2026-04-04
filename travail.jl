@@ -17,7 +17,7 @@
 # La propagation rapide des maladies infectieuses constitue un défi majeur en santé publique, en raison de la complexité des interactions 
 # entre individus et des dynamiques de transmission.  La compréhension de ces dynamiques est essentielle afin de mettre en place des 
 # stratégies efficaces pour limiter la propagation d’un agent pathogène. La modélisation constitue un outil important en épidémiologie, 
-# permettant de simplifier la réalité pour d’étudier l’impact de différents paramètres sur l’évolution d’une épidémie (Keeling & Rohani, 2008).
+# permettant de simplifier la réalité pour étudier l’impact de différents paramètres sur l’évolution d’une épidémie (Keeling & Rohani, 2008).
 
 # Dans ce travail, nous simulons la propagation d’une maladie infectieuse au sein d’une population d’individus mobiles, qui entrent en contact 
 # les uns avec les autres. La transmission survient lors de ces interactions, selon une probabilité fixe, ce qui permet de représenter 
@@ -28,9 +28,9 @@
 # Plusieurs contraintes ont été intégrées à la simulation afin de représenter des conditions proches de la réalité. Premièrement, les 
 # individus infectés sont asymptomatiques, ce qui signifie qu’ils peuvent être détectés seulement à l’aide de tests diagnostiques. En effet, 
 # une proportion importante des infections peut se produire sans symptômes, rendant leur identification difficile sans dépistage (Oran et Topol, 2020). 
-# De plus, les tests utilisés ne sont pas parfaitement fiables et peuvent produire des faux positifs ou des faux négatifs, ce qui introduit une incertitude 
+# De plus, les tests utilisés ne sont pas parfaitement fiables et peuvent produire des faux négatifs, ce qui introduit une incertitude 
 # supplémentaire dans la prise de décision. Deuxièmement, la vaccination constitue le principal moyen d’intervention dans le modèle. Une fois 
-# efficace, elle empêche les individus de contracter la maladie et de contribuer à sa propagation. Toutefois, un délai est nécessaire avant 
+# ative, elle empêche les individus de contracter la maladie et de contribuer à sa propagation. Toutefois, un délai est nécessaire avant 
 # que la vaccination ne devienne active, ce qui correspond au temps requis pour que le système immunitaire développe une réponse protectrice 
 # (Nikoloudis et al., 2025). Cette contrainte est essentielle parce qu’elle influence directement l’efficacité des stratégies mises en place. 
 # Enfin, un budget limité est imposé pour la réalisation des tests et l’administration des vaccins. Cette contrainte reflète les réalités des 
