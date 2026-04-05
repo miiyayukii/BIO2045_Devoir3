@@ -226,6 +226,14 @@ Cette fonction permet de filtrer les agents selon leurs états de santé et ne g
 """
 healthy(pop::Population) = filter(ishealthy, pop)
 
+# Nous allons ajouter une fonction permettant d'administrer un vaccin aux individus. Le vaccin n'est pas 
+# immédiatement efficace, un délai de 2 générations est nécessaire avant qu'il confère une immunité 
+# complète. Cela reflète le temps requis pour que la réponse immunitaire se développe.
+
+function vaccinate!(agent::Agent)
+    agent.vaccine_clock = delai_vaccin
+end
+
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
 # population qui sont dans la même cellule qu'un agent:
 
