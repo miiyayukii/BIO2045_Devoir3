@@ -241,29 +241,28 @@ notVaccinated(pop::Population)= filter(nonvaccinee, pop)
 # immédiatement efficace, un délai de 2 générations est nécessaire avant qu'il confère une immunité 
 # complète. Cela reflète le temps requis pour que la réponse immunitaire se développe.
 
-struct VaccinDate
-    #individu::UUIDs.UUID
-    date::Int64
-end
-
-date_vaccin= VaccinDate[]
-
 """
     vaccinate!(agent::Agent, cout, budget)
 
 Cette fonction enlève les frais du vaccin du budget total. 
 Elle inscrit dans la fiche de l'agent la date du vaccin et change son statue à vacciné.
 
-
+'agent' doit être de type Agent.
+'jour_vacc' doit être de type Int64.
 """
 function vaccinate!(agent::Agent, jour_vacc)
+
+    ## frais du vaccin déduis du budget
+    
     finance!(true)
+    
+    ## modification du statue de vaccination
+    ## stockage de la date de vaccination
+
     agent.vaccine = true
     agent.date_vaccin=jour_vacc
-
-    #push!(date_vaccin, VaccinDate(jour_vacc))
      
-    return 
+    return nothing
 end
 
 """
@@ -276,14 +275,17 @@ Et informe que le vaccin est maintenant actif.
 """
 function activ_vaccin!(agent::Agent)
     
-    agent.infectious = false
+    ## activation du vaccin
+    ## rétablissement de l'agent
+
     agent.vaccin_actif = true 
+    agent.infectious = false
     
     return nothing  
 end
 
-## if faut suivre cette structure dans la simulation 
-t=0
+## if faut suivre cette structure dans la simulation ## à enlever apres
+t=0 # t=tick
 while t<21
     t+=1
     if nonvaccinee(agent) # si non vaccinee on le vaccine donc date de vaccin unique
@@ -295,7 +297,7 @@ while t<21
     end
     println(agent)
 end
-
+###########################################
 """
     finance!(vacc)
 
@@ -322,7 +324,7 @@ function finance!(vacc)
         end
         ##
     end
-    return nothing #jsp encore si on laisse ca ou on met le budget
+    return nothing 
 end
 
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
@@ -439,7 +441,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         ## on peut dire : pour les personnes testé positif on les vaccines
 
         ## activation du vaccin 
-        for personne in vaccinated(population, agent)
+        for personne in vaccinated(population)
             if tick >= (personne.date_vaccin +2)
                 activ_vaccin!(personne)
             end
