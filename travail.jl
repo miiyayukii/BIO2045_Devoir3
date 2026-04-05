@@ -282,17 +282,18 @@ function activ_vaccin!(agent::Agent)
     return nothing  
 end
 
-
+## if faut suivre cette structure dans la simulation 
 t=0
 while t<21
     t+=1
-    vaccinate!(agent, t)
-    #for agent_vaccine in vaccinated(population, agent)
-        if t == (agent.date_vaccin +2)
-            activ_vaccin!(agent)                       
-        end
-        println(agent)
-    #end
+    if nonvaccinee(agent) # si non vaccinee on le vaccine donc date de vaccin unique
+        vaccinate!(agent, t)
+    end
+    ## delais
+    if t == (agent.date_vaccin +2)
+        activ_vaccin!(agent)                       
+    end
+    println(agent)
 end
 
 """
