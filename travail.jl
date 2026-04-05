@@ -69,9 +69,9 @@ using StatsBase
 include("code/01_test.jl")
 
 # ## Variables
-Budget_initiale = 21000
-Cout_vaccin = 17
-Cout_test = 4
+budget_initiale = 21000
+cout_vaccin = 17
+cout_test = 4
 duree_maladie = 21 
 delai_vaccin = 2 #2 jours avant que ça devient actif
 
@@ -93,7 +93,7 @@ UUIDs.uuid4()
 Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
-    clock::Int64 = 20 #temps qui leur reste
+    clock::Int64 = 21 #temps qui leur reste
     infectious::Bool = false
     id::UUIDs.UUID = UUIDs.uuid4() # identiffiant unique
     vaccine::Bool = false
@@ -129,7 +129,7 @@ Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:
 
 # Cette fonction nous permet donc de générer un nouvel agent dans un paysage:
 
-rand(Agent, L)
+agent = rand(Agent, L)
 
 # Mais aussi de générer plusieurs agents:
 
@@ -176,6 +176,55 @@ Cette fonction renvoie true si l'agent est infecté, elle permet de vérifier l'
 'agent' doit être de type Agent.
 """
 isinfectious(agent::Agent) = agent.infectious
+
+"""
+    RAT(agent::Agent, cout, Budget)
+
+Cette fonction simule un test de dépistage de la maladie. Si l'agent est infecté, le test a 95% de chance de renvoyer true et 5% de chance de faire un faux négatif. 
+Si l'agent est sain le test est toujours fiable (renvoie false).
+
+'agent' doit être de type Agent.
+'cout' doit être un chiffre.
+'budget' doit être un chiffre.
+"""
+function RAT!(agent::Agent, cout, budget)
+
+    ## deducction du cout d'utilisation du RAT du budget
+    
+    budget = budget-cout
+
+    ## Probabilité de faire un faux négatif 
+    
+    if isinfectious(agent)
+        if rand()<=0.05
+            test= false
+        else
+            test= true            
+        end
+    else 
+        test= false
+    end
+    return test, budget
+end
+
+"""
+    test()
+
+Cette fonction permet de tester sur 100 combien de fois on a un positif.
+"""
+function test(cout_test, budget_initiale)
+    maladie, budget_initiale =RAT!(agent, cout_test, budget_initiale) 
+    max =100
+    s=0
+    while max > 0
+        if maladie
+            s+=1 
+        end
+    max-= 1 
+    end
+    return s
+end
+test(cout_test, budget_initiale)
 
 # Et on peut donc vérifier si un agent est sain:
 
@@ -288,35 +337,47 @@ events = InfectionEvent[]
 while (length(infectious(population)) != 0) & (tick < maxlength)
 
     ## On spécifie que nous utilisons les variables définies plus haut
+    
     global tick, population
 
     tick += 1
 
     ## Movement
+    
     for agent in population
         move!(agent, L; torus=false)
     end
 
     ## Infection
+    
     for agent in Random.shuffle(infectious(population))
         neighbors = healthy(incell(agent, population))
         for neighbor in neighbors
+
+            ## Probabilité de contagiant lors de l'exposition à un malade 
+            
             if rand() <= 0.4
                 neighbor.infectious = true
+
+                ## Ajout de l'évènement d'infection à la fiche des évènements
+                
                 push!(events, InfectionEvent(tick, agent.id, neighbor.id, agent.x, agent.y))
             end
         end
     end
 
     ## Change in survival
+    
     for agent in infectious(population)
         agent.clock -= 1
     end
 
     ## Remove agents that died
+    
     population = filter(x -> x.clock > 0, population)
 
     ## Store population size
+    
     S[tick] = length(healthy(population))
     I[tick] = length(infectious(population))
 
