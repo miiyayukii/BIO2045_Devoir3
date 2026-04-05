@@ -64,10 +64,11 @@ UUIDs.uuid4()
 Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
-    clock::Int64 = 20 #temps qui leur reste
-    infectious::Bool = false
+    clock::Int64 = 21 #temps qui leur reste
+    infectious::Bool = true
     id::UUIDs.UUID = UUIDs.uuid4() # identiffiant unique
     vaccine::Bool = false
+    date_vaccin::Int64 =0
 end
 
 # On peut créer un agent pour vérifier:
@@ -155,11 +156,9 @@ Cette fonction simule un test de dépistage de la maladie. Si l'agent est infect
 Si l'agent est sain le test est toujours fiable (renvoie false).
 
 'agent' doit être de type Agent.
-'cout' doit être un chiffre.
-'budget' doit être un chiffre.
 """
-function RAT!(agent::Agent, cout, budget)
-    budget = budget-cout
+function RAT!(agent::Agent)
+    finance!(false)
     if isinfectious(agent)
         if rand()<=0.05
             test= false
@@ -169,7 +168,7 @@ function RAT!(agent::Agent, cout, budget)
     else 
         test= false
     end
-    return test, budget
+    return test
 end
 
 """
@@ -177,8 +176,8 @@ end
 
 Cette fonction permet de tester sur 100 combien de fois on a un positif.
 """
-function test(cout_test, budget_initiale)
-    maladie, budget_initiale =RAT!(agent, cout_test, budget_initiale) 
+function test()
+    maladie =RAT!(agent) 
     max =100
     s=0
     while max > 0
@@ -189,7 +188,7 @@ function test(cout_test, budget_initiale)
     end
     return s
 end
-test(cout_test, budget_initiale)
+test()
 
 # Et on peut donc vérifier si un agent est sain:
 
@@ -230,8 +229,68 @@ healthy(pop::Population) = filter(ishealthy, pop)
 # immédiatement efficace, un délai de 2 générations est nécessaire avant qu'il confère une immunité 
 # complète. Cela reflète le temps requis pour que la réponse immunitaire se développe.
 
+struct VaccinDate
+    individu::UUIDs.UUID
+    date::Int64
+end
+
+date_vaccin= VaccinDate[]
+
+"""
+    vaccinate!(agent::Agent, cout, budget)
+
+Cette fonction enlève les frais du vaccin du budget total. Et elle confère une immunité active à l'agent qui le protège de la maladie, 2jours après l'injection.
+
+
+"""
 function vaccinate!(agent::Agent)
-    agent.vaccine_clock = delai_vaccin
+    finance!(true)
+    push!(date_vaccin, VaccinDate(agent.id, agent.clock))
+
+    if date_vaccin[].date == agent.clock-2
+        agent.infectious = false
+        agent.vaccine = true 
+    end
+     
+    return 
+end
+
+t=21
+vaccinate!(agent)
+while t>1
+    t-=1
+    agent.clock-=1
+
+    println(agent)
+end
+
+"""
+    finance!(vacc)
+
+Cette fonction deduis le prix du test RAT ou du vaccin du budget quand on les utilises.
+
+'vacc' est de type bool. vacc=true si on utilise un vaccin et vacc=false si c'est un test RAT. 
+"""
+function finance!(vacc)
+    global budget_initiale, cout_test, cout_vaccin
+
+    if (budget_initiale >= cout_vaccin) & vacc
+        budget_initiale -= cout_vaccin
+        ## a enlever apres
+        if budget_initiale< 17
+            println("pas assez de fond")
+        end
+        ##
+    end
+    if (budget_initiale>= cout_test) & vacc == false
+        budget_initiale -= cout_test
+        ## a enlever apres
+        if budget_initiale< 4
+            println("pas assez de fond")
+        end
+        ##
+    end
+    return nothing #jsp encore si on laisse ca ou on met le budget
 end
 
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
@@ -337,6 +396,11 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 
     ## Remove agents that died
     population = filter(x -> x.clock > 0, population)
+
+    ## debut compagne test et vaccination 
+    if length(population) < 3750
+        
+    end
 
     ## Store population size
     S[tick] = length(healthy(population))
