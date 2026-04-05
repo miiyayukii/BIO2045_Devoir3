@@ -65,7 +65,7 @@ Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
     clock::Int64 = 21 #temps qui leur reste
-    infectious::Bool = true
+    infectious::Bool = false
     id::UUIDs.UUID = UUIDs.uuid4() # identiffiant unique
     vaccine::Bool = false
     date_vaccin::Int64 = 0
@@ -438,14 +438,17 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         #
         #
         #
-        ## on peut dire : pour les personnes testé positif on les vaccines
+        ## faire le vaccin : (a qui ? jsp)
+            if nonvaccinee(agent) # si non vaccinee on le vaccine donc date de vaccin unique
+                vaccinate!(agent, tick)
+            end
 
-        ## activation du vaccin 
+        ## activation du vaccin apres delais de 2 generation
         for personne in vaccinated(population)
-            if tick >= (personne.date_vaccin +2)
+            if tick == (personne.date_vaccin +2)
                 activ_vaccin!(personne)
             end
-            
+            println(agent)
         end
         
     end
@@ -514,6 +517,7 @@ t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
 
 #
+## figure qui donne la date de l'infection ?
 
 f = Figure()
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
@@ -528,7 +532,7 @@ current_figure()
 
 # La figure suivante représente des valeurs aléatoires:
 
-hist(randn(1000), color=:grey80)
+#hist(randn(1000), color=:grey80)
 
 # # Discussion
 
