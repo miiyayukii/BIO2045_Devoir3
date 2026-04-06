@@ -40,11 +40,21 @@
 # Enfin, un budget limité est imposé pour la réalisation des tests et l’administration des vaccins. Cette contrainte reflète les réalités des 
 # systèmes de santé, où selon l’Organisation mondiale de la santé, les ressources sont restreintes et doivent être utilisées de manière optimale. 
 # Ainsi, les décisions de dépistage et de vaccination doivent être prises de façon stratégique afin de maximiser la réduction de la propagation 
-# de la maladie.
+# de la maladie. Dans ce contexe, nous adoptons une stratégie ciblée inspirée du traçage des contacts et de la vaccination en anneau. À partir du
+# premier décès, les interventions sont concentrées dans les cellules spatiales contenaant des individus infectés, considérées comme des zones à risque
+# de transmission. Les individus présents dans ces cellules sont testés, puis ceux qui obtiennent un résultat positif ont vaccinés. Des études ont en fait
+# montré que le traçage des contacts permet de contrôler efficacement la propagation des épidémies en identifiant rapidement les chaînes de tranmissions 
+# (Hellewell et al., 2020), et que la vaccination en anneau permet de limiter la propagation en ciblant les individus à haut risque autour des cas détectés 
+# (Henao-Restrepo et al., 2015).
 
-# L’objectif de ce travail est donc d’évaluer l’impact d’une stratégie de dépistage et de vaccination sur la propagation d’une maladie infectieuse, 
-# en tenant compte de contraintes biologiques et économiques réalistes. Cette approche permet de mieux comprendre comment différentes décisions 
-# d’intervention influencent l’évolution d’une épidémie.
+# La problématique de ce travail est de déterminer comment optimiser l'utilisation de ressources limitées pour réduire la propagation d'une maladie
+# infectieuse, dans un contexte où les individus infectés sont difficilement détectables et où les interventions ont un coût. L’objectif de ce travail 
+# est donc d’évaluer l’impact d’une stratégie de dépistage et de vaccination sur la propagation d’une maladie infectieuse, en tenant compte de 
+# contraintes biologiques et économiques réalistes. Cette approche permet de mieux comprendre comment différentes décisions d’intervention influencent 
+# l’évolution d’une épidémie. Nous posons l'hypothèse qu'une stratégie ciblée de dépistage et de vaccination, concentrée sur les zones à risques définies 
+# par la présence d'individus infectés, permettra de réduire plus efficacement la mortalité qu'une stratégie aléatoire (Henao-Restrepo et al., 2015).
+# Nous attendons à oberver une diminution significative du nombre d'individus infectés au cours du temps, ainsi qu'une réduction de la dispersion spatiale
+# des événements d'infection, ce qui suggère une limitation de la propagation de la maladie.
 
 
 # # Présentation du modèle
