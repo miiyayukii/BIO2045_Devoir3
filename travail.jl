@@ -177,6 +177,39 @@ end
 # infectieux:
 
 """
+    finance!(vacc)
+
+Cette fonction deduis le prix du test RAT ou du vaccin du budget quand on les utilises.
+
+'vacc' est de type bool. vacc=true si on utilise un vaccin et vacc=false si c'est un test RAT. 
+"""
+function finance!(vacc)
+    global budget_initiale, cout_test, cout_vaccin
+
+    ## On verifie qu'on a assez d'argent et quel traitement, vaccin ou test, on fait puis on enlève le cout du traitement du budget
+
+    if (budget_initiale >= cout_vaccin) & vacc
+        budget_initiale -= cout_vaccin
+
+        ## a enlever apres
+        if budget_initiale< 17
+            println("pas assez de fond")
+        end
+        ##
+    end
+    if (budget_initiale>= cout_test) & vacc == false
+        budget_initiale -= cout_test
+
+        ## a enlever apres
+        if budget_initiale< 4
+            println("pas assez de fond")
+        end
+        ##
+    end
+    return nothing 
+end
+
+"""
     isinfectious(agent::Agent)
 
 Cette fonction permet de vérifier l'état infectieux de l'agent, et elle renvoie 'true' si l'agent est infecté.
@@ -184,28 +217,6 @@ Cette fonction permet de vérifier l'état infectieux de l'agent, et elle renvoi
 'agent' doit être de type Agent.
 """
 isinfectious(agent::Agent) = agent.infectious
-
-"""
-    RAT(agent::Agent, cout, Budget)
-
-Cette fonction simule un test de dépistage de la maladie. Si l'agent est infecté, le test a 95% de chance de renvoyer true et 5% de chance de faire un faux négatif. 
-Si l'agent est sain le test est toujours fiable (renvoie false).
-
-'agent' doit être de type Agent.
-"""
-function RAT!(agent::Agent)
-    finance!(false)
-    if isinfectious(agent)
-        if rand()<=0.05
-            test= false
-        else
-            test= true            
-        end
-    else 
-        test= false
-    end
-    return test
-end
 
 # Et on peut donc vérifier si un agent est sain:
 
@@ -278,6 +289,28 @@ Cette fonction permet de créer un vecteur contenant les individus non vaccinés
 """
 notVaccinated(pop::Population)= filter(nonvaccinee, pop)
 
+"""
+    RAT(agent::Agent, cout, Budget)
+
+Cette fonction simule un test de dépistage de la maladie. Si l'agent est infecté, le test a 95% de chance de renvoyer true et 5% de chance de faire un faux négatif. 
+Si l'agent est sain le test est toujours fiable (renvoie false).
+
+'agent' doit être de type Agent.
+"""
+function RAT!(agent::Agent)
+    finance!(false)
+    if isinfectious(agent)
+        if rand()<=0.05
+            test= false
+        else
+            test= true            
+        end
+    else 
+        test= false
+    end
+    return test
+end
+
 # Nous allons ajouter une fonction permettant d'administrer un vaccin aux individus. Le vaccin n'est pas 
 # immédiatement efficace, un délai de 2 générations est nécessaire avant qu'il confère une immunité 
 # complète. Cela reflète le temps requis pour que la réponse immunitaire se développe.
@@ -301,7 +334,7 @@ function vaccinate!(agent::Agent, jour_vacc)
     ## stockage de la date de vaccination
 
     agent.vaccine = true
-    agent.date_vaccin=jour_vacc
+    agent.date_vaccin = jour_vacc
      
     return nothing
 end
@@ -336,38 +369,9 @@ while t<21
     if t == (agent.date_vaccin +2)
         activ_vaccin!(agent)                       
     end
-    println(agent)
+    ## println(agent)
 end
 ###########################################
-
-"""
-    finance!(vacc)
-
-Cette fonction deduis le prix du test RAT ou du vaccin du budget quand on les utilises.
-
-'vacc' est de type bool. vacc=true si on utilise un vaccin et vacc=false si c'est un test RAT. 
-"""
-function finance!(vacc)
-    global budget_initiale, cout_test, cout_vaccin
-
-    if (budget_initiale >= cout_vaccin) & vacc
-        budget_initiale -= cout_vaccin
-        ## a enlever apres
-        if budget_initiale< 17
-            println("pas assez de fond")
-        end
-        ##
-    end
-    if (budget_initiale>= cout_test) & vacc == false
-        budget_initiale -= cout_test
-        ## a enlever apres
-        if budget_initiale< 4
-            println("pas assez de fond")
-        end
-        ##
-    end
-    return nothing 
-end
 
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
 # population qui sont dans la même cellule qu'un agent:
@@ -462,9 +466,9 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         neighbors = healthy(incell(agent, population))
         for neighbor in neighbors
 
-            ## Probabilité de contagiant lors de l'exposition à un malade 
+            ## Probabilité de contagiant lors de l'exposition à un malade, contagiant non possible si l'agent est vacciné
             
-            if rand() <= 0.4
+            if (neighbor.vaccin_actif == false) & (rand() <= 0.4)
                 neighbor.infectious = true
 
                 ## Ajout de l'évènement d'infection à la fiche des évènements
