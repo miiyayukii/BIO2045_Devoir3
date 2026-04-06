@@ -2,14 +2,18 @@
 # title: Titre du travail
 # repository: tpoisot/BIO245-modele
 # auteurs:
-#    - nom: Auteur
-#      prenom: Premier
-#      matricule: XXXXXXXX
+#    - nom: Ben Brahim
+#      prenom: Dorra
+#      matricule: 20302117
 #      github: premierAuteur
 #    - nom: Auteur
 #      prenom: Deuxième
 #      matricule: XXXXXXXX
 #      github: DeuxiAut
+#    - nom: Auteur
+#      prenom: troiseme
+#      matricule: XXXXXXXX
+#      github: TroisiAut
 # ---
 
 # # Introduction
@@ -136,7 +140,7 @@ end
 """
     isinfectious(agent::Agent)
 
-Cette fonction renvoie true si l'agent est infecté, elle permet de vérifier l'état infectieux de l'agent.
+Cette fonction permet de vérifier l'état infectieux de l'agent, et elle renvoie 'true' si l'agent est infecté.
     
 'agent' doit être de type Agent.
 """
@@ -169,9 +173,9 @@ end
 """
     ishealthy(agent::Agent)
 
-Cette fonction renvoie true si l'agent est sain, elle permet de vérifier l'état de santé de l'agent.
+Cette fonction permet de vérifier l'état de santé de l'agent, et elle renvoie 'true' si l'agent est sain.
 
-'agent' doit être de type Agent
+'agent' doit être de type Agent.
 """
 ishealthy(agent::Agent) = !isinfectious(agent)
 
@@ -184,7 +188,7 @@ const Population = Vector{Agent}
 """
     infectious(pop::Population)
 
-Cette fonction permet de filtrer les agents selon leurs états de santé et ne garde en mémoir que les individus infectés.
+Cette fonction permet de filtrer les agents selon leurs états de santé. Elle selectionne tous les individus infecté de la population 'pop', créant un vecteur d'agent infecté.
 
 'pop' doit être de type Population.
 """
@@ -193,7 +197,7 @@ infectious(pop::Population) = filter(isinfectious, pop)
 """
     healthy(pop::Population)
 
-Cette fonction permet de filtrer les agents selon leurs états de santé et ne garde en mémoir que les individus sains.
+Cette fonction permet de filtrer les agents selon leurs états de santé. Elle selectionne tous les individus sain de la population 'pop', créant un vecteur d'agent non malade.
 
 'pop' doit être de type Population.
 """
@@ -202,7 +206,7 @@ healthy(pop::Population) = filter(ishealthy, pop)
 """
     vaccineee(agent::Agent)
 
-Cette fonction renvoie true si l'agent est vacciné.
+Cette fonction vérifie la fiche vaccination de l'agent. Elle renvoie 'true' si l'agent est déjà vacciné.
 
 'agent' doit être de type Agent.
 """
@@ -211,7 +215,7 @@ vaccineee(agent::Agent) = agent.vaccine
 """
     nonvaccinee(agent::Agent)
 
-Cette fonction renvoie true si l'agent est non vacciné.
+Cette fonction vérifie la fiche vaccination de l'agent. Et elle renvoie 'true' si l'agent est non vacciné.
 
 'agent' doit être de type Agent.
 """
@@ -223,7 +227,6 @@ nonvaccinee(agent::Agent) = !vaccineee(agent)
 Cette fonction permet de créer un vecteur contenant les individus vaccinés.
 
 'pop' doit être de type Population.
-'agent' doit être de type Agent.
 """
 vaccinated(pop::Population) = filter(vaccineee, pop)
 
@@ -233,7 +236,6 @@ vaccinated(pop::Population) = filter(vaccineee, pop)
 Cette fonction permet de créer un vecteur contenant les individus non vaccinés.
 
 'pop' doit être de type Population.
-'agent' doit être de type Agent.
 """
 notVaccinated(pop::Population)= filter(nonvaccinee, pop)
 
@@ -242,10 +244,10 @@ notVaccinated(pop::Population)= filter(nonvaccinee, pop)
 # complète. Cela reflète le temps requis pour que la réponse immunitaire se développe.
 
 """
-    vaccinate!(agent::Agent, cout, budget)
+    vaccinate!(agent::Agent, jour_vacc)
 
 Cette fonction enlève les frais du vaccin du budget total. 
-Elle inscrit dans la fiche de l'agent la date du vaccin et change son statue à vacciné.
+Mais aussi, elle inscrit dans la fiche de l'agent la date du vaccin et change son statue à vacciné.
 
 'agent' doit être de type Agent.
 'jour_vacc' doit être de type Int64.
@@ -284,7 +286,7 @@ function activ_vaccin!(agent::Agent)
     return nothing  
 end
 
-## if faut suivre cette structure dans la simulation ## à enlever apres
+## if faut suivre cette structure dans la simulation ## à enlever apres ##############
 t=0 # t=tick
 while t<21
     t+=1
@@ -298,6 +300,7 @@ while t<21
     println(agent)
 end
 ###########################################
+
 """
     finance!(vacc)
 
