@@ -83,6 +83,7 @@ using StatsBase
 include("code/01_test.jl")
 
 # ## Variables
+
 budget_initiale = 21000
 cout_vaccin = 17
 cout_test = 4
@@ -192,19 +193,25 @@ function finance!(vacc)
         budget_initiale -= cout_vaccin
 
         ## a enlever apres
+
         if budget_initiale< 17
             println("pas assez de fond")
         end
+
         ##
+
     end
     if (budget_initiale>= cout_test) & vacc == false
         budget_initiale -= cout_test
 
         ## a enlever apres
+
         if budget_initiale< 4
             println("pas assez de fond")
         end
+
         ##
+
     end
     return nothing 
 end
@@ -359,17 +366,23 @@ function activ_vaccin!(agent::Agent)
 end
 
 ## if faut suivre cette structure dans la simulation ## à enlever apres ##############
-t=0 # t=tick
+## t=tick
+
+t=0 
 while t<21
     t+=1
     if nonvaccinee(agent) # si non vaccinee on le vaccine donc date de vaccin unique
         vaccinate!(agent, t)
     end
+
     ## delais
+
     if t == (agent.date_vaccin +2)
         activ_vaccin!(agent)                       
     end
+
     ## println(agent)
+
 end
 ###########################################
 
@@ -492,15 +505,17 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     if length(population) < 3750
 
         ## On commence par faire des tests pour voir l'avancement de la maladie
-        #
-        #
-        #
+        ##
+        ##
+        ##
         ## faire le vaccin : (a qui ? jsp)
+
             if nonvaccinee(agent) # si non vaccinee on le vaccine donc date de vaccin unique
                 vaccinate!(agent, tick)
             end
 
-        ## activation du vaccin apres delais de 2 generation
+        ## activation du vaccin apres delais de 2 génération
+
         for personne in vaccinated(population)
             if tick == (personne.date_vaccin +2)
                 activ_vaccin!(personne)
