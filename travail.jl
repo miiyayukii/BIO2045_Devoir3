@@ -2,14 +2,18 @@
 # title: Titre du travail
 # repository: tpoisot/BIO245-modele
 # auteurs:
-#    - nom: Auteur
-#      prenom: Premier
-#      matricule: XXXXXXXX
+#    - nom: Ben Brahim
+#      prenom: Dorra
+#      matricule: 20302117
 #      github: premierAuteur
 #    - nom: Auteur
 #      prenom: Deuxième
 #      matricule: XXXXXXXX
 #      github: DeuxiAut
+#    - nom: Auteur
+#      prenom: troiseme
+#      matricule: XXXXXXXX
+#      github: TroisiAut
 # ---
 
 # # Introduction
@@ -97,11 +101,9 @@ Base.@kwdef mutable struct Agent
     infectious::Bool = false
     id::UUIDs.UUID = UUIDs.uuid4() # identiffiant unique
     vaccine::Bool = false
+    date_vaccin::Int64 = 0
+    vaccin_actif = false
 end
-
-# On peut créer un agent pour vérifier:
-
-Agent()
 
 # La deuxième structure dont nous aurons besoin est un paysage, qui est défini
 # par les coordonnées min/max sur les axes x et y:
@@ -130,10 +132,6 @@ Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:
 # Cette fonction nous permet donc de générer un nouvel agent dans un paysage:
 
 agent = rand(Agent, L)
-
-# Mais aussi de générer plusieurs agents:
-
-rand(Agent, L, 3)
 
 # On peut maintenant exprimer l'opération de déplacer un agent dans le paysage.
 # Puisque la position de l'agent va changer, notre fonction se termine par `!`:
@@ -171,7 +169,7 @@ end
 """
     isinfectious(agent::Agent)
 
-Cette fonction renvoie true si l'agent est infecté, elle permet de vérifier l'état infectieux de l'agent.
+Cette fonction permet de vérifier l'état infectieux de l'agent, et elle renvoie 'true' si l'agent est infecté.
     
 'agent' doit être de type Agent.
 """
@@ -184,17 +182,9 @@ Cette fonction simule un test de dépistage de la maladie. Si l'agent est infect
 Si l'agent est sain le test est toujours fiable (renvoie false).
 
 'agent' doit être de type Agent.
-'cout' doit être un chiffre.
-'budget' doit être un chiffre.
 """
-function RAT!(agent::Agent, cout, budget)
-
-    ## deducction du cout d'utilisation du RAT du budget
-    
-    budget = budget-cout
-
-    ## Probabilité de faire un faux négatif 
-    
+function RAT!(agent::Agent)
+    finance!(false)
     if isinfectious(agent)
         if rand()<=0.05
             test= false
@@ -204,36 +194,17 @@ function RAT!(agent::Agent, cout, budget)
     else 
         test= false
     end
-    return test, budget
+    return test
 end
-
-"""
-    test()
-
-Cette fonction permet de tester sur 100 combien de fois on a un positif.
-"""
-function test(cout_test, budget_initiale)
-    maladie, budget_initiale =RAT!(agent, cout_test, budget_initiale) 
-    max =100
-    s=0
-    while max > 0
-        if maladie
-            s+=1 
-        end
-    max-= 1 
-    end
-    return s
-end
-test(cout_test, budget_initiale)
 
 # Et on peut donc vérifier si un agent est sain:
 
 """
     ishealthy(agent::Agent)
 
-Cette fonction renvoie true si l'agent est sain, elle permet de vérifier l'état de santé de l'agent.
+Cette fonction permet de vérifier l'état de santé de l'agent, et elle renvoie 'true' si l'agent est sain.
 
-'agent' doit être de type Agent
+'agent' doit être de type Agent.
 """
 ishealthy(agent::Agent) = !isinfectious(agent)
 
@@ -246,7 +217,7 @@ const Population = Vector{Agent}
 """
     infectious(pop::Population)
 
-Cette fonction permet de filtrer les agents selon leurs états de santé et ne garde en mémoir que les individus infectés.
+Cette fonction permet de filtrer les agents selon leurs états de santé. Elle selectionne tous les individus infecté de la population 'pop', créant un vecteur d'agent infecté.
 
 'pop' doit être de type Population.
 """
@@ -255,11 +226,138 @@ infectious(pop::Population) = filter(isinfectious, pop)
 """
     healthy(pop::Population)
 
-Cette fonction permet de filtrer les agents selon leurs états de santé et ne garde en mémoir que les individus sains.
+Cette fonction permet de filtrer les agents selon leurs états de santé. Elle selectionne tous les individus sain de la population 'pop', créant un vecteur d'agent non malade.
 
 'pop' doit être de type Population.
 """
 healthy(pop::Population) = filter(ishealthy, pop)
+
+"""
+    vaccineee(agent::Agent)
+
+Cette fonction vérifie la fiche vaccination de l'agent. Elle renvoie 'true' si l'agent est déjà vacciné.
+
+'agent' doit être de type Agent.
+"""
+vaccineee(agent::Agent) = agent.vaccine
+
+"""
+    nonvaccinee(agent::Agent)
+
+Cette fonction vérifie la fiche vaccination de l'agent. Et elle renvoie 'true' si l'agent est non vacciné.
+
+'agent' doit être de type Agent.
+"""
+nonvaccinee(agent::Agent) = !vaccineee(agent)
+
+"""
+    vaccinated(pop::Population)
+
+Cette fonction permet de créer un vecteur contenant les individus vaccinés.
+
+'pop' doit être de type Population.
+"""
+vaccinated(pop::Population) = filter(vaccineee, pop)
+
+"""
+    notVaccinated(pop::Population)
+
+Cette fonction permet de créer un vecteur contenant les individus non vaccinés.
+
+'pop' doit être de type Population.
+"""
+notVaccinated(pop::Population)= filter(nonvaccinee, pop)
+
+# Nous allons ajouter une fonction permettant d'administrer un vaccin aux individus. Le vaccin n'est pas 
+# immédiatement efficace, un délai de 2 générations est nécessaire avant qu'il confère une immunité 
+# complète. Cela reflète le temps requis pour que la réponse immunitaire se développe.
+
+"""
+    vaccinate!(agent::Agent, jour_vacc)
+
+Cette fonction enlève les frais du vaccin du budget total. 
+Mais aussi, elle inscrit dans la fiche de l'agent la date du vaccin et change son statue à vacciné.
+
+'agent' doit être de type Agent.
+'jour_vacc' doit être de type Int64.
+"""
+function vaccinate!(agent::Agent, jour_vacc)
+
+    ## frais du vaccin déduis du budget
+    
+    finance!(true)
+    
+    ## modification du statue de vaccination
+    ## stockage de la date de vaccination
+
+    agent.vaccine = true
+    agent.date_vaccin=jour_vacc
+     
+    return nothing
+end
+
+"""
+    activ_vaccin!(agent::Agent)
+
+Cette fonction change l'état de santé de l'agent, de malade à guéri.
+Et informe que le vaccin est maintenant actif.
+
+'agent' doit être de type Agent.
+"""
+function activ_vaccin!(agent::Agent)
+    
+    ## activation du vaccin
+    ## rétablissement de l'agent
+
+    agent.vaccin_actif = true 
+    agent.infectious = false
+    
+    return nothing  
+end
+
+## if faut suivre cette structure dans la simulation ## à enlever apres ##############
+t=0 # t=tick
+while t<21
+    t+=1
+    if nonvaccinee(agent) # si non vaccinee on le vaccine donc date de vaccin unique
+        vaccinate!(agent, t)
+    end
+    ## delais
+    if t == (agent.date_vaccin +2)
+        activ_vaccin!(agent)                       
+    end
+    println(agent)
+end
+###########################################
+
+"""
+    finance!(vacc)
+
+Cette fonction deduis le prix du test RAT ou du vaccin du budget quand on les utilises.
+
+'vacc' est de type bool. vacc=true si on utilise un vaccin et vacc=false si c'est un test RAT. 
+"""
+function finance!(vacc)
+    global budget_initiale, cout_test, cout_vaccin
+
+    if (budget_initiale >= cout_vaccin) & vacc
+        budget_initiale -= cout_vaccin
+        ## a enlever apres
+        if budget_initiale< 17
+            println("pas assez de fond")
+        end
+        ##
+    end
+    if (budget_initiale>= cout_test) & vacc == false
+        budget_initiale -= cout_test
+        ## a enlever apres
+        if budget_initiale< 4
+            println("pas assez de fond")
+        end
+        ##
+    end
+    return nothing 
+end
 
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
 # population qui sont dans la même cellule qu'un agent:
@@ -300,7 +398,7 @@ Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population
 population = Population(L, 3750)
 
 # Pour commencer la simulation, il faut identifier un cas index, que nous allons
-# choisir au hasard dans la population:
+# choisir au hasard dans la population un agent qui devient malade :
 
 rand(population).infectious = true
 
@@ -376,6 +474,28 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     
     population = filter(x -> x.clock > 0, population)
 
+    ## debut compagne test et vaccination 
+    if length(population) < 3750
+
+        ## On commence par faire des tests pour voir l'avancement de la maladie
+        #
+        #
+        #
+        ## faire le vaccin : (a qui ? jsp)
+            if nonvaccinee(agent) # si non vaccinee on le vaccine donc date de vaccin unique
+                vaccinate!(agent, tick)
+            end
+
+        ## activation du vaccin apres delais de 2 generation
+        for personne in vaccinated(population)
+            if tick == (personne.date_vaccin +2)
+                activ_vaccin!(personne)
+            end
+            println(agent)
+        end
+        
+    end
+
     ## Store population size
     
     S[tick] = length(healthy(population))
@@ -407,6 +527,8 @@ current_figure()
 # Nous allons ensuite observer la distribution du nombre de cas créés par chaque
 # individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
 # combien de fois chaque individu est représenté dans le champ `from`:
+# parcourt tous les event dans le vecteur events et extrait .from de chaque élément, formant un nouveau vecteur des valeurs event.from 
+# + countmap() prend ce vecteur et renvoie un dictionnaire Dict qui compte combien de fois chaque valeur apparaît
 
 infxn_by_uuid = countmap([event.from for event in events]);
 
@@ -439,6 +561,7 @@ t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
 
 #
+## figure qui donne la date de l'infection ?
 
 f = Figure()
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
@@ -453,7 +576,7 @@ current_figure()
 
 # La figure suivante représente des valeurs aléatoires:
 
-hist(randn(1000), color=:grey80)
+#hist(randn(1000), color=:grey80)
 
 # # Discussion
 
