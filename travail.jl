@@ -380,27 +380,6 @@ function activ_vaccin!(agent::Agent)
     return nothing  
 end
 
-## if faut suivre cette structure dans la simulation ## à enlever apres ##############
-## t=tick
-
-t=0 
-while t<21
-    t+=1
-    if nonvaccinee(agent) # si non vaccinee on le vaccine donc date de vaccin unique
-        vaccinate!(agent, t)
-    end
-
-    ## delais
-
-    if t == (agent.date_vaccin +2)
-        activ_vaccin!(agent)                       
-    end
-
-    ## println(agent)
-
-end
-###########################################
-
 # Nous allons enfin écrire une fonction pour trouver l'ensemble des agents d'une
 # population qui sont dans la même cellule qu'un agent:
 
@@ -457,8 +436,9 @@ S = zeros(Int64, maxlength);
 I = zeros(Int64, maxlength);
 mort = zeros(Int64, maxlength);
 retabli = zeros(Int64, maxlength);
+detecte = zeros(Int64, maxlength);
 
-# Mais nous allons aussi stocker tous les évènements d'infection qui ont lieu
+# Mais nous allons aussi stocker tous les évènements d'infection, de mort et de test RAT positif qui ont lieu
 # pendant la simulation:
 
 struct InfectionEvent
@@ -478,7 +458,10 @@ struct MortEvent
     y::Int64
 end
 
+# meme structure de type pour les evenement de mort et de detection de malde
+
 qui_meurt = MortEvent[]
+agent_positif = MortEvent[]
 
 # Notez qu'on a contraint notre vecteur `events` a ne contenir _que_ des valeurs
 # du bon type, et que nos `InfectionEvent` sont immutables.
@@ -548,10 +531,13 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     if length(population) < 3750 
         
         ## Stratégie utilisé : 
-        ## On cére un vecteur avec les individus testés positifs apres verification qu'on a le font nécessaire
+        ## On tire alétoirement un nombre d'agent qu'on va tester      
 
         populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
         for personne in populationAtester
+
+            ## On cére un vecteur avec les individus testés positifs apres verification qu'on a le font nécessaire
+            
             if budget_initiale >= (cout_test* length(populationAtester))
                 test_positif = filter(x-> RAT!(personne), populationAtester)
                 for infecte in test_positif 
@@ -571,6 +557,10 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
                         
                          if (budget_initiale >= cout_test) & !(p in test_positif)  
                             test = RAT!(p)
+                            if test
+                                test_positif = test_positif + p
+                                push!(agent_positif, MortEvent(tick, p.id, p.x, p.y))
+                            end
 
                             ## Si l'individu est positif et qu'il n'est pas encore vacciné, on le vaccine s'il y a assez d'argent danss le budget
                             
