@@ -544,25 +544,26 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 
     if length(population) < 3750 
 
-        ## On cére un vecteur avec les individus testés positifs
+        ## On cére un vecteur avec les individus testés positifs apres verification qu'on a le font nécessaire
 
         populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
         for personne in populationAtester
             if budget_initiale >= (cout_test* length(populationAtester))
                 test_positif = filter(x-> RAT!(personne), populationAtester)
+                for infecte in test_positif  
 
-                    for infecte in test_positif  
-
-                        personnes = incell(infecte, population) #puis on trouve les personnes dans la même cellule spatiale (zone à risque)
-                        for p in personnes #on regarde chaque personne dans ce zone à risque
-                            if (budget_initiale >= cout_test) & !(p in test_positif)  #avant de commencer les tests, on doit vérifier le budget pour voir si on a assez
-                                test = RAT!(p)
-                                if test && nonvaccinee(p) && budget_initiale >= cout_vaccin #on vérifie tous les conditions: si le résultat du test est positif, si la personne est déjà vaccinée ou non, et le budget
-                                    vaccinate!(p, tick)
-                                end
+                    ## puis on trouve les personnes dans la même cellule spatiale que les individus positif (zone à risque)
+                    
+                    personnes = incell(infecte, population) 
+                    for p in personnes 
+                         if (budget_initiale >= cout_test) & !(p in test_positif)  
+                            test = RAT!(p)
+                            if test && nonvaccinee(p) && budget_initiale >= cout_vaccin #on vérifie tous les conditions: si le résultat du test est positif, si la personne est déjà vaccinée ou non, et le budget
+                                vaccinate!(p, tick)
                             end
                         end
                     end
+                end
             end
         end
         nb_tirage = round(Int,nb_tirage*0.2)
@@ -575,6 +576,8 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
             end
         end
     end
+
+    ## stockage du nombre de personn guérie après vaccination
 
     retabli[tick] = length(protected(population))
 
