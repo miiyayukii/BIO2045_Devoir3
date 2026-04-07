@@ -537,9 +537,10 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         for personne in populationAtester
 
             ## On cére un vecteur avec les individus testés positifs apres verification qu'on a le font nécessaire
+            ## et on veut que le vecteur soit present en dehors de la boucle pour extraire les donnée qu'il contient
             
             if budget_initiale >= (cout_test* length(populationAtester))
-                test_positif = filter(x-> RAT!(personne), populationAtester)
+                global test_positif = filter(x-> RAT!(personne), populationAtester)
                 for infecte in test_positif 
 
                     ## on vaccine les personne testé positif si elle ne sont pas deja vacciné et seulement si on a l'argent pour le vaccin
@@ -557,10 +558,14 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
                         
                          if (budget_initiale >= cout_test) & !(p in test_positif)  
                             test = RAT!(p)
-                            if test
-                                test_positif = test_positif + p
-                                push!(agent_positif, MortEvent(tick, p.id, p.x, p.y))
-                            end
+                            
+                            ## peut etre a enlever ##########
+                            
+                           ## if test
+                            ##    test_positif = test_positif + p
+                              ##  push!(agent_positif, MortEvent(tick, p.id, p.x, p.y))
+                          ##  end
+                            ##  ##############################################
 
                             ## Si l'individu est positif et qu'il n'est pas encore vacciné, on le vaccine s'il y a assez d'argent danss le budget
                             
@@ -586,6 +591,10 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         end
     end
 
+    ## Personne malade detecté
+
+    detecte[tick] = length(test_positif)
+
     ## stockage du nombre de personn guérie après vaccination (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
 
     retabli[tick] = length(protected(population))
@@ -608,10 +617,12 @@ S = S[1:tick];
 I = I[1:tick];
 mort = mort[1:tick];
 retabli = retabli[1:tick];
+detecte = detecte[1:tick];
 
 #- Courbe de suivis du nombre d'individus dans la population 
 # Courbe orange pour les agents enore à risque
-# Courbe rouge pour les agent véritablement infectieux
+# Courbe rouge pour tous les agents véritablement infectieux
+# Courbe jaune pour les agents infectieux détecté 
 # Courbe noire pour les agents mort suite à la maladie
 # Courbe verte pour les agents qui ont pu être protégé grace au vaccin
 
@@ -619,6 +630,7 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
 stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
 stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
+stairs!(ax, 1:tick, detecte, label="Malade détecté", color=:yellow)
 stairs!(ax, 1:tick, mort, label="mort", color=:black)
 stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
