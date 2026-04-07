@@ -269,6 +269,21 @@ Cette fonction vérifie la fiche vaccination de l'agent. Elle renvoie 'true' si 
 """
 vaccineee(agent::Agent) = agent.vaccine
 
+
+"""
+    vac_actif(agent::Agent)
+Cette fonction vérifie la fiche vaccination de l'agent. Et elle renvoie 'true' si l'agent a un vaccin actif (donc vacciné depuis au moins deux jours).
+'agent' doit être de type Agent.
+"""
+vac_actif(agent::Agent) = agent.vaccin_actif
+
+"""
+    protected(pop::Population)
+Cette fonction permet de créer un vecteur contenant les individus ayant un vaccin actif, donc les individus protégé de tous dangers.
+'pop' doit être de type Population.
+"""
+protected(pop::Population)= filter(vac_actif, pop)
+
 """
     nonvaccinee(agent::Agent)
 
@@ -440,6 +455,8 @@ maxlength = 2000
 
 S = zeros(Int64, maxlength);
 I = zeros(Int64, maxlength);
+mort = zeros(Int64, maxlength);
+retabli = zeros(Int64, maxlength);
 
 # Mais nous allons aussi stocker tous les évènements d'infection qui ont lieu
 # pendant la simulation:
@@ -454,8 +471,21 @@ end
 
 events = InfectionEvent[]
 
+struct MortEvent
+    time::Int64
+    who::UUIDs.UUID
+    x::Int64
+    y::Int64
+end
+
+qui_meurt = MortEvent[]
+
 # Notez qu'on a contraint notre vecteur `events` a ne contenir _que_ des valeurs
 # du bon type, et que nos `InfectionEvent` sont immutables.
+
+# On defini le nombre de personne qui seront testés
+
+nb_tirage =2600
 
 # ## Simulation
 
@@ -495,35 +525,58 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     
     for agent in infectious(population)
         agent.clock -= 1
+        if agent.clock ==0
+            push!(qui_meurt,MortEvent(tick,agent.id, agent.x, agent.y))            
+        end        
     end
+    
+    ## Enregistrement du nombre de mort 
 
+    deadagent = filter(x -> x.clock == 0, population)
+    mort[tick] = length(deadagent) 
+    
     ## Remove agents that died
     
     population = filter(x -> x.clock > 0, population)
 
-    ## debut compagne test et vaccination 
-    if length(population) < 3750
+    ## debut compagne test et vaccination apres le premier mort qui indique la présence de cette maladie asymptomatiques    
+    ## Stratégie pour tester et vacciné le monde
 
-        ## On commence par faire des tests pour voir l'avancement de la maladie
-        ##
-        ##
-        ##
-        ## faire le vaccin : (a qui ? jsp)
+    if length(population) < 3750 
 
-            if nonvaccinee(agent) # si non vaccinee on le vaccine donc date de vaccin unique
-                vaccinate!(agent, tick)
+        ## On cére un vecteur avec les individus testés positifs
+
+        populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
+        for personne in populationAtester
+            if budget_initiale >= (cout_test* length(populationAtester))
+                test_positif = filter(x-> RAT!(personne), populationAtester)
+
+                    for infecte in test_positif  
+
+                        personnes = incell(infecte, population) #puis on trouve les personnes dans la même cellule spatiale (zone à risque)
+                        for p in personnes #on regarde chaque personne dans ce zone à risque
+                            if (budget_initiale >= cout_test) & !(p in test_positif)  #avant de commencer les tests, on doit vérifier le budget pour voir si on a assez
+                                test = RAT!(p)
+                                if test && nonvaccinee(p) && budget_initiale >= cout_vaccin #on vérifie tous les conditions: si le résultat du test est positif, si la personne est déjà vaccinée ou non, et le budget
+                                    vaccinate!(p, tick)
+                                end
+                            end
+                        end
+                    end
             end
+        end
+        nb_tirage = round(Int,nb_tirage*0.2)
+        
+        ## activation du vaccin apres delais de 2 generation
 
-        ## activation du vaccin apres delais de 2 génération
-
-        for personne in vaccinated(population)
-            if tick == (personne.date_vaccin +2)
+        for personne in vaccinated(population) 
+            if tick == (personne.date_vaccin + 2)
                 activ_vaccin!(personne)
             end
-            println(agent)
         end
-        
     end
+
+    retabli[tick] = length(protected(population))
 
     ## Store population size
     
@@ -541,13 +594,17 @@ end
 
 S = S[1:tick];
 I = I[1:tick];
+mort = mort[1:tick];
+retabli = retabli[1:tick];
 
 #-
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
-stairs!(ax, 1:tick, S, label="Susceptibles", color=:black)
+stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
 stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
+stairs!(ax, 1:tick, mort, label="mort", color=:black)
+stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
 current_figure()
 
@@ -599,6 +656,17 @@ Colorbar(f[1, 2], hm, label="Time of infection")
 hidedecorations!(ax)
 current_figure()
 
+## on veut suivre les morts
+quand =[jour.time for jour in qui_meurt];
+ou = [(jour.x, jour.y) for jour in qui_meurt];
+
+
+f = Figure()
+ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm = scatter!(ax, ou, color=quand, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
+Colorbar(f[1, 2], hm, label="Time of death")
+hidedecorations!(ax)
+current_figure()
 
 #############################################################
 # # Présentation des résultats
