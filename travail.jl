@@ -483,7 +483,8 @@ qui_meurt = MortEvent[]
 # Notez qu'on a contraint notre vecteur `events` a ne contenir _que_ des valeurs
 # du bon type, et que nos `InfectionEvent` sont immutables.
 
-# On defini le nombre de personne qui seront testés
+# On defini le nombre de personne qui seront testés, le plus de personne possible pour pouvoir contenir la maladie avant sa propagation à un plus grand nombre
+# tout en delimitant un budget max (environ la moitié du budget initiale) pour laisser l'argent aux vaccins
 
 nb_tirage =2600
 
@@ -525,6 +526,9 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     
     for agent in infectious(population)
         agent.clock -= 1
+
+        ## Suivi des évènement de mort 
+        
         if agent.clock ==0
             push!(qui_meurt,MortEvent(tick,agent.id, agent.x, agent.y))            
         end        
@@ -540,25 +544,37 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     population = filter(x -> x.clock > 0, population)
 
     ## debut compagne test et vaccination apres le premier mort qui indique la présence de cette maladie asymptomatiques    
-    ## Stratégie pour tester et vacciné le monde
 
     if length(population) < 3750 
-
+        
+        ## Stratégie utilisé : 
         ## On cére un vecteur avec les individus testés positifs apres verification qu'on a le font nécessaire
 
         populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
         for personne in populationAtester
             if budget_initiale >= (cout_test* length(populationAtester))
                 test_positif = filter(x-> RAT!(personne), populationAtester)
-                for infecte in test_positif  
+                for infecte in test_positif 
+
+                    ## on vaccine les personne testé positif si elle ne sont pas deja vacciné et seulement si on a l'argent pour le vaccin
+
+                    if  (nonvaccinee(infecte)) & (budget_initiale >= cout_vaccin) 
+                        vaccinate!(p, tick)
+                    end                    
 
                     ## puis on trouve les personnes dans la même cellule spatiale que les individus positif (zone à risque)
                     
                     personnes = incell(infecte, population) 
                     for p in personnes 
+
+                        ## Si on a l'argent et que l'individus n'a pas encore fait de test on fait verifie si le RAT est positif
+                        
                          if (budget_initiale >= cout_test) & !(p in test_positif)  
                             test = RAT!(p)
-                            if test && nonvaccinee(p) && budget_initiale >= cout_vaccin #on vérifie tous les conditions: si le résultat du test est positif, si la personne est déjà vaccinée ou non, et le budget
+
+                            ## Si l'individu est positif et qu'il n'est pas encore vacciné, on le vaccine s'il y a assez d'argent danss le budget
+                            
+                            if test && nonvaccinee(p) && budget_initiale >= cout_vaccin 
                                 vaccinate!(p, tick)
                             end
                         end
@@ -566,6 +582,9 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
                 end
             end
         end
+
+        ##  Baisse du nombre de personne échantilloné aleatoirement pour le test 
+        
         nb_tirage = round(Int,nb_tirage*0.2)
         
         ## activation du vaccin apres delais de 2 generation
@@ -577,7 +596,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         end
     end
 
-    ## stockage du nombre de personn guérie après vaccination
+    ## stockage du nombre de personn guérie après vaccination (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
 
     retabli[tick] = length(protected(population))
 
@@ -600,7 +619,11 @@ I = I[1:tick];
 mort = mort[1:tick];
 retabli = retabli[1:tick];
 
-#-
+#- Courbe de suivis du nombre d'individus dans la population 
+# Courbe orange pour les agents enore à risque
+# Courbe rouge pour les agent véritablement infectieux
+# Courbe noire pour les agents mort suite à la maladie
+# Courbe verte pour les agents qui ont pu être protégé grace au vaccin
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
