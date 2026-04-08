@@ -264,17 +264,7 @@ Cette fonction permet de vérifier l'état de santé de l'agent, et elle renvoie
 """
 ishealthy(agent::Agent) = !isinfectious(agent)
 
-# On vérifie également si un agent est non vacciné
-
-"""
-    nonvaccinee(agent::Agent)
-Cette fonction vérifie la fiche vaccination de l'agent. Et elle renvoie 'true'
-si l'agent est non vacciné.
-'agent' doit être de type Agent.
-"""
-nonvaccinee(agent::Agent) = !vaccineee(agent)
-
-# Ou alors s'il est vacciné
+# On vérifie également si un agent est vacciné
 
 """
     vaccineee(agent::Agent)
@@ -283,6 +273,16 @@ l'agent est déjà vacciné.
 'agent' doit être de type Agent.
 """
 vaccineee(agent::Agent) = agent.vaccine
+
+# Ou alors s'il est non vacciné
+
+"""
+    nonvaccinee(agent::Agent)
+Cette fonction vérifie la fiche vaccination de l'agent. Et elle renvoie 'true'
+si l'agent est non vacciné.
+'agent' doit être de type Agent.
+"""
+nonvaccinee(agent::Agent) = !vaccineee(agent)
 
 # Enfin, si l'agent est vacciné on vérifie si le vaccin est actif 
 
@@ -294,7 +294,16 @@ doit être de type Agent.
 """
 vac_actif(agent::Agent) = agent.vaccin_actif
 
+# Ou non actif
 
+"""
+    not_actif(agent::Agent)
+Cette fonction vérifie la fiche vaccination de l'agent. Et elle renvoie 'true'
+si l'agent a un vaccin non actif (donc quand l'agent est vacciné depuis moins 
+de 2jours ou quand il n'est pas vacciné).
+'agent' doit être de type Agent.
+"""
+not_actif(agent::Agent) = !vac_actif(agent)
 
 # On peut maintenant définir une fonction pour prendre, dans une population,
 # uniquement les agents qui répondent à une condition qu'on défini. Pour que ce
@@ -346,7 +355,7 @@ Cette fonction permet de créer un vecteur contenant les individus vaccinés.
 """
 vaccinated(pop::Population) = filter(vaccineee, pop)
 
-# Et enfin, population avec les agents non vacciné
+# Population avec les agents non vacciné
 
 """
     notVaccinated(pop::Population)
@@ -354,6 +363,16 @@ Cette fonction permet de créer un vecteur contenant les individus non vaccinés
 'pop' doit être de type Population.
 """
 notVaccinated(pop::Population) = filter(nonvaccinee, pop)
+
+# Et enfin, population avec les agents n'ayant pas un vaccin actif
+
+"""
+    NotProtected(pop::Population)
+Cette fonction permet de créer un vecteur contenant les agents n'ayant pas un vaccin actif.
+Donc les individus pouvant encore contracter la maladie s'ils sont exposés à des contaminés.
+'pop' doit être de type Population.
+"""
+NotProtected(pop::Population) = filter(not_actif, pop)
 
 # La maladie étant asymptomatique on a besoin de test pour détecter les malades.
 # Les tests n'étant pas fiable dans 100% des cas, ils ont une probabilité de 5 %
@@ -459,7 +478,7 @@ la maladie après son contact avec l'agent malade.
 """
 function contagiant!(pop::Population, time)
     for agent in Random.shuffle(infectious(pop))
-        neighbors = healthy(incell(agent, pop)) ## TP: Vous pouvez aussi utiliser une fonction pour filter ceux qui n'ont pas un vaccin actif
+        neighbors = NotProtected(incell(agent, pop)) ## TP: Vous pouvez aussi utiliser une fonction pour filter ceux qui n'ont pas un vaccin actif
         for neighbor in neighbors
 
             ## Probabilité de contagiant lors de l'exposition à un malade, contagiant non possible si l'agent est vacciné
@@ -752,7 +771,6 @@ current_figure()
 
 infxn_by_uuid = countmap([event.from for event in events]);
 dico_mort = countmap([corp.who for corp in qui_meurt]);
-dico_Ratpositif = countmap([malade.who for malade in agent_positif]);
 dico_protegee = countmap([gueri.who for gueri in protegee])
 dico_test = countmap([rat.who for rat in agent_teste])
 
