@@ -483,7 +483,7 @@ function contagiant!(pop::Population, time)
 
             ## Probabilité de contagiant lors de l'exposition à un malade, contagiant non possible si l'agent est vacciné
 
-            if (neighbor.vaccin_actif == false) & (rand() <= 0.4)
+            if rand() <= 0.4
                 neighbor.infectious = true
 
                 ## Ajout de l'évènement d'infection à la fiche des évènements
@@ -729,11 +729,13 @@ end
 
 #
 # test pour voir ce qui marche pas 
+
 for i in population
     if i.vaccin_actif
         println(i.id, "true")
     end
 end
+
 # ## Analyse des résultats
 # ### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
@@ -751,6 +753,7 @@ detecte = detecte[1:tick];
 # Courbe jaune pour les agents infectieux détecté 
 # Courbe noire pour les agents mort suite à la maladie
 # Courbe verte pour les agents qui ont pu être protégé grace au vaccin
+
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
 stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
@@ -760,6 +763,7 @@ stairs!(ax, 1:tick, mort, label="mort", color=:black)
 stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
 current_figure()
+
 # ### Nombre de cas par individu infectieux
 # Nous allons ensuite observer la distribution du nombre de cas créés par chaque
 # individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
@@ -793,21 +797,26 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
 f
+
 # ### Hotspots
 # Nous allons enfin nous intéresser à la propagation spatio-temporelle de
 # l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
 # position de chaque infection:
+
 t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
-#
+
 ## figure qui donne la date de l'infection 
+
 f = Figure()
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
 hm = scatter!(ax, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
 Colorbar(f[1, 2], hm, label="Time of infection")
 hidedecorations!(ax)
 current_figure()
+
 ## suivie de la detection de malade/protégé => marche pas
+
 date_test = [ag_test.time for ag_test in agent_teste];
 endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
 f = Figure()
@@ -816,7 +825,9 @@ hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:black,
 Colorbar(f[1, 2], hm, label="Time of test")
 hidedecorations!(ax)
 current_figure()
+
 ## on veut suivre les morts
+
 quand = [jour.time for jour in qui_meurt];
 ou = [(jour.x, jour.y) for jour in qui_meurt];
 f = Figure()
@@ -832,7 +843,7 @@ current_figure()
 # Avant tout intervention, a la fin de la simulation on obtenais 1730 infections
 # au total, 2894 morts et une population finale de seulement 856 agents encore
 # vivant.
-=#
+#
 
 # La figure suivante représente des valeurs aléatoires:
 #hist(randn(1000), color=:grey80)
@@ -844,4 +855,5 @@ current_figure()
 # Le format de la bibliographie est American Physics Society, et les références
 # seront correctement présentées dans ce format. Vous ne devez/pouvez pas éditer
 # la bibliographie à la main.
+=#
 
