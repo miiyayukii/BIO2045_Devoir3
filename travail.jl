@@ -696,8 +696,8 @@ detecte = detecte[1:tick];
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
-#stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
-#stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
+stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
+stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
 stairs!(ax, 1:tick, detecte, label="Malade détecté", color=:yellow)
 stairs!(ax, 1:tick, mort, label="mort", color=:black)
 stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
@@ -768,7 +768,9 @@ hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:black,
 Colorbar(f[1, 2], hm, label="Time of infection")
 hidedecorations!(ax)
 current_figure()
+
 ## on veut suivre les morts
+
 quand =[jour.time for jour in qui_meurt];
 ou = [(jour.x, jour.y) for jour in qui_meurt];
 
