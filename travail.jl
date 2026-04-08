@@ -45,7 +45,7 @@
 # de transmission. Les individus présents dans ces cellules sont testés, puis ceux qui obtiennent un résultat positif ont vaccinés. Des études ont en fait
 # montré que le traçage des contacts permet de contrôler efficacement la propagation des épidémies en identifiant rapidement les chaînes de tranmissions 
 # (@hellewell2020@feasibility), et que la vaccination en anneau permet de limiter la propagation en ciblant les individus à haut risque autour des cas détectés 
-# (henao2015efficacy).
+# (@henao2015efficacy).
 
 # La problématique de ce travail est de déterminer comment optimiser l'utilisation de ressources limitées pour réduire la propagation d'une maladie
 # infectieuse, dans un contexte où les individus infectés sont difficilement détectables et où les interventions ont un coût. L’objectif de ce travail 
