@@ -140,10 +140,6 @@ L = Landscape(xmin=-50, xmax=50, ymin=-50, ymax=50)
 Random.rand(::Type{Agent}, L::Landscape) = Agent(x=rand(L.xmin:L.xmax), y=rand(L.ymin:L.ymax))
 Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:n]
 
-# Cette fonction nous permet donc de générer un nouvel agent dans un paysage:
-
-agent = rand(Agent, L)
-
 # On peut maintenant exprimer l'opération de déplacer un agent dans le paysage.
 # Puisque la position de l'agent va changer, notre fonction se termine par `!`:
 
@@ -195,7 +191,7 @@ function finance!(vacc)
         ## a enlever apres
 
         if budget_initiale< 17
-            println("pas assez de fond")
+            println("pas assez de fond pour vacc")
         end
 
         ##
@@ -207,7 +203,7 @@ function finance!(vacc)
         ## a enlever apres
 
         if budget_initiale< 4
-            println("pas assez de fond")
+            println("pas assez de fond pour test")
         end
 
         ##
@@ -469,8 +465,8 @@ agent_positif = MortEvent[]
 # On defini le nombre de personne qui seront testés, le plus de personne possible pour pouvoir contenir la maladie avant sa propagation à un plus grand nombre
 # tout en delimitant un budget max (environ la moitié du budget initiale) pour laisser l'argent aux vaccins
 
-nb_tirage =2600
-
+nb_tirage = 500
+test_positif = zeros(Int64, maxlength);
 # ## Simulation
 
 while (length(infectious(population)) != 0) & (tick < maxlength)
@@ -526,7 +522,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     
     population = filter(x -> x.clock > 0, population)
 
-    ## debut compagne test et vaccination apres le premier mort qui indique la présence de cette maladie asymptomatiques    
+    ## debut compagne test et vaccination apres le premier mort qui indique la présence de cette maladie asymptomatiques   
 
     if length(population) < 3750 
         
@@ -540,7 +536,8 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
             ## et on veut que le vecteur soit present en dehors de la boucle pour extraire les donnée qu'il contient
             
             if budget_initiale >= (cout_test* length(populationAtester))
-                global test_positif = filter(x-> RAT!(personne), populationAtester)
+                global test_positif
+                test_positif = filter(x-> RAT!(personne), populationAtester)
                 for infecte in test_positif 
 
                     ## on vaccine les personne testé positif si elle ne sont pas deja vacciné et seulement si on a l'argent pour le vaccin
@@ -556,8 +553,8 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 
                         ## Si on a l'argent et que l'individus n'a pas encore fait de test on fait verifie si le RAT est positif
                         
-                         if (budget_initiale >= cout_test) & !(p in test_positif)  
-                            test = RAT!(p)
+                        ##if (budget_initiale >= cout_test) & !(p in test_positif)  
+                           ## test = RAT!(p)
                             
                             ## peut etre a enlever ##########
                             
@@ -569,10 +566,10 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 
                             ## Si l'individu est positif et qu'il n'est pas encore vacciné, on le vaccine s'il y a assez d'argent danss le budget
                             
-                            if test && nonvaccinee(p) && budget_initiale >= cout_vaccin 
+                            if nonvaccinee(p) && budget_initiale >= cout_vaccin 
                                 vaccinate!(p, tick)
                             end
-                        end
+                        
                     end
                 end
             end
@@ -628,9 +625,9 @@ detecte = detecte[1:tick];
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
-stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
-stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
-stairs!(ax, 1:tick, detecte, label="Malade détecté", color=:yellow)
+#stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
+#stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
+#stairs!(ax, 1:tick, detecte, label="Malade détecté", color=:yellow)
 stairs!(ax, 1:tick, mort, label="mort", color=:black)
 stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
@@ -645,6 +642,7 @@ current_figure()
 # + countmap() prend ce vecteur et renvoie un dictionnaire Dict qui compte combien de fois chaque valeur apparaît
 
 infxn_by_uuid = countmap([event.from for event in events]);
+dico_mort = countmap([corp.who for corp in qui_meurt]);
 
 # La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
 # nombre de fois ou il apparaît:
@@ -652,6 +650,7 @@ infxn_by_uuid = countmap([event.from for event in events]);
 # Notez que ceci nous indique combien d'individus ont été infectieux au total:
 
 length(infxn_by_uuid)
+length(dico_mort)
 
 # Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
 # utiliser `countmap` une deuxième fois:
@@ -698,6 +697,9 @@ current_figure()
 
 #############################################################
 # # Présentation des résultats
+
+# Avant tout intervention, a la fin de la simulation on obtenais 1730 infections au total,
+# 2894 morts et une population finale de seulement 856 agents encore vivant.
 
 # La figure suivante représente des valeurs aléatoires:
 
