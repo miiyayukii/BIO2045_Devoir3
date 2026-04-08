@@ -21,7 +21,7 @@
 # La propagation rapide des maladies infectieuses constitue un défi majeur en santé publique, en raison de la complexité des interactions 
 # entre individus et des dynamiques de transmission.  La compréhension de ces dynamiques est essentielle afin de mettre en place des 
 # stratégies efficaces pour limiter la propagation d’un agent pathogène. La modélisation constitue un outil important en épidémiologie, 
-# permettant de simplifier la réalité pour étudier l’impact de différents paramètres sur l’évolution d’une épidémie (Keeling & Rohani, 2008).
+# permettant de simplifier la réalité pour étudier l’impact de différents paramètres sur l’évolution d’une épidémie (@keeling2008modeling).
 
 # Dans ce travail, nous simulons la propagation d’une maladie infectieuse au sein d’une population d’individus mobiles, qui entrent en contact 
 # les uns avec les autres. La transmission survient lors de ces interactions, selon une probabilité fixe, ce qui permet de représenter 
@@ -31,12 +31,12 @@
 
 # Plusieurs contraintes ont été intégrées à la simulation afin de représenter des conditions proches de la réalité. Premièrement, les 
 # individus infectés sont asymptomatiques, ce qui signifie qu’ils peuvent être détectés seulement à l’aide de tests diagnostiques. En effet, 
-# une proportion importante des infections peut se produire sans symptômes, rendant leur identification difficile sans dépistage (Oran et Topol, 2020). 
+# une proportion importante des infections peut se produire sans symptômes, rendant leur identification difficile sans dépistage (@oran2020prevalence). 
 # De plus, les tests utilisés ne sont pas parfaitement fiables et peuvent produire des faux négatifs, ce qui introduit une incertitude 
 # supplémentaire dans la prise de décision. Deuxièmement, la vaccination constitue le principal moyen d’intervention dans le modèle. Une fois 
 # ative, elle empêche les individus de contracter la maladie et de contribuer à sa propagation. Toutefois, un délai est nécessaire avant 
 # que la vaccination ne devienne active, ce qui correspond au temps requis pour que le système immunitaire développe une réponse protectrice 
-# (Nikoloudis et al., 2025). Cette contrainte est essentielle parce qu’elle influence directement l’efficacité des stratégies mises en place. 
+# (@nikoloudis2025delayed). Cette contrainte est essentielle parce qu’elle influence directement l’efficacité des stratégies mises en place. 
 # Enfin, un budget limité est imposé pour la réalisation des tests et l’administration des vaccins. Cette contrainte reflète les réalités des 
 # systèmes de santé, où selon l’Organisation mondiale de la santé, les ressources sont restreintes et doivent être utilisées de manière optimale. 
 # Ainsi, les décisions de dépistage et de vaccination doivent être prises de façon stratégique afin de maximiser la réduction de la propagation 
@@ -44,15 +44,15 @@
 # premier décès, les interventions sont concentrées dans les cellules spatiales contenaant des individus infectés, considérées comme des zones à risque
 # de transmission. Les individus présents dans ces cellules sont testés, puis ceux qui obtiennent un résultat positif ont vaccinés. Des études ont en fait
 # montré que le traçage des contacts permet de contrôler efficacement la propagation des épidémies en identifiant rapidement les chaînes de tranmissions 
-# (Hellewell et al., 2020), et que la vaccination en anneau permet de limiter la propagation en ciblant les individus à haut risque autour des cas détectés 
-# (Henao-Restrepo et al., 2015).
+# (@hellewell2020@feasibility), et que la vaccination en anneau permet de limiter la propagation en ciblant les individus à haut risque autour des cas détectés 
+# (henao2015efficacy).
 
 # La problématique de ce travail est de déterminer comment optimiser l'utilisation de ressources limitées pour réduire la propagation d'une maladie
 # infectieuse, dans un contexte où les individus infectés sont difficilement détectables et où les interventions ont un coût. L’objectif de ce travail 
 # est donc d’évaluer l’impact d’une stratégie de dépistage et de vaccination sur la propagation d’une maladie infectieuse, en tenant compte de 
 # contraintes biologiques et économiques réalistes. Cette approche permet de mieux comprendre comment différentes décisions d’intervention influencent 
 # l’évolution d’une épidémie. Nous posons l'hypothèse qu'une stratégie ciblée de dépistage et de vaccination, concentrée sur les zones à risques définies 
-# par la présence d'individus infectés, permettra de réduire plus efficacement la mortalité qu'une stratégie aléatoire (Henao-Restrepo et al., 2015).
+# par la présence d'individus infectés, permettra de réduire plus efficacement la mortalité qu'une stratégie aléatoire (@henao2015efficacy).
 # Nous attendons à oberver une diminution significative du nombre d'individus infectés au cours du temps, ainsi qu'une réduction de la dispersion spatiale
 # des événements d'infection, ce qui suggère une limitation de la propagation de la maladie.
 
