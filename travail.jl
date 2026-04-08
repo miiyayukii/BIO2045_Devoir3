@@ -117,7 +117,7 @@ budget_initiale = 21000
 cout_vaccin = 17
 cout_test = 4
 duree_maladie = 21
-delai_vaccin = 2 #2 jours avant que ça devient actif
+delai_vaccin = 2 
 
 # Puisque nous allons identifier des agents, nous utiliserons des UUIDs pour
 # leur donner un indentifiant unique: UUIDs.uuid4()
