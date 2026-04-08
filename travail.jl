@@ -68,6 +68,7 @@ Random.seed!(123456)
 using CairoMakie
 CairoMakie.activate!(px_per_unit=6.0)
 using StatsBase
+import UUIDs
 
 # ## Inclure du code
 
@@ -90,20 +91,15 @@ cout_test = 4
 duree_maladie = 21 
 delai_vaccin = 2 #2 jours avant que ça devient actif
 
-
-#############################################################
-
 # Puisque nous allons identifier des agents, nous utiliserons des UUIDs pour
-# leur donner un indentifiant unique:
-
-import UUIDs
-UUIDs.uuid4()
+# leur donner un indentifiant unique: UUIDs.uuid4()
 
 # ## Création des types
 
 # Le premier type que nous avons besoin de créer est un agent. Les agents se
 # déplacent sur une lattice, et on doit donc suivre leur position. On doit
-# savoir si ils sont infectieux, et dans ce cas, combien de jours il leur reste:
+# savoir si ils sont infectieux, et dans ce cas, combien de jours il leur reste, on note aussi 
+# s'il sont vacciné, la date du vaccin (s'ils le sont) et si le vaccin est actif ou pas :
 
 Base.@kwdef mutable struct Agent
     x::Int64 = 0
@@ -170,8 +166,9 @@ function move!(A::Agent, L::Landscape; torus=true)
 end
 
 # Nous pouvons maintenant définir des fonctions qui vont nous permettre de nous
-# simplifier la rédaction du code. Par exemple, on peut vérifier si un agent est
-# infectieux:
+# simplifier la rédaction du code. 
+
+# D'abord, on a besoin de suivre les depense pour ne pas dépasser le budget initiale fixé au début 
 
 """
     finance!(vacc)
@@ -212,6 +209,9 @@ function finance!(vacc)
     return nothing 
 end
 
+# On vérifie plusieurs information à propos de l'état de l'agent :
+# s'il est infecté
+
 """
     isinfectious(agent::Agent)
 
@@ -221,7 +221,7 @@ Cette fonction permet de vérifier l'état infectieux de l'agent, et elle renvoi
 """
 isinfectious(agent::Agent) = agent.infectious
 
-# Et on peut donc vérifier si un agent est sain:
+# Ou sain:
 
 """
     ishealthy(agent::Agent)
@@ -232,53 +232,7 @@ Cette fonction permet de vérifier l'état de santé de l'agent, et elle renvoie
 """
 ishealthy(agent::Agent) = !isinfectious(agent)
 
-# On peut maintenant définir une fonction pour prendre uniquement les agents qui
-# sont infectieux dans une population. Pour que ce soit clair, nous allons créer
-# un _alias_, `Population`, qui voudra dire `Vector{Agent}`:
-
-const Population = Vector{Agent}
-
-"""
-    infectious(pop::Population)
-
-Cette fonction permet de filtrer les agents selon leurs états de santé. Elle selectionne tous les individus infecté de la population 'pop', créant un vecteur d'agent infecté.
-
-'pop' doit être de type Population.
-"""
-infectious(pop::Population) = filter(isinfectious, pop)
-
-"""
-    healthy(pop::Population)
-
-Cette fonction permet de filtrer les agents selon leurs états de santé. Elle selectionne tous les individus sain de la population 'pop', créant un vecteur d'agent non malade.
-
-'pop' doit être de type Population.
-"""
-healthy(pop::Population) = filter(ishealthy, pop)
-
-"""
-    vaccineee(agent::Agent)
-
-Cette fonction vérifie la fiche vaccination de l'agent. Elle renvoie 'true' si l'agent est déjà vacciné.
-
-'agent' doit être de type Agent.
-"""
-vaccineee(agent::Agent) = agent.vaccine
-
-
-"""
-    vac_actif(agent::Agent)
-Cette fonction vérifie la fiche vaccination de l'agent. Et elle renvoie 'true' si l'agent a un vaccin actif (donc vacciné depuis au moins deux jours).
-'agent' doit être de type Agent.
-"""
-vac_actif(agent::Agent) = agent.vaccin_actif
-
-"""
-    protected(pop::Population)
-Cette fonction permet de créer un vecteur contenant les individus ayant un vaccin actif, donc les individus protégé de tous dangers.
-'pop' doit être de type Population.
-"""
-protected(pop::Population)= filter(vac_actif, pop)
+# On vérifie également si un agent est non vacciné
 
 """
     nonvaccinee(agent::Agent)
@@ -289,6 +243,69 @@ Cette fonction vérifie la fiche vaccination de l'agent. Et elle renvoie 'true' 
 """
 nonvaccinee(agent::Agent) = !vaccineee(agent)
 
+# Ou alors s'il est vacciné
+
+"""
+    vaccineee(agent::Agent)
+
+Cette fonction vérifie la fiche vaccination de l'agent. Elle renvoie 'true' si l'agent est déjà vacciné.
+
+'agent' doit être de type Agent.
+"""
+vaccineee(agent::Agent) = agent.vaccine
+
+# Enfin, si l'agent est vacciné on vérifie si le vaccin est actif 
+
+"""
+    vac_actif(agent::Agent)
+Cette fonction vérifie la fiche vaccination de l'agent. Et elle renvoie 'true' si l'agent a un vaccin actif (donc vacciné depuis au moins deux jours).
+'agent' doit être de type Agent.
+"""
+vac_actif(agent::Agent) = agent.vaccin_actif
+
+
+
+# On peut maintenant définir une fonction pour prendre, dans une population, uniquement les agents qui
+# répondent à une condition qu'on défini. Pour que ce soit clair, nous allons créer
+# un _alias_, `Population`, qui voudra dire `Vector{Agent}`:
+
+const Population = Vector{Agent}
+
+# Population d'agents infectieux :
+
+"""
+    infectious(pop::Population)
+
+Cette fonction permet de filtrer les agents selon leurs états de santé. Elle selectionne tous les individus infecté de la population 'pop', créant un vecteur d'agent infecté.
+
+'pop' doit être de type Population.
+"""
+infectious(pop::Population) = filter(isinfectious, pop)
+
+# Population d'agents sains :
+
+"""
+    healthy(pop::Population)
+
+Cette fonction permet de filtrer les agents selon leurs états de santé. Elle selectionne tous les individus sain de la population 'pop', créant un vecteur d'agent non malade.
+
+'pop' doit être de type Population.
+"""
+healthy(pop::Population) = filter(ishealthy, pop)
+
+
+# Population d'agents ayant un vaccin actif 
+# donc protégé des infections / mort par la maldie 
+
+"""
+    protected(pop::Population)
+Cette fonction permet de créer un vecteur contenant les individus ayant un vaccin actif, donc les individus protégé de tous dangers.
+'pop' doit être de type Population.
+"""
+protected(pop::Population)= filter(vac_actif, pop)
+
+# Population avec les agents vaccinés
+
 """
     vaccinated(pop::Population)
 
@@ -297,6 +314,8 @@ Cette fonction permet de créer un vecteur contenant les individus vaccinés.
 'pop' doit être de type Population.
 """
 vaccinated(pop::Population) = filter(vaccineee, pop)
+
+# Et enfin, population avec les agents non vacciné
 
 """
     notVaccinated(pop::Population)
@@ -307,8 +326,12 @@ Cette fonction permet de créer un vecteur contenant les individus non vaccinés
 """
 notVaccinated(pop::Population)= filter(nonvaccinee, pop)
 
+# La maladie étant asymptomatique on a besoin de test pour détecter les malades.
+# Les tests n'étant pas fiable dans 100% des cas, ils ont une probabilité de 5 % de donner un faux négatif, rendant la detection des porteurs plus compliqué
+# Les tests ont un cout de 4 dollar qui est déduis du budget quand le test est fait.
+
 """
-    RAT(agent::Agent, cout, Budget)
+    RAT!(agent::Agent)
 
 Cette fonction simule un test de dépistage de la maladie. Si l'agent est infecté, le test a 95% de chance de renvoyer true et 5% de chance de faire un faux négatif. 
 Si l'agent est sain le test est toujours fiable (renvoie false).
@@ -316,8 +339,14 @@ Si l'agent est sain le test est toujours fiable (renvoie false).
 'agent' doit être de type Agent.
 """
 function RAT!(agent::Agent)
+
+    ## frais du test
+
     finance!(false)
     if isinfectious(agent)
+
+        ## probabilité de faux négatif
+
         if rand()<=0.05
             test= false
         else
@@ -356,6 +385,8 @@ function vaccinate!(agent::Agent, jour_vacc)
      
     return nothing
 end
+
+# Fonction qui simule l'activation du vaccin en changeant les valeurs dans la fiche de l'agent vacciné
 
 """
     activ_vaccin!(agent::Agent)
@@ -426,7 +457,9 @@ tick = 0
 maxlength = 2000
 
 # Pour étudier les résultats de la simulation, nous allons stocker la taille de
-# populations à chaque pas de temps:
+# populations à chaque pas de temps, 'S' pour les individus pas encore infecté, 'I' pour les agents malade,
+# 'mort' pour les agents infectieux depuis plus 21 jours, 'retabli' pour les agent ayant recu un vaccin qui s'est activé après 
+# 2 générations et 'detecte' pour les agents testé avec le RAT et qui ont été declarés malade : 
 
 S = zeros(Int64, maxlength);
 I = zeros(Int64, maxlength);
@@ -434,8 +467,10 @@ mort = zeros(Int64, maxlength);
 retabli = zeros(Int64, maxlength);
 detecte = zeros(Int64, maxlength);
 
-# Mais nous allons aussi stocker tous les évènements d'infection, de mort et de test RAT positif qui ont lieu
-# pendant la simulation:
+# Mais nous allons aussi stocker tous les évènements importants pendant la simulation,
+# dans des types immutables :
+
+# Évenements d'infection
 
 struct InfectionEvent
     time::Int64
@@ -447,6 +482,8 @@ end
 
 events = InfectionEvent[]
 
+# évènement de mort
+
 struct MortEvent
     time::Int64
     who::UUIDs.UUID
@@ -454,26 +491,39 @@ struct MortEvent
     y::Int64
 end
 
+qui_meurt = MortEvent[]
+
 # meme structure de type pour les evenement de mort et de detection de malde
 
-qui_meurt = MortEvent[]
+struct ProtectionEvent
+    time::Int64
+    who::UUIDs.UUID
+    x::Int64
+    y::Int64
+end
+
 agent_positif = MortEvent[]
+protegee = ProtectionEvent[]
 
-# Notez qu'on a contraint notre vecteur `events` a ne contenir _que_ des valeurs
-# du bon type, et que nos `InfectionEvent` sont immutables.
 
-# On defini le nombre de personne qui seront testés, le plus de personne possible pour pouvoir contenir la maladie avant sa propagation à un plus grand nombre
-# tout en delimitant un budget max (environ la moitié du budget initiale) pour laisser l'argent aux vaccins
+# On defini le nombre de personne qui seront testés : 'nb_tirage'.
+# Pour limiter la propagation de la maladie, on veut tester le plus de personnes possible
+# pour avoir une idée de la prévalence de la maladie, tout en ne dépassant pas un budget fixé
+# (environ la moitié du budget initiale) pour laisser assez d'argent aux vaccins.
 
-nb_tirage = 500
+nb_tirage = 900
 test_positif = zeros(Int64, maxlength);
 # ## Simulation
+# La simulation continue de tourner simulant le temps qui passe (un pas de temps = une generation)
+# La simulation s'arrête si on atteint le nombre max de génération,
+# ou si le nombre d'infecté devient nul, signifier la fin de l'épidémie. 
+# (possible par la mort des agents avant une nouvelle contagiant ou l'éradication de la maladie grâce au vaccin)
 
 while (length(infectious(population)) != 0) & (tick < maxlength)
 
     ## On spécifie que nous utilisons les variables définies plus haut
     
-    global tick, population
+    global tick, population, test_positif
 
     tick += 1
 
@@ -506,7 +556,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     for agent in infectious(population)
         agent.clock -= 1
 
-        ## Suivi des évènement de mort 
+        ## Suivi des évènements de mort 
         
         if agent.clock ==0
             push!(qui_meurt,MortEvent(tick,agent.id, agent.x, agent.y))            
@@ -522,7 +572,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     
     population = filter(x -> x.clock > 0, population)
 
-    ## debut compagne test et vaccination apres le premier mort qui indique la présence de cette maladie asymptomatiques   
+    ## début compagne test et vaccination après le premier mort qui indique la présence de cette maladie asymptomatiques   
 
     if length(population) < 3750 
         
@@ -532,19 +582,25 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
         for personne in populationAtester
 
-            ## On cére un vecteur avec les individus testés positifs apres verification qu'on a le font nécessaire
+            ## On cére un vecteur avec les individus testés positifs après vérification qu'on a le font nécessaire
             ## et on veut que le vecteur soit present en dehors de la boucle pour extraire les donnée qu'il contient
             
-            if budget_initiale >= (cout_test* length(populationAtester))
+            if budget_initiale >= (cout_test * length(populationAtester))
+
                 global test_positif
+
                 test_positif = filter(x-> RAT!(personne), populationAtester)
+                
                 for infecte in test_positif 
 
-                    ## on vaccine les personne testé positif si elle ne sont pas deja vacciné et seulement si on a l'argent pour le vaccin
+                    push!(agent_positif, MortEvent(tick, infecte.id, infecte.x, infecte.y))
+
+                    ## on vaccine les personnes testés positif si elles ne sont pas déja vaccinées
+                    ## et seulement si on a l'argent pour le vaccin
 
                     if  (nonvaccinee(infecte)) & (budget_initiale >= cout_vaccin) 
-                        vaccinate!(p, tick)
-                    end                    
+                        vaccinate!(infecte, tick)
+                    end
 
                     ## puis on trouve les personnes dans la même cellule spatiale que les individus positif (zone à risque)
                     
@@ -575,7 +631,8 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
             end
         end
 
-        ##  Baisse du nombre de personne échantilloné aleatoirement pour le test 
+        ##  Baisse du nombre de personne échantilloné aléatoirement pour le RAT,
+        ## tout en gardant un nombre entier (Int) grâce a l'arrondissement vers la valeur la plus proche:
         
         nb_tirage = round(Int,nb_tirage*0.2)
         
@@ -584,6 +641,11 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
         for personne in vaccinated(population) 
             if tick == (personne.date_vaccin + 2)
                 activ_vaccin!(personne)
+
+                ## on peut enregistrer l'activation du vaccin
+
+                push!(protegee, ProtectionEvent(tick, personne.id, personne.x, personne.y))
+                println("activVac")
             end
         end
     end
@@ -592,7 +654,8 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
 
     detecte[tick] = length(test_positif)
 
-    ## stockage du nombre de personn guérie après vaccination (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
+    ## stockage du nombre de personn guérie après vaccination 
+    ## (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
 
     retabli[tick] = length(protected(population))
 
@@ -601,6 +664,14 @@ while (length(infectious(population)) != 0) & (tick < maxlength)
     S[tick] = length(healthy(population))
     I[tick] = length(infectious(population))
 
+end
+
+# test pour voir ce qui marche pas 
+for i in population
+    if i.vaccin_actif
+        println(i.id, "true")    
+    end 
+    
 end
 
 # ## Analyse des résultats
@@ -627,7 +698,7 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
 #stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
 #stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
-#stairs!(ax, 1:tick, detecte, label="Malade détecté", color=:yellow)
+stairs!(ax, 1:tick, detecte, label="Malade détecté", color=:yellow)
 stairs!(ax, 1:tick, mort, label="mort", color=:black)
 stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
@@ -643,6 +714,8 @@ current_figure()
 
 infxn_by_uuid = countmap([event.from for event in events]);
 dico_mort = countmap([corp.who for corp in qui_meurt]);
+dico_Ratpositif = countmap([malade.who for malade in agent_positif]);
+dico_protegee = countmap([gueri.who for gueri in protegee])
 
 # La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
 # nombre de fois ou il apparaît:
@@ -651,6 +724,7 @@ dico_mort = countmap([corp.who for corp in qui_meurt]);
 
 length(infxn_by_uuid)
 length(dico_mort)
+length(dico_protegee)
 
 # Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
 # utiliser `countmap` une deuxième fois:
@@ -683,10 +757,20 @@ Colorbar(f[1, 2], hm, label="Time of infection")
 hidedecorations!(ax)
 current_figure()
 
+## suivie de la detection de malade/protégé => marche pas
+
+date_test = [malade.time for malade in protegee];
+endroit = [(malade.x, malade.y) for malade in protegee];
+
+f = Figure()
+ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
+Colorbar(f[1, 2], hm, label="Time of infection")
+hidedecorations!(ax)
+current_figure()
 ## on veut suivre les morts
 quand =[jour.time for jour in qui_meurt];
 ou = [(jour.x, jour.y) for jour in qui_meurt];
-
 
 f = Figure()
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
