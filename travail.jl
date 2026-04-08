@@ -24,7 +24,7 @@
 # essentielle afin de mettre en place des stratégies efficaces pour limiter la
 # propagation d’un agent pathogène. La modélisation constitue un outil important
 # en épidémiologie, permettant de simplifier la réalité pour étudier l’impact de
-# différents paramètres sur l’évolution d’une épidémie (Keeling & Rohani, 2008).
+# différents paramètres sur l’évolution d’une épidémie (@keeling2008modeling).
 
 # Dans ce travail, nous simulons la propagation d’une maladie infectieuse au
 # sein d’une population d’individus mobiles, qui entrent en contact les uns avec
@@ -40,15 +40,15 @@
 # sont asymptomatiques, ce qui signifie qu’ils peuvent être détectés seulement à
 # l’aide de tests diagnostiques. En effet, une proportion importante des
 # infections peut se produire sans symptômes, rendant leur identification
-# difficile sans dépistage (Oran et Topol, 2020). De plus, les tests utilisés ne
+# difficile sans dépistage (@oran2020prevalence). De plus, les tests utilisés ne
 # sont pas parfaitement fiables et peuvent produire des faux négatifs, ce qui
 # introduit une incertitude supplémentaire dans la prise de décision.
 # Deuxièmement, la vaccination constitue le principal moyen d’intervention dans
 # le modèle. Une fois ative, elle empêche les individus de contracter la maladie
 # et de contribuer à sa propagation. Toutefois, un délai est nécessaire avant
 # que la vaccination ne devienne active, ce qui correspond au temps requis pour
-# que le système immunitaire développe une réponse protectrice (Nikoloudis et
-# al., 2025). Cette contrainte est essentielle parce qu’elle influence
+# que le système immunitaire développe une réponse protectrice (@nikoloudis2025delayed).
+# Cette contrainte est essentielle parce qu’elle influence
 # directement l’efficacité des stratégies mises en place. Enfin, un budget
 # limité est imposé pour la réalisation des tests et l’administration des
 # vaccins. Cette contrainte reflète les réalités des systèmes de santé, où selon
@@ -63,9 +63,9 @@
 # testés, puis ceux qui obtiennent un résultat positif ont vaccinés. Des études
 # ont en fait montré que le traçage des contacts permet de contrôler
 # efficacement la propagation des épidémies en identifiant rapidement les
-# chaînes de tranmissions (Hellewell et al., 2020), et que la vaccination en
+# chaînes de tranmissions (@hellewell2020@feasibility), et que la vaccination en
 # anneau permet de limiter la propagation en ciblant les individus à haut risque
-# autour des cas détectés (Henao-Restrepo et al., 2015).
+# autour des cas détectés (@henao2015efficacy).
 
 # La problématique de ce travail est de déterminer comment optimiser
 # l'utilisation de ressources limitées pour réduire la propagation d'une maladie
@@ -78,7 +78,7 @@
 # l’évolution d’une épidémie. Nous posons l'hypothèse qu'une stratégie ciblée de
 # dépistage et de vaccination, concentrée sur les zones à risques définies par
 # la présence d'individus infectés, permettra de réduire plus efficacement la
-# mortalité qu'une stratégie aléatoire (Henao-Restrepo et al., 2015). Nous
+# mortalité qu'une stratégie aléatoire (@henao2015efficacy). Nous
 # attendons à oberver une diminution significative du nombre d'individus
 # infectés au cours du temps, ainsi qu'une réduction de la dispersion spatiale
 # des événements d'infection, ce qui suggère une limitation de la propagation de
