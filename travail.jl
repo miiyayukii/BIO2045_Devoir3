@@ -92,11 +92,14 @@
 # ## Packages nécessaires
 
 import Random
-Random.seed!(123456)
 using CairoMakie
 CairoMakie.activate!(px_per_unit=6.0)
 using StatsBase
 import UUIDs
+
+# point de départ initié pour assurer la réplication des résultats
+
+Random.seed!(123456)
 
 # ## Inclure du code
 
@@ -116,8 +119,6 @@ include("code/01_test.jl")
 budget_initiale = 21000
 cout_vaccin = 17
 cout_test = 4
-duree_maladie = 21
-delai_vaccin = 2 #2 jours avant que ça devient actif
 sum_vacc_prix = 0
 sum_rat_prix = 0
 
@@ -135,14 +136,16 @@ sum_rat_prix = 0
 Base.@kwdef mutable struct Agent
     x::Int64 = 0
     y::Int64 = 0
-    clock::Int64 = 21 #temps qui leur reste
+    clock::Int64 = 21 
     infectious::Bool = false
-    id::UUIDs.UUID = UUIDs.uuid4() # identiffiant unique
+    id::UUIDs.UUID = UUIDs.uuid4() 
     vaccine::Bool = false
     date_vaccin::Int64 = 0
-    vaccin_actif = false
+    vaccin_actif::Bool = false
 end
+
 agent = Agent()
+
 # La deuxième structure dont nous aurons besoin est un paysage, qui est défini
 # par les coordonnées min/max sur les axes x et y:
 
@@ -161,7 +164,7 @@ L = Landscape(xmin=-50, xmax=50, ymin=-50, ymax=50)
 
 # On va commencer par générer une fonction pour créer des agents au hasard. Il
 # existe une fonction pour faire ceci dans _Julia_: `rand`. Pour que notre code
-# soit facile a comprendre, nous allons donc ajouter une méthode à cette
+# soit facile a comprendre, nous allons donc ajouter deux méthodes à cette
 # fonction:
 
 Random.rand(::Type{Agent}, L::Landscape) = Agent(x=rand(L.xmin:L.xmax), y=rand(L.ymin:L.ymax))
@@ -175,13 +178,22 @@ Random.rand(::Type{Agent}, L::Landscape, n::Int64) = [rand(Agent, L) for _ in 1:
 Cette fonction fait bouger les agents au fils en mettant à jour leurs positions
 dans l'environnement à chaque pas de temps.
 'A' doit être de type Agent. 'L' doit être de type Landscape. 'torus' est de
-type bool et par défaut true.
+type bool et est true par défaut.
 """
 function move!(A::Agent, L::Landscape; torus=true)
+    
+    ## On fait bouger l'agent A de façon aléatoire dans la lattice 
+
     A.x += rand(-1:1)
     A.y += rand(-1:1)
+
+    ## Quand l'agent atteint le bord, on défini comment si se 
+    ## déplacera selon le type de d'environnement dans lequel il évolue 
+    ## (si torus l'agent se téleporte à l'autre bout 
+    ## et si non torus il rebondi et reste à sa place)
+
     if torus
-        A.y = A.y < L.ymin ? L.ymax : A.y # si A.y < L.ymin alors A.y = L.ymax sinon reste A.y
+        A.y = A.y < L.ymin ? L.ymax : A.y 
         A.x = A.x < L.xmin ? L.xmax : A.x
         A.y = A.y > L.ymax ? L.ymin : A.y
         A.x = A.x > L.xmax ? L.xmin : A.x
@@ -197,8 +209,8 @@ end
 # Nous pouvons maintenant définir des fonctions qui vont nous permettre de nous
 # simplifier la rédaction du code. 
 
-# D'abord, on a besoin de suivre les depense pour ne pas dépasser le budget
-# initiale fixé au début 
+# D'abord, on a besoin de suivre les dépenses pour ne pas dépasser le budget
+# initialement fixé 
 
 """
     finance!(vacc)
@@ -215,6 +227,9 @@ function finance!(vacc)
 
     if (budget_initiale >= cout_vaccin) & vacc
         budget_initiale -= cout_vaccin
+
+        ## on enregistre dans quel produit les dépense sont faites
+
         sum_vacc_prix += cout_vaccin
 
         ## a enlever apres
@@ -228,6 +243,9 @@ function finance!(vacc)
     end
     if (budget_initiale >= cout_test) & vacc == false
         budget_initiale -= cout_test
+
+        ## on enregistre dans quel produit les dépense sont faites
+        
         sum_rat_prix += cout_test
 
         ## a enlever apres
@@ -468,6 +486,9 @@ sont dans la même cellule qu'un agent donné.
 """
 incell(target::Agent, pop::Population) = filter(ag -> (ag.x, ag.y) == (target.x, target.y), pop)
 
+# La contagiant n'étant pas systématique, cette fonction permet d'ajouter un peu d'aléatoir
+# dans quel agent contractera la maladie après exposition à un malade
+
 """
     contagiant!(pop::Population, time)
 Cette fonction simule la propagation de la maladie d'un agent infécté à un autre sain après 
@@ -523,13 +544,14 @@ population = Population(L, 3750)
 rand(population).infectious = true
 
 # Nous initialisons la simulation au temps 0, et nous allons la laisser se
-# dérouler au plus 1000 pas de temps:
+# dérouler au plus 2000 pas de temps:
 
 tick = 0
 maxlength = 2000
 
 # Pour étudier les résultats de la simulation, nous allons stocker la taille de
-# populations à chaque pas de temps, 'S' pour les individus pas encore infecté,
+# populations à chaque pas de temps,
+# 'S' pour les individus pas encore infecté,
 # 'I' pour les agents malade, 'mort' pour les agents infectieux depuis plus 21
 # jours, 'retabli' pour les agent ayant recu un vaccin qui s'est activé après 2
 # générations et 'detecte' pour les agents testé avec le RAT et qui ont été
@@ -567,7 +589,7 @@ end
 
 qui_meurt = MortEvent[]
 
-# meme structure de type pour les evenement de mort et de detection de malde
+# Évenements d'activation de vaccin
 
 struct ProtectionEvent
     time::Int64
@@ -578,6 +600,7 @@ end
 
 protegee = ProtectionEvent[]
 
+# Évenements de test RAT
 
 struct TestEvent
     time::Int64
@@ -587,6 +610,17 @@ struct TestEvent
 end
 
 agent_teste = TestEvent[]
+
+# evenement de test positif
+
+struct TestPositif
+    time::Int64
+    who::UUIDs.UUID
+    x::Int64
+    y::Int64
+end
+
+positif_test = TestPositif[]
 
 # On defini le nombre de personne qui seront testés : 'nb_tirage'. Pour limiter
 # la propagation de la maladie, on veut tester le plus de personnes possible
@@ -609,7 +643,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
 
     ## On spécifie que nous utilisons les variables définies plus haut
 
-    global tick, population, test_positif
+    global tick, population, test_positif, nb_tirage
 
     tick += 1
 
@@ -666,7 +700,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
 
                 for infecte in agent_test_positif
 
-                    push!(agent_positif, MortEvent(tick, infecte.id, infecte.x, infecte.y))
+                    push!(positif_test, TestPositif(tick, infecte.id, infecte.x, infecte.y))
 
                     ## on vaccine les personnes testés positif si elles ne sont pas déja vaccinées
                     ## et seulement si on a l'argent pour le vaccin
@@ -770,28 +804,63 @@ current_figure()
 #   combien de fois chaque valeur apparaît
 
 infxn_by_uuid = countmap([event.from for event in events]);
-dico_mort = countmap([corp.who for corp in qui_meurt]);
-dico_protegee = countmap([gueri.who for gueri in protegee])
-dico_test = countmap([rat.who for rat in agent_teste])
+
+# nombre de mort par pas de temps
+# nombre d'agent protégé par pas de temps
+# nombre de test par pas de temps
+
+dico_mort = countmap([corp.time for corp in qui_meurt]);
+dico_protegee = countmap([gueri.time for gueri in protegee]);
+dico_test = countmap([rat.time for rat in agent_teste]);
 
 # La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
 # nombre de fois ou il apparaît:
 # Notez que ceci nous indique combien d'individus ont été infectieux au total:
 
 length(infxn_by_uuid)
+
 length(dico_mort)
-length(agent_teste)
+length(dico_protegee)
+length(dico_test)
 
 # Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
 # utiliser `countmap` une deuxième fois:
 
 nb_inxfn = countmap(values(infxn_by_uuid))
 
+nb_mort = countmap(values(dico_mort))
+nb_sauvé = countmap(values(dico_protegee))
+nb_testé = countmap(values(dico_test))
+
 # On peut maintenant visualiser ces données:
 
+# 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
+f
+
+# 
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Nombre de mort", ylabel="temps")
+scatterlines!(ax, [get(nb_mort, i, 0) for i in Base.OneTo(maximum(keys(nb_mort)))], color=:black)
+f
+
+#
+
+# Pas possible d'afficher la figure suivante vu qu'il n'y a aucun individus
+# protégé
+#f = Figure()
+#ax = Axis(f[1, 1]; xlabel="Nombre de protégé", ylabel="temps")
+#scatterlines!(ax, [get(nb_sauvé, i, 0) for i in Base.OneTo(maximum(keys(nb_sauvé)))], color=:black)
+#f
+
+#
+
+# 
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Nombre de test", ylabel="temps")
+scatterlines!(ax, [get(nb_testé, i, 0) for i in Base.OneTo(maximum(keys(nb_testé)))], color=:black)
 f
 
 # ### Hotspots
@@ -832,6 +901,17 @@ hm = scatter!(ax, ou, color=quand, colormap=:navia, strokecolor=:black, strokewi
 Colorbar(f[1, 2], hm, label="Time of death")
 hidedecorations!(ax)
 current_figure()
+
+## affichage des informations pertinante 
+# tel que l'argent restant et les dépensense totales
+
+println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
+println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
+println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
+
+# Mais aussi le nombre restant d'agents dans la population
+
+println("Le nombre d'agent encore vivant est", population)
 
 #=
 # # Présentation des résultats
