@@ -1,5 +1,5 @@
 # Dépôt modèle pour le cours BIO 2045
-# Devoir 3 - 
+# Devoir 3 - Dynamique épidémique et campagne de vaccination 
 ## Organisation du projet
 
 ### I. Introduction
