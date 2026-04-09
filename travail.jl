@@ -1,5 +1,5 @@
 # ---
-# title: Titre du travail
+# title: Dynamique épidémique et campagne de vaccination 
 # repository: tpoisot/BIO245-modele
 # auteurs:
 #    - nom: Ben Brahim
@@ -711,10 +711,6 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
         end
     end
 
-    ## Personne malade detecté
-
-    detecte[tick] = length(test_positif)
-
     ## stockage du nombre de personn guérie après vaccination 
     ## (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
 
@@ -745,7 +741,7 @@ S = S[1:tick];
 I = I[1:tick];
 mort = mort[1:tick];
 retabli = retabli[1:tick];
-detecte = detecte[1:tick];
+test_positif = test_positif[1:tick];
 
 #-Courbe de suivis du nombre d'individus dans la population 
 # Courbe orange pour les agents enore à risque
@@ -758,7 +754,7 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
 stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
 stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
-stairs!(ax, 1:tick, detecte, label="Malade détecté", color=:yellow)
+stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:yellow)
 stairs!(ax, 1:tick, mort, label="mort", color=:black)
 stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
