@@ -63,7 +63,7 @@
 # testés, puis ceux qui obtiennent un résultat positif ont vaccinés. Des études
 # ont en fait montré que le traçage des contacts permet de contrôler
 # efficacement la propagation des épidémies en identifiant rapidement les
-# chaînes de tranmissions (@hellewell2020@feasibility), et que la vaccination en
+# chaînes de tranmissions (@hellewell2020feasibility), et que la vaccination en
 # anneau permet de limiter la propagation en ciblant les individus à haut risque
 # autour des cas détectés (@henao2015efficacy).
 
