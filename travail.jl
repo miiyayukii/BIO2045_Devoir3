@@ -89,6 +89,9 @@
 
 # # Implémentation
 
+# Le modèle est implémenté dans Julia à partir du code fourni pour simuler
+# la propagation d'une épidémie. 
+
 # ## Packages nécessaires
 
 import Random
@@ -97,22 +100,9 @@ CairoMakie.activate!(px_per_unit=6.0)
 using StatsBase
 import UUIDs
 
-# point de départ initié pour assurer la réplication des résultats
+# ### Initiation du point de départ
 
 Random.seed!(123456)
-
-# ## Inclure du code
-
-# Tous les fichiers dans le dossier `code` peuvent être ajoutés au travail
-# final. C'est par exemple utile pour déclarer l'ensemble des fonctions du
-# modèle hors du document principal.
-
-# Le contenu des fichiers est inclus avec `include("code/nom_fichier.jl")`.
-
-# Attention! Il faut que le code soit inclus au bon endroit (avant que les
-# fonctions déclarées soient appellées).
-
-include("code/01_test.jl")
 
 # ## Variables
 
@@ -554,15 +544,14 @@ maxlength = 2000
 # 'S' pour les individus pas encore infecté,
 # 'I' pour les agents malade, 'mort' pour les agents infectieux depuis plus de 21
 # jours, 'retabli' pour les agent ayant recu un vaccin qui s'est activé après 2
-# générations et 'detecte' pour les agents testé avec le RAT et qui ont été
+# générations, et 'test_positif' pour les agents testé avec le RAT et qui ont été
 # declarés malade : 
 
 S = zeros(Int64, maxlength);
 I = zeros(Int64, maxlength);
 mort = zeros(Int64, maxlength);
 retabli = zeros(Int64, maxlength);
-detecte = zeros(Int64, maxlength);
-nb_test = zeros(Int64, maxlength); ## a enlever
+test_positif = zeros(Int64, maxlength);
 
 # Mais nous allons aussi stocker tous les évènements importants pendant la
 # simulation, dans des types immutables :
@@ -579,7 +568,7 @@ end
 
 events = InfectionEvent[]
 
-# évènement de mort
+# Évènement de mort
 
 struct MortEvent
     time::Int64
@@ -612,7 +601,7 @@ end
 
 agent_teste = TestEvent[]
 
-# evenement de test positif
+# Évenements de test positif
 
 struct TestPositif
     time::Int64
@@ -623,14 +612,15 @@ end
 
 positif_test = TestPositif[]
 
-# On defini le nombre de personne qui seront testés : 'nb_tirage'. Pour limiter
-# la propagation de la maladie, on veut tester le plus de personnes possible
-# pour avoir une idée de la prévalence de la maladie, tout en ne dépassant pas
+# On defini le nombre de personne qui seront testés : 'nb_tirage'.
+
+# Pour limiter la propagation de la maladie, 
+# on veut tester le plus de personnes possible pour avoir une idée de
+# la prévalence de la maladie, tout en ne dépassant pas
 # un budget fixé (environ la moitié du budget initiale) pour laisser assez
 # d'argent aux vaccins.
 
 nb_tirage = 900
-test_positif = zeros(Int64, maxlength);
 
 # ## Simulation
 
@@ -815,12 +805,13 @@ nb_inxfn = countmap(values(infxn_by_uuid))
 
 # Au début de la simulaton la population est composé de **3750 agents**.
 
-# ## _Avant tout intervention pour controler la maladie_ :
+# ## _Avant l'intervention pour controler la maladie_ :
+#
 # 1730 évènements d'infection se sont produit, 2894 agents meurt 
 # et la population finale contient seulement 856 agents encore
 # vivant.
 
-# ## _Après intervention_ :
+# ## _Après l'intervention_ :
 #
 # Affichage des informations pertinante :
 # Ce qui reste du budget initial, dans quoi l'argent 
@@ -925,5 +916,8 @@ current_figure()
 
 
 # # Discussion
+
+# # Conclusion
+
 
 
