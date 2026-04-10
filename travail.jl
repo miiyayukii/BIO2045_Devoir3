@@ -26,7 +26,7 @@
 # en épidémiologie, permettant de simplifier la réalité pour étudier l’impact de
 # différents paramètres sur l’évolution d’une épidémie @keeling2008modeling.
 
-# Dans ce travail, nous simulons la propagation d’une maladie infectieuse au
+# Le modèle dans ce travail, simule la propagation d’une maladie infectieuse au
 # sein d’une population d’individus mobiles, qui entrent en contact les uns avec
 # les autres. La transmission survient lors de ces interactions, selon une
 # probabilité fixe, ce qui permet de représenter simplement le processus de
@@ -60,29 +60,34 @@
 # anneau. À partir du premier décès, les interventions sont concentrées dans les
 # cellules spatiales contenaant des individus infectés, considérées comme des
 # zones à risque de transmission. Les individus présents dans ces cellules sont
-# testés, puis ceux qui obtiennent un résultat positif ont vaccinés. Des études
+# directement vaccinés par prévention et cure pour ne pas gaspiller l'argent dans de nouveaux tests. Des études
 # ont en fait montré que le traçage des contacts permet de contrôler
 # efficacement la propagation des épidémies en identifiant rapidement les
 # chaînes de tranmissions @hellewell2020feasibility, et que la vaccination en
 # anneau permet de limiter la propagation en ciblant les individus à haut risque
 # autour des cas détectés @henao2015efficacy.
 
-# La problématique de ce travail est de déterminer comment optimiser
+# La problématique de ce travail est la determination de comment optimiser
 # l'utilisation de ressources limitées pour réduire la propagation d'une maladie
 # infectieuse, dans un contexte où les individus infectés sont difficilement
-# détectables et où les interventions ont un coût. L’objectif de ce travail est
+# détectables et où les interventions sont coûteuses.
+
+# L’objectif de ce travail est
 # donc d’évaluer l’impact d’une stratégie de dépistage et de vaccination sur la
 # propagation d’une maladie infectieuse, en tenant compte de contraintes
 # biologiques et économiques réalistes. Cette approche permet de mieux
 # comprendre comment différentes décisions d’intervention influencent
-# l’évolution d’une épidémie. Nous posons l'hypothèse qu'une stratégie ciblée de
+# l’évolution d’une épidémie.
+
+# L'hypothèse est qu'une stratégie ciblée de
 # dépistage et de vaccination, concentrée sur les zones à risques définies par
 # la présence d'individus infectés, permettra de réduire plus efficacement la
-# mortalité qu'une stratégie aléatoire @henao2015efficacy. Nous
-# attendons à oberver une diminution significative du nombre d'individus
+# mortalité qu'une stratégie aléatoire @henao2015efficacy.
+
+# Le résultat attendu est une diminution significative du nombre d'individus
 # infectés au cours du temps, ainsi qu'une réduction de la dispersion spatiale
-# des événements d'infection, ce qui suggère une limitation de la propagation de
-# la maladie.
+# des événements d'infection, suggérant une limitation de la propagation de
+# la maladie. Et donc une stratégie efficace. 
 
 
 # # Présentation du modèle
