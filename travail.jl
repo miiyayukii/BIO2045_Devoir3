@@ -105,6 +105,34 @@
 
 # # Implémentation
 
+# Dans cette étude, l'implémentation du modèle repose sur un simulation basée sur des agents, où chaque individu de la 
+# population est représenté explicitement et évolue dans le temps selon un ensemble de règles biologiques et probabilistes. 
+# L'objectif est de traduire les mécanismes de propagation d'une maladie infectieuse ainsi que la stratégie d'intervention 
+# (dépistage et vaccination) en un système de règles simples appliquées à chaque pas de temps. Cette approche permet de reproduire
+# la dynamique de l'épidémie tout en intégrant des contraintes réalistes, telles qu'un budget limité et l'absence d'information sur
+# l'état infectieux des individus. 
+
+# La simulation repose sur les règles suivantes, appliquées à chaque pas de temps:
+# 1. Une population d'individus est distribuée dans l'espace, avec un petit nombre d'individus initialement infectés.
+# 2. À chaque répétition, les individus se déplacent dans l'espace, ce qui permet les interactions entre eux. 
+# 3. Lorsqu'un individu infectieux entre en contact avec un individu sain, la transmission peut se produire avec une probabilité de 0,4,
+# simulant une maladie relativement contagieuse.
+# 4. Les individus infectés restent contagieux pendant une durée de 21 itérations, après quoi ils meurent et sont retirés de la population,
+# mettant fin à leur capacité de transmission.
+# 5. À chaque pas de temps, un sous-ensemble d'individus est sélectionné aléatoirement afin d'être testé. Le nombre d'individus testés
+# est initalement fixé à 900, puis diminue progressivement au cours de la simulation afin de respecter les contraintes de budget.
+# 6. Les tests permettent de détecter les individus infectés avec une sensibilité de 95%, ce qui implique la présence de faux négatifs
+# et introduit une incertitude dans le processus de détection.
+# 7. Lorsqu'un individu est détecté positif, une intervention est déclenchée, incluant la vaccination de cet individu ainsi que celle des
+# individus situés dans la même cellule spatiale, correspondant à une zone à risque.
+# 8. Les individus vaccinés deviennent protégés après un délai de 2 itérations, durant lequel ils peuvent encore être infectés ou
+# transmettre la maladie. 
+# 9. Le nombre de tests et de vaccinations est limité par un budget fixe de $21000. Chaque test et chaque vaccin ont un coût de $4 et $10
+# respectivement, ce qui impose un compromis entre dépistage et vaccination et influence directement l'efficacité de la stratégie.
+
+# Ces règles traduisent donc les mécanismes biologiques de propagation et les contraintes d'intervention en un cadre simulé permettant 
+# d'évaluer l'efficacité de la stratégie mise en place. 
+
 # Le modèle est implémenté dans Julia à partir du code fourni pour simuler
 # la propagation d'une épidémie. 
 
