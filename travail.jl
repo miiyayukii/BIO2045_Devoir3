@@ -862,7 +862,7 @@ f
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre de test", ylabel="temps")
-scatterlines!(ax, [get(dico_test, , 0) for i in Base.OneTo(maximum(keys(dico_test)))], color=:black)
+scatterlines!(ax, [get(dico_test,i , 0) for i in Base.OneTo(maximum(keys(dico_test)))], color=:black)
 f
 
 # ### Hotspots
