@@ -24,7 +24,7 @@
 # essentielle afin de mettre en place des stratégies efficaces pour limiter la
 # propagation d’un agent pathogène. La modélisation constitue un outil important
 # en épidémiologie, permettant de simplifier la réalité pour étudier l’impact de
-# différents paramètres sur l’évolution d’une épidémie (@keeling2008modeling).
+# différents paramètres sur l’évolution d’une épidémie @keeling2008modeling.
 
 # Dans ce travail, nous simulons la propagation d’une maladie infectieuse au
 # sein d’une population d’individus mobiles, qui entrent en contact les uns avec
@@ -40,14 +40,14 @@
 # sont asymptomatiques, ce qui signifie qu’ils peuvent être détectés seulement à
 # l’aide de tests diagnostiques. En effet, une proportion importante des
 # infections peut se produire sans symptômes, rendant leur identification
-# difficile sans dépistage (@oran2020prevalence). De plus, les tests utilisés ne
+# difficile sans dépistage @oran2020prevalence. De plus, les tests utilisés ne
 # sont pas parfaitement fiables et peuvent produire des faux négatifs, ce qui
 # introduit une incertitude supplémentaire dans la prise de décision.
 # Deuxièmement, la vaccination constitue le principal moyen d’intervention dans
 # le modèle. Une fois ative, elle empêche les individus de contracter la maladie
 # et de contribuer à sa propagation. Toutefois, un délai est nécessaire avant
 # que la vaccination ne devienne active, ce qui correspond au temps requis pour
-# que le système immunitaire développe une réponse protectrice (@nikoloudis2025delayed).
+# que le système immunitaire développe une réponse protectrice @nikoloudis2025delayed.
 # Cette contrainte est essentielle parce qu’elle influence
 # directement l’efficacité des stratégies mises en place. Enfin, un budget
 # limité est imposé pour la réalisation des tests et l’administration des
@@ -63,9 +63,9 @@
 # testés, puis ceux qui obtiennent un résultat positif ont vaccinés. Des études
 # ont en fait montré que le traçage des contacts permet de contrôler
 # efficacement la propagation des épidémies en identifiant rapidement les
-# chaînes de tranmissions (@hellewell2020feasibility), et que la vaccination en
+# chaînes de tranmissions @hellewell2020feasibility, et que la vaccination en
 # anneau permet de limiter la propagation en ciblant les individus à haut risque
-# autour des cas détectés (@henao2015efficacy).
+# autour des cas détectés @henao2015efficacy.
 
 # La problématique de ce travail est de déterminer comment optimiser
 # l'utilisation de ressources limitées pour réduire la propagation d'une maladie
@@ -78,7 +78,7 @@
 # l’évolution d’une épidémie. Nous posons l'hypothèse qu'une stratégie ciblée de
 # dépistage et de vaccination, concentrée sur les zones à risques définies par
 # la présence d'individus infectés, permettra de réduire plus efficacement la
-# mortalité qu'une stratégie aléatoire (@henao2015efficacy). Nous
+# mortalité qu'une stratégie aléatoire @henao2015efficacy. Nous
 # attendons à oberver une diminution significative du nombre d'individus
 # infectés au cours du temps, ainsi qu'une réduction de la dispersion spatiale
 # des événements d'infection, ce qui suggère une limitation de la propagation de
@@ -758,7 +758,6 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
 
 end
 
-# ## Analyse des résultats
 # ### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
 # dernière génération:
@@ -768,31 +767,6 @@ I = I[1:tick];
 mort = mort[1:tick];
 retabli = retabli[1:tick];
 test_positif = test_positif[1:tick];
-
-#-Courbe de suivis du nombre d'individus dans la population 
-# Courbe orange pour les agents enore à risque
-# Courbe rouge pour tous les agents véritablement infectieux
-# Courbe jaune pour les agents infectieux détecté 
-# Courbe noire pour les agents mort suite à la maladie
-# Courbe verte pour les agents qui ont pu être protégé grace au vaccin
-
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
-stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
-stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
-stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:yellow)
-stairs!(ax, 1:tick, mort, label="mort", color=:black)
-stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
-axislegend(ax)
-current_figure()
-
-# Suivi du nombre total d'agent au fil des générations
-
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="Génération", ylabel="taille population")
-lines!(ax, 1:tick, S, label="mort", color=:black)
-axislegend(ax)
-current_figure()
 
 # ### Nombre de cas par individu infectieux
 # Nous allons ensuite observer la distribution du nombre de cas créés par chaque
@@ -805,48 +779,29 @@ current_figure()
 
 infxn_by_uuid = countmap([event.from for event in events]);
 
-# On compte également combien de personne meurt, est protégé par le vaccin 
-# et combien de test sont fait à chaque generation
-
-dico_mort = countmap([corp.time for corp in qui_meurt]);
-dico_protegee = countmap([gueri.time for gueri in protegee]);
-dico_test = countmap([rat.time for rat in agent_teste])
-
 # La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
 # nombre de fois ou il apparaît:
 # Notez que ceci nous indique combien d'individus ont été infectieux au total:
 
 length(infxn_by_uuid)
 
-length(dico_mort)
-length(dico_protegee)
+# On compte également combien de personne meurt, est protégé par le vaccin 
+# et combien de test sont fait à chaque generation
+
+dico_mort = countmap([corp.time for corp in qui_meurt]);
+dico_protegee = countmap([gueri.time for gueri in protegee]);
+dico_test = countmap([rat.time for rat in agent_teste]);
+
+# À combien de génération on a faite une intervention pour tester les agents 
+# Et combien de personne ont pu être sauvé grâce au vaccin :
+
 length(dico_test)
+length(dico_protegee)
 
 # Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
 # utiliser `countmap` une deuxième fois:
 
 nb_inxfn = countmap(values(infxn_by_uuid))
-
-# On peut maintenant visualiser ces données:
-
-# 
-
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
-scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
-f
-
-# en moyenne les agents contaminent 10 autres personnes. 
-#(distribution normale)
-
-# mortalité au fil des générations
-
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="temps", ylabel="Nombre de mort")
-lines!(ax, 1:tick, mort, label="mort", color=:black)
-f
-
-#
 
 # Pas possible d'afficher la figure suivante vu qu'il n'y a aucun individus
 # protégé
@@ -856,24 +811,84 @@ f
 #scatterlines!(ax, [get(nb_sauvé, i, 0) for i in Base.OneTo(maximum(keys(nb_sauvé)))], color=:black)
 #f
 
-#
+# # Présentation des résultats
 
-# marche pas => 
+# Au début de la simulaton la population est composé de **3750 agents**.
+
+# ## _Avant tout intervention pour controler la maladie_ :
+# 1730 évènements d'infection se sont produit, 2894 agents meurt 
+# et la population finale contient seulement 856 agents encore
+# vivant.
+
+# ## _Après intervention_ :
+#
+# Affichage des informations pertinante :
+# Ce qui reste du budget initial, dans quoi l'argent 
+# a été investi et le nombre restant d'agents dans la population
+
+println("Le nombre d'agent encore vivant est ", length(population))
+println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
+println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
+println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
+
+
+#-Courbe de suivis du nombre d'individus dans la population 
 
 f = Figure()
-ax = Axis(f[1, 1]; xlabel="Nombre de test", ylabel="temps")
+ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
+stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
+stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
+stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:yellow)
+stairs!(ax, 1:tick, mort, label="mort", color=:black)
+stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
+axislegend(ax)
+current_figure()
+
+# **Figure 1:** Courbes de suivi de la taille des populations des agents sains mais 
+# encore à risque, des infectés, des morts, des agents malade detecté et des agents 
+# guéri par le vaccin. 
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Génération", ylabel="taille population")
+lines!(ax, 1:tick, S, label="mort", color=:black)
+axislegend(ax)
+current_figure()
+
+# **Figure 2:** Courbe de l'évolution de la taille de la population au fils 
+# des génération.
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
+scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
+f
+
+# **Figure 3:** Courbe du nombre d'agent infectieux en fonction du nombre
+# d'agent qu'ils infectent.
+
+# en moyenne les agents contaminent 10 autres personnes. 
+# (distribution normale)
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de mort")
+lines!(ax, 1:tick, mort, label="mort", color=:black)
+f
+
+# **Figure 4:** Courbe du nombre de mortalité en fonction du temps.
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de test")
 scatterlines!(ax, [get(dico_test,i , 0) for i in Base.OneTo(maximum(keys(dico_test)))], color=:black)
 f
 
-# ### Hotspots
-# Nous allons enfin nous intéresser à la propagation spatio-temporelle de
+# **Figure 5:** Courbe de suivi des tests effectués.
+
+# ## Hotspots
+# Nous allons nous intéresser maintenant à la propagation spatio-temporelle de
 # l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
-# position de chaque infection:
+# position de chaque infection, puis les représenter dans un graphique:
 
 t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
-
-## figure qui donne la date de l'infection 
 
 f = Figure()
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
@@ -882,18 +897,7 @@ Colorbar(f[1, 2], hm, label="Time of infection")
 hidedecorations!(ax)
 current_figure()
 
-## suivie des testes effectués 
-
-date_test = [ag_test.time for ag_test in agent_teste];
-endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
-f = Figure()
-ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
-Colorbar(f[1, 2], hm, label="Time of test")
-hidedecorations!(ax)
-current_figure()
-
-## on veut suivre les morts
+# **Figure 6:** Propagation spatio-temporelle de l'infection.
 
 quand = [jour.time for jour in qui_meurt];
 ou = [(jour.x, jour.y) for jour in qui_meurt];
@@ -905,34 +909,21 @@ Colorbar(f[1, 2], hm, label="Time of death")
 hidedecorations!(ax)
 current_figure()
 
-## affichage des informations pertinante 
-# tel que l'argent restant et les dépensense totales
+# **Figure 7:** Suivi spatio-temporel des évenèments de mort.
 
-println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
-println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
-println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
+date_test = [ag_test.time for ag_test in agent_teste];
+endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
 
-# Mais aussi le nombre restant d'agents dans la population
+f = Figure()
+ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(20, 26), markersize=20)
+Colorbar(f[1, 2], hm, label="Time of test")
+hidedecorations!(ax)
+current_figure()
 
-println("Le nombre d'agent encore vivant est ", length(population))
+# **Figure 8:** Suivi spatio-temporel des test effectués.
 
-#=
-# # Présentation des résultats
 
-# Avant tout intervention, a la fin de la simulation on obtenais 1730 infections
-# au total, 2894 morts et une population finale de seulement 856 agents encore
-# vivant.
-#
-
-# La figure suivante représente des valeurs aléatoires:
-#hist(randn(1000), color=:grey80)
 # # Discussion
-# On peut aussi citer des références dans le document `references.bib`, qui doit
-# être au format BibTeX. Les références peuvent être citées dans le texte avec
-# `@` suivi de la clé de citation. Par exemple: @ermentrout1993cellular -- la
-# bibliographie sera ajoutée automatiquement à la fin du document.
-# Le format de la bibliographie est American Physics Society, et les références
-# seront correctement présentées dans ce format. Vous ne devez/pouvez pas éditer
-# la bibliographie à la main.
-=#
+
 
