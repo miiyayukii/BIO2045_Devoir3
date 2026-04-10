@@ -734,7 +734,8 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
 
     population = filter(x -> x.clock > 0, population)
 
-    ## début compagne test et vaccination après le premier mort qui indique la présence de cette maladie asymptomatiques   
+    ## début compagne test et vaccination après le premier mort qui indique 
+    ## la présence de cette maladie asymptomatiques   
 
     if length(population) < 3750
 
@@ -744,8 +745,9 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
         populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
         for personne in populationAtester
 
-            ## On cére un vecteur avec les individus testés positifs après vérification qu'on a le font nécessaire
-            ## et on veut que le vecteur soit present en dehors de la boucle pour extraire les donnée qu'il contient
+            ## On cére un vecteur avec les individus testés positifs après
+            ## vérification qu'on a le font nécessaire et on veut que le vecteur 
+            ## soit present en dehors de la boucle pour extraire les donnée qu'il contient
 
             if budget_initiale >= (cout_test * length(populationAtester))
 
@@ -758,14 +760,16 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
 
                     push!(positif_test, TestPositif(tick, infecte.id, infecte.x, infecte.y))
 
-                    ## on vaccine les personnes testés positif si elles ne sont pas déja vaccinées
-                    ## et seulement si on a l'argent pour le vaccin
+                    ## on vaccine les personnes testés positif si elles ne
+                    ## sont pas déja vaccinées seulement si on a l'argent
+                    ## pour le vaccin
 
                     if (nonvaccinee(infecte)) & (budget_initiale >= cout_vaccin)
                         vaccinate!(infecte, tick)
                     end
 
-                    ## puis on trouve les personnes dans la même cellule spatiale que les individus positif (zone à risque)
+                    ## puis on trouve les personnes dans la même cellule spatiale
+                    ## que les individus positif (zone à risque)
 
                     personnes = incell(infecte, population)
                     for p in personnes
@@ -847,7 +851,7 @@ dico_mort = countmap([corp.time for corp in qui_meurt]);
 dico_protegee = countmap([gueri.time for gueri in protegee]);
 dico_test = countmap([rat.time for rat in agent_teste]);
 
-# À combien de génération on a faite une intervention pour tester les agents 
+# À combien de génération il y a eu une intervention pour tester les agents 
 # Et combien de personne ont pu être sauvé grâce au vaccin :
 
 length(dico_test)
@@ -857,14 +861,6 @@ length(dico_protegee)
 # utiliser `countmap` une deuxième fois:
 
 nb_inxfn = countmap(values(infxn_by_uuid))
-
-# Pas possible d'afficher la figure suivante vu qu'il n'y a aucun individus
-# protégé
-#nb_sauvé = countmap(values(dico_protegee))
-#f = Figure()
-#ax = Axis(f[1, 1]; xlabel="Nombre de protégé", ylabel="temps")
-#scatterlines!(ax, [get(nb_sauvé, i, 0) for i in Base.OneTo(maximum(keys(nb_sauvé)))], color=:black)
-#f
 
 # # Présentation des résultats
 
@@ -913,15 +909,26 @@ current_figure()
 # **Figure 2:** Courbe de l'évolution de la taille de la population au fils 
 # des génération.
 
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
+lines!(ax, 1:tick, test_positif, label="Malade détecté", color=:blue)
+lines!(ax, 1:tick, retabli, label="rétabli", color=:green)
+axislegend(ax)
+current_figure()
+
+# **Figure 3:** Courbes du nombre d'agents malades détéctés 
+# et du nombre d'agent avec un vaccin actif au fil des générations.
+
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
 f
 
-# **Figure 3:** Courbe du nombre d'agent infectieux en fonction du nombre
+# **Figure 4:** Courbe du nombre d'agent infectieux en fonction du nombre
 # d'agent qu'ils infectent.
 
-# en moyenne les agents contaminent 10 autres personnes. 
+# => en moyenne les agents contaminent 10 autres personnes. 
 # (distribution normale)
 
 f = Figure()
@@ -929,14 +936,22 @@ ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de mort")
 lines!(ax, 1:tick, mort, label="mort", color=:black)
 f
 
-# **Figure 4:** Courbe du nombre de mortalité en fonction du temps.
+# **Figure 5:** Courbe du nombre de mortalité en fonction du temps.
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de test")
 scatterlines!(ax, [get(dico_test,i , 0) for i in Base.OneTo(maximum(keys(dico_test)))], color=:black)
 f
 
-# **Figure 5:** Courbe de suivi des tests effectués.
+# **Figure 6:** Courbe de suivi des tests effectués.
+
+nb_sauvé = countmap(values(dico_protegee))
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="générations", ylabel="nombre de vaccin")
+scatterlines!(ax, [get(dico_protegee, i, 0) for i in Base.OneTo(maximum(keys(dico_protegee)))], color=:black)
+f
+
+# **Figure 6:** Suivi du nombre d'agent vacciné.
 
 # ## Hotspots
 # Nous allons nous intéresser maintenant à la propagation spatio-temporelle de
@@ -953,7 +968,7 @@ Colorbar(f[1, 2], hm, label="Time of infection")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 6:** Propagation spatio-temporelle de l'infection.
+# **Figure 8:** Propagation spatio-temporelle de l'infection.
 
 quand = [jour.time for jour in qui_meurt];
 ou = [(jour.x, jour.y) for jour in qui_meurt];
@@ -965,7 +980,7 @@ Colorbar(f[1, 2], hm, label="Time of death")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 7:** Suivi spatio-temporel des évenèments de mort.
+# **Figure 9:** Suivi spatio-temporel des évenèments de mort.
 
 date_test = [ag_test.time for ag_test in agent_teste];
 endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
@@ -977,7 +992,7 @@ Colorbar(f[1, 2], hm, label="Time of test")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 8:** Suivi spatio-temporel des test effectués.
+# **Figure 10:** Suivi spatio-temporel des test effectués.
 
 
 # # Discussion
