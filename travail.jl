@@ -87,6 +87,22 @@
 
 # # Présentation du modèle
 
+# Le modèle utilisé est un modèle épidémique. Le code simule la propagation d'une infection dans une 
+# population de 3750 agents non immunisés. Ces agents se déplacent de façon aléatoire sur une lattice 
+# carré à 2 dimentions, de 100 x 100 cellules. 
+# Au début de la simulation un seul agent, choisi aléatoirement, est rendu malade. Et cet agent infecté
+# a 40% de chance de contaminer chaque individus sains présent dans la même cellule de la lattice que lui.
+# Le temps dans la simulation est détérminer par les déplacement des agents. Une génération est égale à
+# un mouvement pour tous les agents.
+# Lorsqu'un agent a été infecté depuis 21 génération il est retiré de la population et donc de la lattice,
+# On le considère mort suite à l'infection. 
+
+# Après la mort du premier agent, donc à la baisse de la taille de la population, des tests RAT sont réalisés
+# sur un nombre d'agents pris aléatoirement dans la population. Un test RAT permet de detecté un agent infectieux
+# dans 95% des cas, et donne un faux négatif dans 5% des cas. Sans les tests il n'est pas possible de savoir
+# qui est infecté.
+# Si le RAT est positif, 
+
 # # Implémentation
 
 # Le modèle est implémenté dans Julia à partir du code fourni pour simuler
@@ -133,8 +149,6 @@ Base.@kwdef mutable struct Agent
     date_vaccin::Int64 = 0
     vaccin_actif::Bool = false
 end
-
-agent = Agent()
 
 # La deuxième structure dont nous aurons besoin est un paysage, qui est défini
 # par les coordonnées min/max sur les axes x et y:
