@@ -18,24 +18,24 @@
 
 # # Introduction
 
-# La propagation rapide des maladies infectieuses constitue un défi majeur en
+# La propagation rapide des maladies infectieuses représente un défi majeur en
 # santé publique, en raison de la complexité des interactions entre individus et
 # des dynamiques de transmission.  La compréhension de ces dynamiques est
 # essentielle afin de mettre en place des stratégies efficaces pour limiter la
 # propagation d’un agent pathogène. La modélisation constitue un outil important
-# en épidémiologie, permettant de simplifier la réalité pour étudier l’impact de
-# différents paramètres sur l’évolution d’une épidémie @keeling2008modeling.
+# en épidémiologie, permettant de simplifier ces systèmes afin d'évaluer l’impact
+# de différents paramètres sur l’évolution d’une épidémie @keeling2008modeling.
 
-# Le modèle dans ce travail, simule la propagation d’une maladie infectieuse au
+# Le modèle dans ce travail simule la propagation d’une maladie infectieuse au
 # sein d’une population d’individus mobiles, qui entrent en contact les uns avec
 # les autres. La transmission survient lors de ces interactions, selon une
-# probabilité fixe, ce qui permet de représenter simplement le processus de
-# contagion tout en conservant les mécanismes essentiels de propagation. Dans ce
-# cas, la maladie est supposée être toujours fatale après une durée déterminée,
-# pour permettre de simplifier la dynamique du modèle et de se concentrer sur
-# l’évolution de l’infection dans la population.
+# probabilité fixe, ce qui permet de représenter les mécanismes fondamentaux de
+# contagion tout en conservant un modèle simple. Dans ce cas, la maladie est 
+# supposée être toujours fatale après une durée déterminée, pour permettre de 
+# simplifier la dynamique du modèle et de se concentrer sur l'évolution de
+# l’infection dans la population.
 
-# Plusieurs contraintes ont été intégrées à la simulation afin de représenter
+# Plusieurs contraintes ont été intégrées au modèle afin de représenter
 # des conditions proches de la réalité. Premièrement, les individus infectés
 # sont asymptomatiques, ce qui signifie qu’ils peuvent être détectés seulement à
 # l’aide de tests diagnostiques. En effet, une proportion importante des
@@ -43,8 +43,8 @@
 # difficile sans dépistage @oran2020prevalence. De plus, les tests utilisés ne
 # sont pas parfaitement fiables et peuvent produire des faux négatifs, ce qui
 # introduit une incertitude supplémentaire dans la prise de décision.
-# Deuxièmement, la vaccination constitue le principal moyen d’intervention dans
-# le modèle. Une fois ative, elle empêche les individus de contracter la maladie
+# Ensuite, la vaccination constitue le principal moyen d’intervention dans
+# le modèle. Une fois active, elle empêche les individus de contracter la maladie
 # et de contribuer à sa propagation. Toutefois, un délai est nécessaire avant
 # que la vaccination ne devienne active, ce qui correspond au temps requis pour
 # que le système immunitaire développe une réponse protectrice @nikoloudis2025delayed.
@@ -55,28 +55,28 @@
 # l’Organisation mondiale de la santé, les ressources sont restreintes et
 # doivent être utilisées de manière optimale. Ainsi, les décisions de dépistage
 # et de vaccination doivent être prises de façon stratégique afin de maximiser
-# la réduction de la propagation de la maladie. Dans ce contexe, nous adoptons
-# une stratégie ciblée inspirée du traçage des contacts et de la vaccination en
-# anneau. À partir du premier décès, les interventions sont concentrées dans les
-# cellules spatiales contenaant des individus infectés, considérées comme des
-# zones à risque de transmission. Les individus présents dans ces cellules sont
-# directement vaccinés par prévention et cure pour ne pas gaspiller l'argent dans de nouveaux tests. Des études
-# ont en fait montré que le traçage des contacts permet de contrôler
-# efficacement la propagation des épidémies en identifiant rapidement les
-# chaînes de tranmissions @hellewell2020feasibility, et que la vaccination en
-# anneau permet de limiter la propagation en ciblant les individus à haut risque
-# autour des cas détectés @henao2015efficacy.
+# la réduction de la propagation de la maladie. 
 
-# La problématique de ce travail est la determination de comment optimiser
+# Dans ce contexe, nous adoptons une stratégie ciblée inspirée du traçage des
+# contacts et de la vaccination en anneau. À partir du premier décès, les interventions
+# sont concentrées dans les cellules spatiales contenant des individus infectés, 
+# considérées comme des zones à risque de transmission. Les individus présents dans
+# ces cellules sont directement vaccinés par prévention et cure pour ne pas gaspiller
+# l'argent dans de nouveaux tests. Des études ont en fait montré que le traçage des 
+# contacts permet de contrôler efficacement la propagation des épidémies en identifiant
+# rapidement les chaînes de transmissions @hellewell2020feasibility. De plus, la 
+# vaccination en anneau permet de limiter la propagation en ciblant les individus
+# à haut risque autour des cas détectés @henao2015efficacy.
+
+# Alors, la problématique de ce travail est la determination de comment optimiser
 # l'utilisation de ressources limitées pour réduire la propagation d'une maladie
 # infectieuse, dans un contexte où les individus infectés sont difficilement
 # détectables et où les interventions sont coûteuses.
 
-# L’objectif de ce travail est
-# donc d’évaluer l’impact d’une stratégie de dépistage et de vaccination sur la
-# propagation d’une maladie infectieuse, en tenant compte de contraintes
-# biologiques et économiques réalistes. Cette approche permet de mieux
-# comprendre comment différentes décisions d’intervention influencent
+# L’objectif de ce travail est donc d'évaluer l'impact d'une stratégie de 
+# dépistage et de vaccination sur la propagation d'une maladie infectieuse, en
+# tenant compte de contraintes biologiques et économiques réalistes. Cette approche
+# permet de mieux comprendre comment différents décisions d'intervention influencent
 # l’évolution d’une épidémie.
 
 # L'hypothèse est qu'une stratégie ciblée de
@@ -94,30 +94,30 @@
 
 # Le modèle utilisé est un modèle épidémique. Le code simule la propagation d'une infection dans une 
 # population de 3750 agents non immunisés. Ces agents se déplacent de façon aléatoire sur une lattice 
-# carré à 2 dimentions, de 100 x 100 cellules. 
-# Au début de la simulation un seul agent, choisi aléatoirement, est rendu malade. Et cet agent infecté
-# a 40% de chance de contaminer chaque individus sains présent dans la même cellule de la lattice que lui.
-# Le temps dans la simulation est détérminer par les déplacement des agents. Une génération est égale à
-# un mouvement pour tous les agents.
-# Lorsqu'un agent a été infecté depuis 21 génération il est retiré de la population et donc de la lattice,
-# On le considère mort suite à l'infection. 
+# carrée à 2 dimensions, de 100 x 100 cellules. 
+# Au début de la simulation un seul agent, choisi aléatoirement, est rendu malade. Cet agent infecté
+# a 40% de chance de contaminer chaque individu sain présent dans la même cellule de la lattice.
+# Le temps dans la simulation est détérminé par les déplacements des agents, tandis qu'yne génération
+# est égale à un mouvement pour tous les agents.
+# Lorsqu'un agent a été infecté depuis 21 générations, il est retiré de la population et donc de la lattice.
+# Il est alors considéré comme mort des suites de l'infection. 
 
-# Après la mort du premier agent, donc à la baisse de la taille de la population, des tests RAT sont réalisés
-# sur un nombre d'agents pris aléatoirement dans la population. Un test RAT detecte l'état, infectieux ou non, 
-# de l'agent. Et si l'agent est malade, le RAT le déclare positif dans 95% des cas, 
-# et fait un faux négatif dans 5% des cas. Sans tests il n'est pas possible de savoir qui est infecté.
+# Après la mort du premier agent, donc à la diminution de la taille de la population, des tests RAT sont réalisés
+# sur un nombre d'agents pris aléatoirement dans la population. Un test RAT détecte l'état de l'agent, soit 
+# infectieux ou non. Si l'agent est malade, le test RAT le déclare positif dans 95% des cas, 
+# et fait un faux négatif dans 5% des cas. Sans tests, il n'est pas possible de savoir qui est infecté.
 # Si le RAT est positif, l'agent malade est vacciné. La vaccination change l'état 'vacciné' de l'agent de faux
-# à vrai et inscrit le jour de l'injection de la dose. Après 2 jours du vaccin, l'agent est guéri
-# (s'il est toujours vivant) et ne peut plus être contaminés même en présence d'autres malades.
+# à vrai, et inscrit le jour de l'injection de la dose. Après 2 jours du vaccin, l'agent est guéri
+# (s'il est toujours vivant) et ne peut plus être contaminés même en présence d'autres agents malades.
 
-# Un budget_initiale est fixé et chacun des vaccin ou test ont des couts déduit de ce budget à chacune de 
-# leurs utilisation. si une intervention est demandé et que le budget n'est pas suffisant
-# un message est affiché pour informer sur quel traitement veut être exécuter, ce message permet
-# l'ajustement du code de tel sorte qu'une intervention soit faite uniquement s'il y a assez de fond pour.
+# Un budget_initiale est fixé, et chacun des vaccins et des tests a un coût qui est déduit de ce budget 
+# à chaque utilisation. Si une intervention est demandée et que le budget n'est pas suffisant,
+# un message est affiché pour indiquer quel traitement doit être exécuter. Ce message permet
+# l'ajuster le code afin qu'une intervention soit réalisée uniquement si les fonds disponibles sont suffisants.
 
-# les changements de la taille de la population, le budget restant et les évenèments de contaminations,
-# morts, protections sont présenté à la fin de la simulation avec des schéma et courbes, pour analyser
-# l'évolution des chose au cours de la simulation. 
+# Les variations de la taille de la population, le budget restant ainsi que les évenèments de contaminations,
+# de mortalité et de protection sont présentés à la fin de la simulation à l'aide de schémas et de courbes,
+# afin d'analyser l'évolution du système au cours de la simulation. 
 
 # # Implémentation
 
@@ -136,22 +136,31 @@
 # telles qu'un budget limité et l'absence d'information sur l'état infectieux des individus. 
 
 # La simulation repose sur les règles suivantes, appliquées à chaque pas de temps:
+
 # 1. Une population d'individus est distribuée dans l'espace, avec un seul agent,
 # choisi aléatoirement, initialement infectés.
+
 # 2. À chaque répétition, les individus se déplacent dans l'espace, ce qui permet les interactions entre eux. 
+
 # 3. Lorsqu'un individu infectieux entre en contact avec un individu sain,
 # la transmission peut se produire avec une probabilité de 0,4, simulant une maladie relativement contagieuse.
+
 # 4. Les individus infectés restent contagieux pendant une durée de 21 itérations,
 # après quoi ils meurent et sont retirés de la population, mettant fin à leur capacité de transmission.
+
 # 5. À chaque pas de temps, un sous-ensemble d'individus est sélectionné aléatoirement afin d'être testé.
 # Le nombre d'individus testés est initalement fixé à 900,
 # puis diminue progressivement au cours de la simulation afin de respecter les contraintes de budget.
+
 # 6. Les tests permettent de détecter les individus infectés avec une sensibilité de 95%,
 # ce qui implique la présence de faux négatifs et introduit une incertitude dans le processus de détection.
+
 # 7. Lorsqu'un individu est détecté positif, une intervention est déclenchée, incluant la vaccination de cet
 # individu ainsi que les individus situés dans la même cellule spatiale, correspondant à une zone à risque.
+
 # 8. Les individus vaccinés deviennent protégés après un délai de 2 itérations, durant lequel ils peuvent
 # encore être infectés (s'ils sont sains) ou transmettre la maladie (s'ils sont infectés). 
+
 # 9. Le nombre de tests et de vaccinations est limité par un budget fixe de $21000. Chaque test et
 # chaque vaccin ont un coût de $4 et $17 respectivement, ce qui impose un compromis entre dépistage et
 # vaccination, influençant directement l'efficacité de la stratégie.
