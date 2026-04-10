@@ -499,7 +499,7 @@ la maladie après son contact avec l'agent malade.
 """
 function contagiant!(pop::Population, time)
     for agent in Random.shuffle(infectious(pop))
-        neighbors = NotProtected(incell(agent, pop)) ## TP: Vous pouvez aussi utiliser une fonction pour filter ceux qui n'ont pas un vaccin actif
+        neighbors = NotProtected(incell(agent, pop))
         for neighbor in neighbors
 
             ## Probabilité de contagiant lors de l'exposition à un malade, contagiant non possible si l'agent est vacciné
@@ -562,6 +562,7 @@ I = zeros(Int64, maxlength);
 mort = zeros(Int64, maxlength);
 retabli = zeros(Int64, maxlength);
 detecte = zeros(Int64, maxlength);
+nb_test = zeros(Int64, maxlength);
 
 # Mais nous allons aussi stocker tous les évènements importants pendant la
 # simulation, dans des types immutables :
@@ -745,7 +746,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
         end
     end
 
-    ## stockage du nombre de personn guérie après vaccination 
+    ## stockage du nombre de personnes guérie après vaccination 
     ## (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
 
     retabli[tick] = length(protected(population))
@@ -828,28 +829,32 @@ length(dico_test)
 
 nb_inxfn = countmap(values(infxn_by_uuid))
 
-nb_mort = countmap(values(dico_mort))
-nb_sauvé = countmap(values(dico_protegee))
 nb_testé = countmap(values(dico_test))
 
 # On peut maintenant visualiser ces données:
 
 # 
+
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
 f
 
-# 
+# en moyenne les agents contaminent 10 autres personnes. 
+#(distribution normale)
+
+# mortalité au fil des générations
+
 f = Figure()
-ax = Axis(f[1, 1]; xlabel="Nombre de mort", ylabel="temps")
-scatterlines!(ax, [get(nb_mort, i, 0) for i in Base.OneTo(maximum(keys(nb_mort)))], color=:black)
+ax = Axis(f[1, 1]; xlabel="temps", ylabel="Nombre de mort")
+lines!(ax, 1:tick, mort, label="mort", color=:black)
 f
 
 #
 
 # Pas possible d'afficher la figure suivante vu qu'il n'y a aucun individus
 # protégé
+#nb_sauvé = countmap(values(dico_protegee))
 #f = Figure()
 #ax = Axis(f[1, 1]; xlabel="Nombre de protégé", ylabel="temps")
 #scatterlines!(ax, [get(nb_sauvé, i, 0) for i in Base.OneTo(maximum(keys(nb_sauvé)))], color=:black)
@@ -857,7 +862,8 @@ f
 
 #
 
-# 
+# marche pas => 
+
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre de test", ylabel="temps")
 scatterlines!(ax, [get(nb_testé, i, 0) for i in Base.OneTo(maximum(keys(nb_testé)))], color=:black)
@@ -880,7 +886,7 @@ Colorbar(f[1, 2], hm, label="Time of infection")
 hidedecorations!(ax)
 current_figure()
 
-## suivie de la detection de malade/protégé => marche pas
+## suivie des testes effectués 
 
 date_test = [ag_test.time for ag_test in agent_teste];
 endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
@@ -895,6 +901,7 @@ current_figure()
 
 quand = [jour.time for jour in qui_meurt];
 ou = [(jour.x, jour.y) for jour in qui_meurt];
+
 f = Figure()
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
 hm = scatter!(ax, ou, color=quand, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
@@ -911,7 +918,7 @@ println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
 
 # Mais aussi le nombre restant d'agents dans la population
 
-println("Le nombre d'agent encore vivant est", population)
+println("Le nombre d'agent encore vivant est ", length(population))
 
 #=
 # # Présentation des résultats
