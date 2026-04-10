@@ -228,33 +228,33 @@ function finance!(vacc)
     if (budget_initiale >= cout_vaccin) & vacc
         budget_initiale -= cout_vaccin
 
-        ## on enregistre dans quel produit les dépense sont faites
+        ## on enregistre dans quel produit les dépenses sont faites
 
         sum_vacc_prix += cout_vaccin
 
-        ## a enlever apres
+        ## Pour être sur de pas vacciner si le budget ne le permet pas 
+        ## un message apparaît pour nous signaler que le code doit être révisé 
+        ## pour vérifier les fond avant d'initier la vaccination
 
         if budget_initiale < 17
-            println("pas assez de fond pour vacc")
+            println("pas assez de fond pour vaccin")
         end
-
-        ##
 
     end
     if (budget_initiale >= cout_test) & vacc == false
         budget_initiale -= cout_test
 
-        ## on enregistre dans quel produit les dépense sont faites
+        ## on enregistre dans quel produit les dépenses sont faites
         
         sum_rat_prix += cout_test
 
-        ## a enlever apres
+        ## Pour être sur de pas faire de test RAT si le budget ne le permet pas 
+        ## un message apparaît pour nous signaler que le code doit être révisé 
+        ## pour vérifier les fonds avant d'initier un test 
 
         if budget_initiale < 4
             println("pas assez de fond pour test")
         end
-
-        ##
 
     end
     return nothing
@@ -552,7 +552,7 @@ maxlength = 2000
 # Pour étudier les résultats de la simulation, nous allons stocker la taille de
 # populations à chaque pas de temps,
 # 'S' pour les individus pas encore infecté,
-# 'I' pour les agents malade, 'mort' pour les agents infectieux depuis plus 21
+# 'I' pour les agents malade, 'mort' pour les agents infectieux depuis plus de 21
 # jours, 'retabli' pour les agent ayant recu un vaccin qui s'est activé après 2
 # générations et 'detecte' pour les agents testé avec le RAT et qui ont été
 # declarés malade : 
@@ -562,7 +562,7 @@ I = zeros(Int64, maxlength);
 mort = zeros(Int64, maxlength);
 retabli = zeros(Int64, maxlength);
 detecte = zeros(Int64, maxlength);
-nb_test = zeros(Int64, maxlength);
+nb_test = zeros(Int64, maxlength); ## a enlever
 
 # Mais nous allons aussi stocker tous les évènements importants pendant la
 # simulation, dans des types immutables :
@@ -758,15 +758,6 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
 
 end
 
-#
-# test pour voir ce qui marche pas 
-
-for i in population
-    if i.vaccin_actif
-        println(i.id, "true")
-    end
-end
-
 # ## Analyse des résultats
 # ### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
@@ -795,6 +786,14 @@ stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
 current_figure()
 
+# Suivi du nombre total d'agent au fil des générations
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Génération", ylabel="taille population")
+lines!(ax, 1:tick, S, label="mort", color=:black)
+axislegend(ax)
+current_figure()
+
 # ### Nombre de cas par individu infectieux
 # Nous allons ensuite observer la distribution du nombre de cas créés par chaque
 # individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
@@ -806,13 +805,12 @@ current_figure()
 
 infxn_by_uuid = countmap([event.from for event in events]);
 
-# nombre de mort par pas de temps
-# nombre d'agent protégé par pas de temps
-# nombre de test par pas de temps
+# On compte également combien de personne meurt, est protégé par le vaccin 
+# et combien de test sont fait à chaque generation
 
 dico_mort = countmap([corp.time for corp in qui_meurt]);
 dico_protegee = countmap([gueri.time for gueri in protegee]);
-dico_test = countmap([rat.time for rat in agent_teste]);
+dico_test = countmap([rat.time for rat in agent_teste])
 
 # La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
 # nombre de fois ou il apparaît:
@@ -828,8 +826,6 @@ length(dico_test)
 # utiliser `countmap` une deuxième fois:
 
 nb_inxfn = countmap(values(infxn_by_uuid))
-
-nb_testé = countmap(values(dico_test))
 
 # On peut maintenant visualiser ces données:
 
@@ -866,7 +862,7 @@ f
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre de test", ylabel="temps")
-scatterlines!(ax, [get(nb_testé, i, 0) for i in Base.OneTo(maximum(keys(nb_testé)))], color=:black)
+scatterlines!(ax, [get(dico_test, , 0) for i in Base.OneTo(maximum(keys(dico_test)))], color=:black)
 f
 
 # ### Hotspots
