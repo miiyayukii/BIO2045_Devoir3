@@ -393,6 +393,10 @@ not_actif(agent::Agent) = !vac_actif(agent)
 
 const Population = Vector{Agent}
 
+# Pour faciliter le groupement d'agents ayant certains trait en commun 
+# on va créer des fonctions qui trie puis regroupe les agents en des population 
+# avec des caractéristique prédéfini. 
+
 # Population d'agents infectieux :
 
 """
@@ -417,7 +421,7 @@ healthy(pop::Population) = filter(ishealthy, pop)
 
 
 # Population d'agents ayant un vaccin actif 
-# donc protégé des infections / mort par la maldie 
+# donc protégé des infections / mort par la maldie :
 
 """
     protected(pop::Population)
@@ -427,7 +431,7 @@ type Population.
 """
 protected(pop::Population) = filter(vac_actif, pop)
 
-# Population avec les agents vaccinés
+# Population avec les agents vaccinés :
 
 """
     vaccinated(pop::Population)
@@ -436,7 +440,7 @@ Cette fonction permet de créer un vecteur contenant les individus vaccinés.
 """
 vaccinated(pop::Population) = filter(vaccineee, pop)
 
-# Population avec les agents non vacciné
+# Population avec les agents non vacciné :
 
 """
     notVaccinated(pop::Population)
@@ -445,7 +449,7 @@ Cette fonction permet de créer un vecteur contenant les individus non vaccinés
 """
 notVaccinated(pop::Population) = filter(nonvaccinee, pop)
 
-# Et enfin, population avec les agents n'ayant pas un vaccin actif
+# Et enfin, population avec les agents n'ayant pas un vaccin actif :
 
 """
     NotProtected(pop::Population)
@@ -555,7 +559,9 @@ sont dans la même cellule qu'un agent donné.
 incell(target::Agent, pop::Population) = filter(ag -> (ag.x, ag.y) == (target.x, target.y), pop)
 
 # La contagiant n'étant pas systématique, cette fonction permet d'ajouter un peu d'aléatoir
-# dans quel agent contractera la maladie après exposition à un malade
+# dans quel agent contractera la maladie après exposition à un malade. Cela permet de simuler 
+# la différence entre les individus, certains sont vite contaminé tandis que d'autre
+# ayant une santé moins fragile réussissent à ne pas être affécté.
 
 """
     contagiant!(pop::Population, time)
@@ -567,6 +573,10 @@ la maladie après son contact avec l'agent malade.
 """
 function contagiant!(pop::Population, time)
     for agent in Random.shuffle(infectious(pop))
+
+        ## Les voisins pouvant être contaminés sont ceux 
+        ## n'ayant pas un vaccin actif 
+
         neighbors = NotProtected(incell(agent, pop))
         for neighbor in neighbors
 
@@ -582,6 +592,12 @@ function contagiant!(pop::Population, time)
         end
     end
 end
+
+# Une fois agents infectieux détéctés, la statégie choisi est de les vacciners.
+# Même si on ignore combien de jour il leur reste il est important de réduire tout risque de propagation par
+# le cas identifié. Des doses de vaccins sont également administrés au voisins directes du malade par prévention.
+# s'ils ont été contaminé, leur propagation de la maladie devient limité, s'ils sont sain il deviennent protégé, et
+# s'ils étaient déjà malade, cela revient à la même stratégie utilisé pour l'agent détecté. 
 
 """
     group_vaccin(positif, time, pop)
