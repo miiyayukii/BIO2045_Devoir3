@@ -5,13 +5,13 @@
 ### I. Introduction
 ### II. Présentation du modèle 
 ### III. Implémentation 
-### IV. Code pour la simulation
+#### Code pour la simulation
 - Les packages necessaires
 - Les fonctions utilisés
 - La simulations 
-### V. Principeaux résultats 
-### VI. Discussion
-### VII. Conclusion 
+### IV. Principeaux résultats 
+### V. Discussion
+### VI. Conclusion 
 
 ## Contexte
 
