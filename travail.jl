@@ -945,6 +945,7 @@ println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
+lines!(ax, 1:tick, PopulationRestant, label="agent encore vivant", color=:grey)
 stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
 stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
 stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:blue)
@@ -969,53 +970,25 @@ current_figure()
 # Après, la taille de la population fluctue en baissant jusqu'à atteindre 0, signant la 
 # fin de la simulation.
 
-# Les autres courbes présent dans la figure étant trop faible comparé aux
-# population infecté et Susceptibles, il faudrait une échelle plus grande
-# pour voir ce qui ce passe.
-
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="Génération", ylabel="taille population")
-lines!(ax, 1:tick, PopulationRestant, label="agent encore vivant", color=:grey)
-axislegend(ax)
-current_figure()
-
-# **Figure 2:** Courbe de l'évolution de la taille de la population au fils 
-# des génération.
-
 # L'évolution de la taille de la population totale d'agent toujours vivant suit 
 # également une sigmoide, le nombre d'agent commençant à baisser après un delais 
 # et atteignant un plateau à la fin de la simulation.
 
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
-lines!(ax, 1:tick, test_positif, label="Malade détecté", color=:blue)
-lines!(ax, 1:tick, retabli, label="rétabli", color=:green)
-axislegend(ax)
-current_figure()
-
-# **Figure 3:** Courbes du nombre d'agents malades détéctés 
-# et du nombre d'agent avec un vaccin actif au fil des générations.
-
-# L'agrandissement de l'échelle dans la figure 3 montre un pic unique dans la courbe
-# des tests RAT positif. À la 24ème génération, 7 des tests effectués étaient positif.
-# La figure montre également que 2 jours après, 3 individus ont eu une activation de leur
-# vaccin (Figure 6). Ce nombre ne changeant plus après.
-# Les valeurs n'étant pas très visible sur la figure ils ont été obtenus autrement.
-# Pour le nombre de test positif et leur date, par la ligne de code suivante :
-# 'test_positif[21:27]'.
+# Les autres courbes présent dans la figure étant trop faible comparé aux
+# population infecté et Susceptibles, il faudrait une échelle plus grande
+# pour voir ce qui ce passe.
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
 f
 
-# **Figure 4:** Courbe du nombre d'agent infectieux en fonction du nombre
+# **Figure 2:** Courbe du nombre d'agent infectieux en fonction du nombre
 # d'agent qu'ils infectent.
 
 # La courbe de la figure 4 possède une distribution normale.
 # L'analyse du nombre de contagiant par agent montre qu'une grande partie
 # des agents malades (un peu plus de 400) contaminent 9-11 autres personnes. 
-
 
 f = Figure()
 ax = Axis(f[2, 1]; xlabel="génération", ylabel="Nombre de mort")
