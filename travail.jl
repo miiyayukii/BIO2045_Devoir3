@@ -622,6 +622,7 @@ maxlength = 2000
 
 S = zeros(Int64, maxlength);
 I = zeros(Int64, maxlength);
+PopulationRestant = zeros(Int64, maxlength);
 mort = zeros(Int64, maxlength);
 retabli = zeros(Int64, maxlength);
 test_positif = zeros(Int64, maxlength);
@@ -822,6 +823,7 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
 
     S[tick] = length(healthy(population))
     I[tick] = length(infectious(population))
+    PopulationRestant[tick] = length(population)
 
 end
 
@@ -834,6 +836,7 @@ I = I[1:tick];
 mort = mort[1:tick];
 retabli = retabli[1:tick];
 test_positif = test_positif[1:tick];
+PopulationRestant = PopulationRestant[1:tick];
 
 # ### Nombre de cas par individu infectieux
 # Nous allons ensuite observer la distribution du nombre de cas créés par chaque
@@ -852,8 +855,7 @@ infxn_by_uuid = countmap([event.from for event in events]);
 
 length(infxn_by_uuid)
 
-# On compte également combien de personne meurt, est protégé par le vaccin 
-# et combien de test sont fait à chaque generation
+# On compte également combien de personne meurt et combien sont protégés par le vaccin 
 
 dico_mort = countmap([corp.time for corp in qui_meurt]);
 dico_protegee = countmap([gueri.time for gueri in protegee]);
@@ -875,9 +877,12 @@ nb_inxfn = countmap(values(infxn_by_uuid))
 # Au début de la simulaton la population est composé de **3750 agents**.
 
 # ## _Avant l'intervention pour controler la maladie_ :
-#
-# 1730 évènements d'infection se sont produit, 2894 agents meurt 
-# et la population finale contient seulement 856 agents encore
+
+# **1730** évènements d'infection se sont produit,
+
+# **2894** agents meurt 
+
+# et la population finale contient **856** agents encore
 # vivant.
 
 # ## _Après l'intervention_ :
@@ -892,14 +897,12 @@ println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
 println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
 
 # Après l'application de la stratégie de tests aléatoirs et de vaccin ciblée,
-# La taille de la population finale obtenue est de 792 agents.
+# La taille de la population finale obtenue est de **792** agents uniquement.
 
-# Le budget initialement fixé à 21000$ est épuisé
+# Et le budget initialement fixé à 21000$ est épuisé
 # laissant uniquement 9$ dans le porte-feuille. Le suivi des dépenses montre 
 # que l'argent est presque totalement déboursé dans les tests RAT et peu dans
 # les vaccins avec 20940$ alloué aux tests contre uniquqment 51$ pour les vaccins.
-
-#-Courbe de suivis du nombre d'individus dans la population 
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
@@ -915,29 +918,34 @@ current_figure()
 # encore à risque, des infectés, des morts, des agents malade detecté et des agents 
 # guéri par le vaccin. 
 
-# La figure 1 montre une courbe sigmoïde de l'évolution de la population d'agent
-# naïf au cours du temps. Après un léger delais, la taille de cette population
-# commence à décroitre de plus en plus rapidement au fil des générations jusqu'à environ 
+# La Figure 1 montre des courbes de suivis du nombre d'individus dans différents type de groupement. 
+# L'évolution de la population d'agent naïf au cours du temps est représenté par 
+# une courbe sigmoïde. Après un léger delais, la taille de cette population
+# commence à décroitre de plus en plus rapidement au fil du temps jusqu'à environ 
 # la 250 ème génération où la vitesse de décroissance diminue peu à peu. 
-# Enfin, la taille de ce goupe se stabiliser plus ou moins au delas de 670 générations à 792 agents.
-# Simultanément au début de baisse du nombre d'agent Susceptibles, une 
+# Enfin, la taille de ce goupe se stabiliser plus ou moins au delas de la 670 ème générations à 792 agents.
+# Simultanément au début de la baisse du nombre d'agent susceptibles, une 
 # augmentation dans la population d'agent infectieux est noté. Le nombre d'individus
 # malade continue d'augmenter jusqu'à atteindre un maximum vers environ la 250ème génération.
-# Après, la taille de la population fluctue en baissant jusqu'à atteindre 0.
+# Après, la taille de la population fluctue en baissant jusqu'à atteindre 0, signant la 
+# fin de la simulation.
 
-# Les autres courbes représentant l'évolution du nombre d'agent testé, de mort et des 
-# agents avec un vaccin actif étant trop faible comparé aux population infecté et Susceptibles
-# il faut une échelle plus grande pour voir ce qui ce passe.
+# Les autres courbes présent dans la figure étant trop faible comparé aux
+# population infecté et Susceptibles, il faudrait une échelle plus grande
+# pour voir ce qui ce passe.
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="taille population")
-lines!(ax, 1:tick, S, label="mort", color=:orange)
+lines!(ax, 1:tick, PopulationRestant, label="agent encore vivant", color=:grey)
 axislegend(ax)
 current_figure()
 
 # **Figure 2:** Courbe de l'évolution de la taille de la population au fils 
 # des génération.
 
+# L'évolution de la taille de la population totale d'agent toujours vivant suit 
+# également une sigmoide, le nombre d'agent commençant à baisser après un delais 
+# et atteignant un plateau à la fin de la simulation.
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
@@ -949,10 +957,13 @@ current_figure()
 # **Figure 3:** Courbes du nombre d'agents malades détéctés 
 # et du nombre d'agent avec un vaccin actif au fil des générations.
 
-# La figure 3 montre qu'à la 24ème génération 7 des tests effectués étaient positif.
-# Cela est montré par le pic unique de la courbe.
+# L'agrandissement de l'échelle dans la figure 3 montre un pic unique dans la courbe
+# des tests RAT positif. À la 24ème génération, 7 des tests effectués étaient positif.
 # La figure montre également que 2 jours après, 3 individus ont eu une activation de leur
-# vaccin. Ce nombre ne changeant plus après.
+# vaccin (Figure 6). Ce nombre ne changeant plus après.
+# Les valeurs n'étant pas très visible sur la figure ils ont été obtenus autrement.
+# Pour le nombre de test positif et leur date, par la ligne de code suivante :
+# 'test_positif[21:27]'.
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
@@ -962,9 +973,10 @@ f
 # **Figure 4:** Courbe du nombre d'agent infectieux en fonction du nombre
 # d'agent qu'ils infectent.
 
-# La courbe de la figure 4 possède une distribution normale, 
-# en moyenne les agents malades contaminent 9-11 autres personnes. 
-# 
+# La courbe de la figure 4 possède une distribution normale.
+# L'analyse du nombre de contagiant par agent montre qu'une grande partie
+# des agents malades (un peu plus de 400) contaminent 9-11 autres personnes. 
+
 
 f = Figure()
 ax = Axis(f[2, 1]; xlabel="génération", ylabel="Nombre de mort")
@@ -975,10 +987,13 @@ f
 
 # **Figure 5:** Courbe du nombre de mort et infectieux en fonction du temps.
 
-# La figure 5 montre que la courbe représentant la population morte fluctue beaucoup
-# au cours du temps, mais elle présente un pic plus import vers la 250ème generation. 
-# Cette courbe suit la même tendance que la courbe d'individus infectieux mais a une
-# plus faible amplitude. 
+# La comparaison entre le nombre d'infection et le nombre de mort dans la 
+# figure 5 montre que la courbe représentant la population morte fluctue beaucoup
+# au cours du temps, mais qu'elle présente un pic plus import vers la 250ème generation. 
+# Suit la même tendance que la courbe d'individus infectieux mais avec une amplitude
+# moindre. Le nombre d'infection atteignant presque les 300 agents alors
+# que le nombre de mort restant inférieur à 30 agents. Le nombre de mort est
+# donc 10 fois plus faible que le nombre d'infection. 
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de test")
@@ -987,9 +1002,9 @@ f
 
 # **Figure 6:** Courbe de suivi des tests effectués.
 
-# La courbe 6 montre que les tests sont effectué durant uniquement 4 générations.
-# Un très grand nombre de test est effectué en une fois (pic à la génération 21)
-# puis à la génération suivante le nombre baisse drastiquement. 
+# La courbe 6 montre que les tests sont effectué durant 4 générations uniquement.
+# Plus de 4000 tests sont effectués en une fois (pic à la génération 21)
+# puis à la génération suivante le nombre baisse drastiquement en dessous de 1000. 
 
 nb_sauvé = countmap(values(dico_protegee))
 f = Figure()
@@ -999,13 +1014,13 @@ f
 
 # **Figure 6:** Suivi du nombre d'agent vacciné.
 
-# Le suivi des individus protégés par le vaccin montre qu'à la génération 26, 3 agents
-# ont eu leurs vaccins activés. 
+# Le suivi des individus protégés par le vaccin montre que rien ne se passe avant la
+# génération 26, où 3 agents ont eu leurs vaccins activés.
 
 # ## Hotspots
 # Nous allons nous intéresser maintenant à la propagation spatio-temporelle de
 # l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
-# position de chaque infection, puis les représenter dans un graphique:
+# position de chaque infection et mort, puis les représenter dans un graphique:
 
 t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
@@ -1020,8 +1035,8 @@ current_figure()
 # **Figure 8:** Propagation spatio-temporelle de l'infection.
 
 # La figure 8 montre que l'infection s'est déclanché dans la partie 
-# centrale de la moitié supérieur de la lattice. Puis, se propage de proche en proche de 
-# façon cerculaire jusqu'au bord inferieur de la lattice.
+# centrale de la moitié supérieur de la lattice. Puis, s'est propagée de proche en proche de 
+# façon cerculaire jusqu'à atteindre le bord inferieur de la lattice.
 
 quand = [jour.time for jour in qui_meurt];
 ou = [(jour.x, jour.y) for jour in qui_meurt];
@@ -1035,8 +1050,8 @@ current_figure()
 
 # **Figure 9:** Suivi spatio-temporel des évenèments de mort.
 
-# La figure 9 montre les evènements mort suivent le même patron de 
-# propagation que les infection. Cependant, les morts ont une densité
+# La figure 9 montre les evènements de mort suivent le même patron de 
+# propagation que les infections. Cependant, les morts ont une densité
 # moins importante que les infections.
 
 date_test = [ag_test.time for ag_test in agent_teste];
@@ -1052,7 +1067,7 @@ current_figure()
 # **Figure 10:** Suivi spatio-temporel des test effectués.
 
 # Cette figure montre que les testes sont fait un peu partout sur la lattice
-# mais que certaines zones restent non échantilloné.
+# mais à des moments différents, laissant certaines zones non échantilloné.
 
 # # Discussion
 
