@@ -10,10 +10,6 @@
 #      prenom: Christina
 #      matricule: 20313890
 #      github: DeuxiAut
-#    - nom: Auteur
-#      prenom: troiseme
-#      matricule: XXXXXXXX
-#      github: TroisiAut
 # ---
 
 # # Introduction
@@ -296,12 +292,14 @@ function finance!(vacc)
 
         sum_vacc_prix += cout_vaccin
 
-        ## Pour être sur de pas vacciner si le budget ne le permet pas 
-        ## un message apparaît pour nous signaler que le code doit être révisé 
-        ## pour vérifier les fond avant d'initier la vaccination
     end
+
+    ## Pour être sur de pas vacciner si le budget ne le permet pas 
+    ## un message apparaît pour nous signaler que le code doit être révisé 
+    ## pour vérifier les fond avant d'initier la vaccination
+    
     if (budget_initiale < 17) & vacc
-        println("pas assez de fond pour vaccin")
+        println("pas assez de fond pour un vaccin")
     end
 
     if (budget_initiale >= cout_test) & (vacc == false)
@@ -311,13 +309,14 @@ function finance!(vacc)
         
         sum_rat_prix += cout_test
 
-        ## Pour être sur de pas faire de test RAT si le budget ne le permet pas 
-        ## un message apparaît pour nous signaler que le code doit être révisé 
-        ## pour vérifier les fonds avant d'initier un test 
-
     end
+
+    ## Pour être sur de pas faire de test RAT si le budget ne le permet pas 
+    ## un message apparaît pour nous signaler que le code doit être révisé 
+    ## pour vérifier les fonds avant d'initier un test
+
     if (budget_initiale < 4) & (vacc == false)
-        println("pas assez de fond pour test")
+        println("pas assez de fond pour un test")
         
     end
     return nothing
@@ -861,11 +860,9 @@ dico_mort = countmap([corp.time for corp in qui_meurt]);
 dico_protegee = countmap([gueri.time for gueri in protegee]);
 dico_test = countmap([rat.time for rat in agent_teste]);
 
-# À combien de génération il y a eu une intervention pour tester les agents 
-# Et combien de personne ont pu être sauvé grâce au vaccin :
+# À combien de génération il y a eu une intervention pour tester les agents :
 
 length(dico_test)
-length(dico_protegee)
 
 # Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
 # utiliser `countmap` une deuxième fois:
@@ -1066,6 +1063,9 @@ current_figure()
 
 # **Figure 10:** Suivi spatio-temporel des test effectués
 
+# Cette figure montre que les testes sont fait un peu partout sur la lattice
+# mais à des moments différents, laissant certaines zones non échantilloné.
+
 t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
 date_test = [ag_test.time for ag_test in agent_teste];
@@ -1080,11 +1080,11 @@ Colorbar(f[1, 2], hm, label="Time")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 10:** Suivi spatio-temporel des test effectués superposé
+# **Figure 11:** Suivi spatio-temporel des test effectués superposé
 # au évènements d'inection.
 
-# Cette figure montre que les testes sont fait un peu partout sur la lattice
-# mais à des moments différents, laissant certaines zones non échantilloné.
+# La figure 11 montre que très peu de tests sont effectué 
+# au même endroit des foyers d'infection.
 
 # # Discussion
 
