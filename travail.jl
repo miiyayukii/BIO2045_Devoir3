@@ -299,13 +299,12 @@ function finance!(vacc)
         ## Pour être sur de pas vacciner si le budget ne le permet pas 
         ## un message apparaît pour nous signaler que le code doit être révisé 
         ## pour vérifier les fond avant d'initier la vaccination
-
-        if budget_initiale < 17
-            println("pas assez de fond pour vaccin")
-        end
-
     end
-    if (budget_initiale >= cout_test) & vacc == false
+    if (budget_initiale < 17) & vacc
+        println("pas assez de fond pour vaccin")
+    end
+
+    if (budget_initiale >= cout_test) & (vacc == false)
         budget_initiale -= cout_test
 
         ## on enregistre dans quel produit les dépenses sont faites
@@ -316,10 +315,10 @@ function finance!(vacc)
         ## un message apparaît pour nous signaler que le code doit être révisé 
         ## pour vérifier les fonds avant d'initier un test 
 
-        if budget_initiale < 4
-            println("pas assez de fond pour test")
-        end
-
+    end
+    if (budget_initiale < 4) & (vacc == false)
+        println("pas assez de fond pour test")
+        
     end
     return nothing
 end
@@ -892,6 +891,13 @@ println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
 println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
 println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
 
+# Après l'application de la stratégie de tests aléatoirs et de vaccin ciblée,
+# La taille de la population finale obtenue est de 792 agents.
+
+# Le budget initialement fixé à 21000$ est épuisé
+# laissant uniquement 9$ dans le porte-feuille. Le suivi des dépenses montre 
+# que l'argent est presque totalement déboursé dans les tests RAT et peu dans
+# les vaccins avec 20940$ alloué aux tests contre uniquqment 51$ pour les vaccins.
 
 #-Courbe de suivis du nombre d'individus dans la population 
 
@@ -899,7 +905,7 @@ f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
 stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
 stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
-stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:yellow)
+stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:blue)
 stairs!(ax, 1:tick, mort, label="mort", color=:black)
 stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
@@ -909,9 +915,23 @@ current_figure()
 # encore à risque, des infectés, des morts, des agents malade detecté et des agents 
 # guéri par le vaccin. 
 
+# La figure 1 montre une courbe sigmoïde de l'évolution de la population d'agent
+# naïf au cours du temps. Après un léger delais, la taille de cette population
+# commence à décroitre de plus en plus rapidement au fil des générations jusqu'à environ 
+# la 250 ème génération où la vitesse de décroissance diminue peu à peu. 
+# Enfin, la taille de ce goupe se stabiliser plus ou moins au delas de 670 générations à 792 agents.
+# Simultanément au début de baisse du nombre d'agent Susceptibles, une 
+# augmentation dans la population d'agent infectieux est noté. Le nombre d'individus
+# malade continue d'augmenter jusqu'à atteindre un maximum vers environ la 250ème génération.
+# Après, la taille de la population fluctue en baissant jusqu'à atteindre 0.
+
+# Les autres courbes représentant l'évolution du nombre d'agent testé, de mort et des 
+# agents avec un vaccin actif étant trop faible comparé aux population infecté et Susceptibles
+# il faut une échelle plus grande pour voir ce qui ce passe.
+
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="taille population")
-lines!(ax, 1:tick, S, label="mort", color=:black)
+lines!(ax, 1:tick, S, label="mort", color=:orange)
 axislegend(ax)
 current_figure()
 
@@ -929,6 +949,11 @@ current_figure()
 # **Figure 3:** Courbes du nombre d'agents malades détéctés 
 # et du nombre d'agent avec un vaccin actif au fil des générations.
 
+# La figure 3 montre qu'à la 24ème génération 7 des tests effectués étaient positif.
+# Cela est montré par le pic unique de la courbe.
+# La figure montre également que 2 jours après, 3 individus ont eu une activation de leur
+# vaccin. Ce nombre ne changeant plus après.
+
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
@@ -937,15 +962,23 @@ f
 # **Figure 4:** Courbe du nombre d'agent infectieux en fonction du nombre
 # d'agent qu'ils infectent.
 
-# => en moyenne les agents contaminent 10 autres personnes. 
-# (distribution normale)
+# La courbe de la figure 4 possède une distribution normale, 
+# en moyenne les agents malades contaminent 9-11 autres personnes. 
+# 
 
 f = Figure()
-ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de mort")
+ax = Axis(f[2, 1]; xlabel="génération", ylabel="Nombre de mort")
+ax1 = Axis(f[1, 1]; ylabel="Nombre d'infectieux")
+lines!(ax1, 1:tick, I, label="Infectieux", color=:red)
 lines!(ax, 1:tick, mort, label="mort", color=:black)
 f
 
-# **Figure 5:** Courbe du nombre de mortalité en fonction du temps.
+# **Figure 5:** Courbe du nombre de mort et infectieux en fonction du temps.
+
+# La figure 5 montre que la courbe représentant la population morte fluctue beaucoup
+# au cours du temps, mais elle présente un pic plus import vers la 250ème generation. 
+# Cette courbe suit la même tendance que la courbe d'individus infectieux mais a une
+# plus faible amplitude. 
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de test")
@@ -954,6 +987,10 @@ f
 
 # **Figure 6:** Courbe de suivi des tests effectués.
 
+# La courbe 6 montre que les tests sont effectué durant uniquement 4 générations.
+# Un très grand nombre de test est effectué en une fois (pic à la génération 21)
+# puis à la génération suivante le nombre baisse drastiquement. 
+
 nb_sauvé = countmap(values(dico_protegee))
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="générations", ylabel="nombre de vaccin")
@@ -961,6 +998,9 @@ scatterlines!(ax, [get(dico_protegee, i, 0) for i in Base.OneTo(maximum(keys(dic
 f
 
 # **Figure 6:** Suivi du nombre d'agent vacciné.
+
+# Le suivi des individus protégés par le vaccin montre qu'à la génération 26, 3 agents
+# ont eu leurs vaccins activés. 
 
 # ## Hotspots
 # Nous allons nous intéresser maintenant à la propagation spatio-temporelle de
@@ -979,6 +1019,10 @@ current_figure()
 
 # **Figure 8:** Propagation spatio-temporelle de l'infection.
 
+# La figure 8 montre que l'infection s'est déclanché dans la partie 
+# centrale de la moitié supérieur de la lattice. Puis, se propage de proche en proche de 
+# façon cerculaire jusqu'au bord inferieur de la lattice.
+
 quand = [jour.time for jour in qui_meurt];
 ou = [(jour.x, jour.y) for jour in qui_meurt];
 
@@ -990,6 +1034,10 @@ hidedecorations!(ax)
 current_figure()
 
 # **Figure 9:** Suivi spatio-temporel des évenèments de mort.
+
+# La figure 9 montre les evènements mort suivent le même patron de 
+# propagation que les infection. Cependant, les morts ont une densité
+# moins importante que les infections.
 
 date_test = [ag_test.time for ag_test in agent_teste];
 endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
@@ -1003,6 +1051,8 @@ current_figure()
 
 # **Figure 10:** Suivi spatio-temporel des test effectués.
 
+# Cette figure montre que les testes sont fait un peu partout sur la lattice
+# mais que certaines zones restent non échantilloné.
 
 # # Discussion
 
