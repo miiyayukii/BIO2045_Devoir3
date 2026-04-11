@@ -1082,6 +1082,8 @@ current_figure()
 
 # ### Simulation 2 ##################################################################
 
+Random.seed!(123457)
+
 simulation();
 
 # ### Série temporelle
@@ -1290,6 +1292,8 @@ current_figure()
 # au évènements d'inection.
 ###########################################################################################################
 # ### Simulation 3 
+
+Random.seed!(123458)
 
 simulation();
 
