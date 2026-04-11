@@ -1035,23 +1035,17 @@ f
 # donc 10 fois plus faible que le nombre d'infection. 
 
 f = Figure()
-ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de test")
+ax = Axis(f[1, 1]; ylabel="Nombre de test")
+ax1 = Axis(f[2, 1]; xlabel="générations", ylabel="activation de vaccin")
 scatterlines!(ax, [get(dico_test,i , 0) for i in Base.OneTo(maximum(keys(dico_test)))], color=:black)
+scatterlines!(ax1, [get(dico_protegee, i, 0) for i in Base.OneTo(maximum(keys(dico_protegee)))], color=:black)
 f
 
-# **Figure 6:** Courbe de suivi des tests effectués.
+# **Figure 6:** Courbe de suivi des tests effectués et des vaccins activés.
 
 # La courbe 6 montre que les tests sont effectué durant 4 générations uniquement.
 # Plus de 4000 tests sont effectués en une fois (pic à la génération 21)
 # puis à la génération suivante le nombre baisse drastiquement en dessous de 1000. 
-
-nb_sauvé = countmap(values(dico_protegee))
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="générations", ylabel="nombre de vaccin")
-scatterlines!(ax, [get(dico_protegee, i, 0) for i in Base.OneTo(maximum(keys(dico_protegee)))], color=:black)
-f
-
-# **Figure 6:** Suivi du nombre d'agent vacciné.
 
 # Le suivi des individus protégés par le vaccin montre que rien ne se passe avant la
 # génération 26, où 3 agents ont eu leurs vaccins activés.
