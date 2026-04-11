@@ -911,24 +911,9 @@ length(dico_test)
 
 nb_inxfn = countmap(values(infxn_by_uuid))
 
-# # Présentation des résultats
+# ## Résultats 
 
-# Au début de la simulaton la population est composé de **3750 agents**.
-
-# ## _Avant l'intervention pour controler la maladie_ :
-
-# **1730** évènements d'infection se sont produit,
-
-# **2894** agents meurt 
-
-# et la population finale contient **856** agents encore
-# vivant.
-
-# ## _Après l'intervention_ :
-#
-# Affichage des informations pertinante :
-# Ce qui reste du budget initial, dans quoi l'argent 
-# a été investi et le nombre restant d'agents dans la population
+# ### Simulation 1
 
 println("Le nombre d'agent encore vivant est ", length(population))
 println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
@@ -1092,8 +1077,32 @@ current_figure()
 # **Figure 8:** Suivi spatio-temporel des test effectués superposé
 # au évènements d'inection.
 
-# La figure 11 montre que très peu de tests sont effectué 
+# La figure 8 montre que très peu de tests sont effectué 
 # au même endroit des foyers d'infection.
+
+# ### Simulation 2
+
+# ### Simulation 3 
+
+
+# # Analyse des résultats
+
+# Au début de la simulaton la population est composé de **3750 agents**.
+
+# ## _Avant l'intervention pour controler la maladie_ :
+
+# **1730** évènements d'infection se sont produit,
+
+# **2894** agents meurt 
+
+# et la population finale contient **856** agents encore
+# vivant.
+
+# ## _Après l'intervention_ :
+#
+# Affichage des informations pertinante :
+# Ce qui reste du budget initial, dans quoi l'argent 
+# a été investi et le nombre restant d'agents dans la population
 
 # # Discussion
 
