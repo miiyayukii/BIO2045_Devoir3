@@ -866,7 +866,7 @@ function simulation()
     return S, I, PopulationRestant, retabli, mort
 end
 
-simulation()
+simulation();
 
 # ### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
@@ -997,7 +997,7 @@ lines!(ax1, 1:tick, I, label="Infectieux", color=:red)
 lines!(ax, 1:tick, mort, label="mort", color=:black)
 f
 
-# **Figure 5:** Courbe du nombre de mort et infectieux en fonction du temps.
+# **Figure 3:** Courbe du nombre de mort et infectieux en fonction du temps.
 
 # La comparaison entre le nombre d'infection et le nombre de mort dans la 
 # figure 5 montre que la courbe représentant la population morte fluctue beaucoup
@@ -1014,7 +1014,7 @@ scatterlines!(ax, [get(dico_test,i , 0) for i in Base.OneTo(maximum(keys(dico_te
 scatterlines!(ax1, [get(dico_protegee, i, 0) for i in Base.OneTo(maximum(keys(dico_protegee)))], color=:black)
 f
 
-# **Figure 6:** Courbe de suivi des tests effectués et des vaccins activés.
+# **Figure 4:** Courbe de suivi des tests effectués et des vaccins activés.
 
 # La courbe 6 montre que les tests sont effectué durant 4 générations uniquement.
 # Plus de 4000 tests sont effectués en une fois (pic à la génération 21)
@@ -1038,7 +1038,7 @@ Colorbar(f[1, 2], hm, label="Time of infection")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 8:** Propagation spatio-temporelle de l'infection.
+# **Figure 5:** Propagation spatio-temporelle de l'infection.
 
 # La figure 8 montre que l'infection s'est déclanché dans la partie 
 # centrale de la moitié supérieur de la lattice. Puis, s'est propagée de proche en proche de 
@@ -1054,7 +1054,7 @@ Colorbar(f[1, 2], hm, label="Time of death")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 9:** Suivi spatio-temporel des évenèments de mort.
+# **Figure 6:** Suivi spatio-temporel des évenèments de mort.
 
 # La figure 9 montre les evènements de mort suivent le même patron de 
 # propagation que les infections. Cependant, les morts ont une densité
@@ -1070,7 +1070,7 @@ Colorbar(f[1, 2], hm, label="Time of test")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 10:** Suivi spatio-temporel des test effectués
+# **Figure 7:** Suivi spatio-temporel des test effectués
 
 # Cette figure montre que les testes sont fait un peu partout sur la lattice
 # mais à des moments différents, laissant certaines zones non échantilloné.
@@ -1089,7 +1089,7 @@ Colorbar(f[1, 2], hm, label="Time")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 11:** Suivi spatio-temporel des test effectués superposé
+# **Figure 8:** Suivi spatio-temporel des test effectués superposé
 # au évènements d'inection.
 
 # La figure 11 montre que très peu de tests sont effectué 
