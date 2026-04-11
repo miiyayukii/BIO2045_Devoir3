@@ -911,7 +911,7 @@ length(dico_test)
 
 nb_inxfn = countmap(values(infxn_by_uuid))
 
-# ## Résultats 
+# ## Résultats  #############################################
 
 # ### Simulation 1
 
@@ -1080,7 +1080,7 @@ current_figure()
 # La figure 8 montre que très peu de tests sont effectué 
 # au même endroit des foyers d'infection.
 
-# ### Simulation 2
+# ### Simulation 2 ##################################################################
 
 simulation();
 
@@ -1126,10 +1126,6 @@ length(dico_test)
 # utiliser `countmap` une deuxième fois:
 
 nb_inxfn = countmap(values(infxn_by_uuid))
-
-# ## Résultats 
-
-# ### Simulation 1
 
 println("Le nombre d'agent encore vivant est ", length(population))
 println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
@@ -1292,6 +1288,7 @@ current_figure()
 
 # **Figure 8:** Suivi spatio-temporel des test effectués superposé
 # au évènements d'inection.
+###########################################################################################################
 # ### Simulation 3 
 
 simulation();
@@ -1306,42 +1303,6 @@ mort = mort[1:tick];
 retabli = retabli[1:tick];
 test_positif = test_positif[1:tick];
 PopulationRestant = PopulationRestant[1:tick];
-
-# ### Nombre de cas par individu infectieux
-# Nous allons ensuite observer la distribution du nombre de cas créés par chaque
-# individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
-# combien de fois chaque individu est représenté dans le champ `from`: parcourt
-# tous les event dans le vecteur events et extrait .from de chaque élément,
-# formant un nouveau vecteur des valeurs event.from 
-# + countmap() prend ce vecteur et renvoie un dictionnaire Dict qui compte
-#   combien de fois chaque valeur apparaît
-
-infxn_by_uuid = countmap([event.from for event in events]);
-
-# La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
-# nombre de fois ou il apparaît:
-# Notez que ceci nous indique combien d'individus ont été infectieux au total:
-
-length(infxn_by_uuid)
-
-# On compte également combien de personne meurt et combien sont protégés par le vaccin 
-
-dico_mort = countmap([corp.time for corp in qui_meurt]);
-dico_protegee = countmap([gueri.time for gueri in protegee]);
-dico_test = countmap([rat.time for rat in agent_teste]);
-
-# À combien de génération il y a eu une intervention pour tester les agents :
-
-length(dico_test)
-
-# Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
-# utiliser `countmap` une deuxième fois:
-
-nb_inxfn = countmap(values(infxn_by_uuid))
-
-# ## Résultats 
-
-# ### Simulation 1
 
 println("Le nombre d'agent encore vivant est ", length(population))
 println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
