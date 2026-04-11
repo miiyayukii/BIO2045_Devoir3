@@ -1001,7 +1001,24 @@ Colorbar(f[1, 2], hm, label="Time of test")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 10:** Suivi spatio-temporel des test effectués.
+# **Figure 10:** Suivi spatio-temporel des test effectués
+
+t = [event.time for event in events];
+pos = [(event.x, event.y) for event in events];
+date_test = [ag_test.time for ag_test in agent_teste];
+endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
+
+f = Figure()
+ax1 = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm1 = scatter!(ax1, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
+ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=10)
+Colorbar(f[1, 2], hm, label="Time")
+hidedecorations!(ax)
+current_figure()
+
+# **Figure 10:** Suivi spatio-temporel des test effectués superposé
+# au évènements d'inection.
 
 
 # # Discussion
@@ -1010,7 +1027,7 @@ current_figure()
 # dépistage et de vaccination pour limiter la propagation d'une maladie infectieuse dans un contexte
 # de ressources limitées. L'hypothèse initiale était que cette approche permettrait de réduire le  
 # nombre d'infections ainsi que la mortalité. Toutefois, les résultats obtenus suggèrent que 
-# cette stratégie n'a pas permis de réduire ou contrôler efficacement l'épidémie, 
+# cette stratégie n'a pas permis de réduire ou de contrôler efficacement l'épidémie, 
 # et donc l'hypothèse n'est pas supporté.
 
 
@@ -1020,15 +1037,15 @@ current_figure()
 # infectée puis retirée de la population par mortalité. Cette tendance est confirmée aussi par 
 # la Figure 2, qui montre une diminution importante de la taille totale de la population, ce qui
 # reflète indirectement une mortalité élevée puisque dans le modèle, les individus ne quittent la 
-# population qu'au moment de leur décès. La Figure 5 précise cette dynamique en montrant que le
+# population qu'au moment de leur décès suite à l'infection. La Figure 5 précise cette dynamique en montrant que le
 # nombre de décès augmente jusqu'à atteindre un pic, puis diminue progressivement. Cette évolution
-# suggère une diminution des nouvelles cas d'infections au cours du temps, en lien avec la
-# diminution du nombre d'individus susceptibles. En effet, si le nombre d'agents infectieux 
-# diminue, les interactions menant à des nouvelles cas d'infections deviennent moins fréquentes, 
+# suggère une diminution des nouveaux cas d'infections au cours du temps, en lien avec la
+# diminution du nombre d'individus susceptibles. En effet, si le nombre (d'agents infectieux) = (pouvant être infecté) ?
+# diminue, les interactions menant à de nouveaux cas d'infections deviennent moins fréquentes, 
 # ce qui limite la propagation de la maladie et entraîne donc une diminution du nombre de décès 
 # observés. De plus, la comparaison directe des courbes d'infection et de mortalité permet de 
 # mieux visualiser leur relation temporelle, où le pic de mortalité suit celui des infections, 
-# ce qui reflète le délai entre l'infection et le décès dans le modèle. Cette interprétation est
+# ce qui reflète le délai entre l'infection et le décès dans le modèle (Figure ?). Cette interprétation est
 # en fait cohérente avec la littérature sur les modèles épidémiologiques, qui démontre que la 
 # croissance d'une épidémie ralentit quand les individus sont progressivement retirés du groupe
 # d'agents susceptibles, ce qui mène à un ralentissement progressif de la transmission 
@@ -1038,7 +1055,7 @@ current_figure()
 # faible efficacité des interventions qui ont été mises en place. La Figure 1 montre que le 
 # nombre d'individus infectieux reste relativement faible, mais que les individus détectés et 
 # protégés par la vaccination sont presque nuls. Cette observation est renforcée par la Figure 3,
-# où les courbes des agents détectés et des agents vaccinés restent très faibles et presque constantes.
+# où les courbes des agents détectés et des agents avec un vaccin actif restent très faibles et presque constantes.
 # Cela indique que très peu d'individus sont effectivement identifiés ou protégés. Cette inefficacité
 # peut s'expliquer par le caractère asymptomatique de la maladie simulée, rendant la détection des
 # cas plus difficile en l'absence de dépistage systématique. De plus, l'échantillonage aléatoire
@@ -1050,7 +1067,7 @@ current_figure()
 
 # Cette limitation du dépistage est également illustrée par la Figure 6, où les tests sont 
 # administrés seulement à un moment tardif dans la simulation, puis diminuent rapidement, indiquant
-# une intervention à la fois tardive et de courte durée. De manière cohérente, la Figure 7 montre que
+# une intervention à la fois tardive et de courte durée[Ce n'est pas tardif !] . De manière cohérente, la Figure 7 montre que
 # le nombre d'agents vaccinés reste presque nul pendant la majorité de la simulation, ce qui reflète
 # le faible nombre de cas détectés et limite fortement la protection de la popilation. Ainsi, le 
 # manque de détection précoce et le nombre très limité d'agents vaccinés contribuent directement à
@@ -1076,7 +1093,7 @@ current_figure()
 # suivent une distribution spatiale similaire, suggérant que les zones de forte transmission deviennent 
 # également des zones de forte mortalité, ce qui est cohérent avec la dynamique du modèle où les 
 # individus infectés finissent par mourir. Finalement, la Figure 10 met en évidence que les tests sont
-# peu nombreux et distribués de manière inégale dans l'espace et le temps, indiquant une couverture
+# distribués de manière inégale dans l'espace et le temps, indiquant une couverture
 # insuffisante du dépistage. Cette absence de couverture homogène permet à certaines zones de tranmission
 # d'échapper à la détection, favorisant ainsi la persistance et la diffusion de l'épidémie dans l'ensemble
 # de l'espace étudié.
