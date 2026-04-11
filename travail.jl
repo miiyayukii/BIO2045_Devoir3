@@ -593,11 +593,13 @@ function contagiant!(pop::Population, time)
     end
 end
 
-# Une fois agents infectieux détéctés, la statégie choisi est de les vacciners.
-# Même si on ignore combien de jour il leur reste il est important de réduire tout risque de propagation par
-# le cas identifié. Des doses de vaccins sont également administrés au voisins directes du malade par prévention.
-# s'ils ont été contaminé, leur propagation de la maladie devient limité, s'ils sont sain il deviennent protégé, et
-# s'ils étaient déjà malade, cela revient à la même stratégie utilisé pour l'agent détecté. 
+# Une fois un agent infectieux détécté, la statégie choisi est de le vacciner.
+# Même si on ignore combien de jour il lui reste, il est important de réduire tout risque de propagation de l'infection par
+# le cas identifié. Des doses de vaccins sont également administrés aux voisins directes du malade par prévention.
+# s'ils ont été contaminé, leurs propagation de la maladie à leurs tour sera limité, s'ils sont sains ils deviennent protégés, et
+# s'ils étaient déjà malade, cela revient à la même stratégie utilisé pour l'agent détecté au début. 
+# Cette stratégie permettrait de cibler les agents à vacciner pour plus d'efficacité dans la 
+# limitation de la propagation.
 
 """
     group_vaccin(positif, time, pop)
@@ -669,9 +671,9 @@ maxlength = 2000
 
 # Pour étudier les résultats de la simulation, nous allons stocker la taille de
 # populations à chaque pas de temps,
-# 'S' pour les individus pas encore infecté,
+# 'S' pour les individus pas encore infecté donc naïf,
 # 'I' pour les agents malade, 'mort' pour les agents infectieux depuis plus de 21
-# jours, 'retabli' pour les agent ayant recu un vaccin qui s'est activé après 2
+# jours, 'retabli' pour les agent ayant reçu un vaccin qui s'est activé après 2
 # générations, et 'test_positif' pour les agents testé avec le RAT et qui ont été
 # declarés malade : 
 
@@ -757,108 +759,114 @@ nb_tirage = 900
 # = une generation) La simulation s'arrête si on atteint le nombre max de
 # génération, ou si le nombre d'infecté devient nul, signifier la fin de
 # l'épidémie. (possible par la mort des agents avant une nouvelle contagiant ou
-# l'éradication de la maladie grâce au vaccin)
+# l'éradication de la maladie grâce aux vaccins)
 
-while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serait peut-être une bonne idée de faire des fonctions pour simplifier ce code (plus tard)
+function simulation()
 
     ## On spécifie que nous utilisons les variables définies plus haut
 
-    global tick, population, test_positif, nb_tirage
+    global tick, population, test_positif, nb_tirage  
 
-    tick += 1
+    while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serait peut-être une bonne idée de faire des fonctions pour simplifier ce code (plus tard)
 
-    ## Movement
+        tick += 1
 
-    for agent in population
-        move!(agent, L; torus=false)
-    end
+        ## Movement
 
-    ## Infection
-
-    contagiant!(population, tick)
-
-    ## Change in survival
-
-    for agent in infectious(population)
-        agent.clock -= 1
-
-        ## Suivi des évènements de mort 
-
-        if agent.clock == 0
-            push!(qui_meurt, MortEvent(tick, agent.id, agent.x, agent.y))
+        for agent in population
+            move!(agent, L; torus=false)
         end
-    end
 
-    ## Enregistrement du nombre de mort 
+        ## Infection
 
-    deadagent = filter(x -> x.clock == 0, population)
-    mort[tick] = length(deadagent)
+        contagiant!(population, tick)
 
-    ## Remove agents that died
+        ## Change in survival
 
-    population = filter(x -> x.clock > 0, population)
+        for agent in infectious(population)
+            agent.clock -= 1
 
-    ## début compagne test et vaccination après le premier mort qui indique 
-    ## la présence de cette maladie asymptomatiques   
+            ## Suivi des évènements de mort 
 
-    if length(population) < 3750
-
-        ## Stratégie utilisé : 
-        ## On tire alétoirement un nombre d'agent qu'on va tester      
-
-        populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
-        for personne in populationAtester
-
-            if budget_initiale >= (cout_test * length(populationAtester))
-
-                global test_positif
-
-                ## On cére un vecteur avec les individus testés positifs après
-                ## vérification qu'on a le font nécessaire et on veut que le vecteur 
-                ## soit present en dehors de la boucle pour extraire les donnée qu'il contient
-
-                agent_test_positif = filter(x -> RAT!(personne, tick), populationAtester)
-                test_positif[tick] = length(agent_test_positif)
-
-                ## On parcourt un à un les agents ayant un RAT positif et on les vaccinées
-                ## En plus de vacciner les agents à risques (présent dans leurs cellules) 
-
-                group_vaccin(agent_test_positif, tick, population)
- 
+            if agent.clock == 0
+                push!(qui_meurt, MortEvent(tick, agent.id, agent.x, agent.y))
             end
         end
 
-        ##  Baisse du nombre de personne échantilloné aléatoirement pour le RAT,
-        ## tout en gardant un nombre entier (Int) grâce a l'arrondissement vers la valeur la plus proche:
+        ## Enregistrement du nombre de mort 
 
-        nb_tirage = round(Int, nb_tirage * 0.2)
+        deadagent = filter(x -> x.clock == 0, population)
+        mort[tick] = length(deadagent)
 
-        ## activation du vaccin apres delais de 2 generation
+        ## Remove agents that died
 
-        for personne in vaccinated(population)
-            if tick == (personne.date_vaccin + 2)
-                activ_vaccin!(personne)
+        population = filter(x -> x.clock > 0, population)
 
-                ## on peut enregistrer l'activation du vaccin
+        ## début compagne test et vaccination après le premier mort qui indique 
+        ## la présence de cette maladie asymptomatiques   
 
-                push!(protegee, ProtectionEvent(tick, personne.id, personne.x, personne.y))
-                println("activVac")
+        if length(population) < 3750
+
+            ## Stratégie utilisé : 
+            ## On tire alétoirement un nombre d'agent qu'on va tester      
+
+            populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
+            for personne in populationAtester
+
+                if budget_initiale >= (cout_test * length(populationAtester))
+
+                    global test_positif
+
+                    ## On cére un vecteur avec les individus testés positifs après
+                    ## vérification qu'on a le font nécessaire et on veut que le vecteur 
+                    ## soit present en dehors de la boucle pour extraire les donnée qu'il contient
+
+                    agent_test_positif = filter(x -> RAT!(personne, tick), populationAtester)
+                    test_positif[tick] = length(agent_test_positif)
+
+                    ## On parcourt un à un les agents ayant un RAT positif et on les vaccinées
+                    ## En plus de vacciner les agents à risques (présent dans leurs cellules) 
+
+                    group_vaccin(agent_test_positif, tick, population)
+    
+                end
+            end
+
+            ##  Baisse du nombre de personne échantilloné aléatoirement pour le RAT,
+            ## tout en gardant un nombre entier (Int) grâce a l'arrondissement vers la valeur la plus proche:
+
+            nb_tirage = round(Int, nb_tirage * 0.2)
+
+            ## activation du vaccin apres delais de 2 generation
+
+            for personne in vaccinated(population)
+                if tick == (personne.date_vaccin + 2)
+                    activ_vaccin!(personne)
+
+                    ## on peut enregistrer l'activation du vaccin
+
+                    push!(protegee, ProtectionEvent(tick, personne.id, personne.x, personne.y))
+                    println("activVac")
+                end
             end
         end
+
+        ## stockage du nombre de personnes guérie après vaccination 
+        ## (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
+
+        retabli[tick] = length(protected(population))
+
+        ## Store population size
+
+        S[tick] = length(healthy(population))
+        I[tick] = length(infectious(population))
+        PopulationRestant[tick] = length(population)
+
     end
-
-    ## stockage du nombre de personnes guérie après vaccination 
-    ## (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
-
-    retabli[tick] = length(protected(population))
-
-    ## Store population size
-
-    S[tick] = length(healthy(population))
-    I[tick] = length(infectious(population))
-    PopulationRestant[tick] = length(population)
-
+    return S, I, PopulationRestant, retabli, mort
 end
+
+simulation()
 
 # ### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
