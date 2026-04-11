@@ -1049,7 +1049,7 @@ current_figure()
 # en fait cohérente avec la littérature sur les modèles épidémiologiques, qui démontre que la 
 # croissance d'une épidémie ralentit quand les individus sont progressivement retirés du groupe
 # d'agents susceptibles, ce qui mène à un ralentissement progressif de la transmission 
-# @gomes2020individual. 
+# @gomes2022individual. 
 
 # De plus, la difficulté à contrôler l'épidémie peut s'expliquer en grande partie par la 
 # faible efficacité des interventions qui ont été mises en place. La Figure 1 montre que le 
