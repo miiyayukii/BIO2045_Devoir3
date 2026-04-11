@@ -1064,12 +1064,105 @@ Colorbar(f[1, 2], hm, label="Time of test")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 10:** Suivi spatio-temporel des test effectués.
+# **Figure 10:** Suivi spatio-temporel des test effectués
+
+t = [event.time for event in events];
+pos = [(event.x, event.y) for event in events];
+date_test = [ag_test.time for ag_test in agent_teste];
+endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
+
+f = Figure()
+ax1 = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm1 = scatter!(ax1, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
+ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=10)
+Colorbar(f[1, 2], hm, label="Time")
+hidedecorations!(ax)
+current_figure()
+
+# **Figure 10:** Suivi spatio-temporel des test effectués superposé
+# au évènements d'inection.
 
 # Cette figure montre que les testes sont fait un peu partout sur la lattice
 # mais à des moments différents, laissant certaines zones non échantilloné.
 
 # # Discussion
+
+# Pour rappel, l'objectif de cette étude était d'évaluer l'efficacité d'une stratégie ciblée de 
+# dépistage et de vaccination pour limiter la propagation d'une maladie infectieuse dans un contexte
+# de ressources limitées. L'hypothèse initiale était que cette approche permettrait de réduire le  
+# nombre d'infections ainsi que la mortalité. Toutefois, les résultats obtenus suggèrent que 
+# cette stratégie n'a pas permis de réduire ou de contrôler efficacement l'épidémie, 
+# et donc l'hypothèse n'est pas supporté.
+
+
+# Dans un premier temps, les résultats montrent une propagation importante de la maladie dans la
+# population. En effet, la Figure 1 met en évidence une diminution marquée du nombre d'agents
+# susceptibles au cours du temps, indiquant que la majorité des individus est progressivement
+# infectée puis retirée de la population par mortalité. Cette tendance est confirmée aussi par 
+# la Figure 2, qui montre une diminution importante de la taille totale de la population, ce qui
+# reflète indirectement une mortalité élevée puisque dans le modèle, les individus ne quittent la 
+# population qu'au moment de leur décès suite à l'infection. La Figure 5 précise cette dynamique en montrant que le
+# nombre de décès augmente jusqu'à atteindre un pic, puis diminue progressivement. Cette évolution
+# suggère une diminution des nouveaux cas d'infections au cours du temps, en lien avec la
+# diminution du nombre d'individus susceptibles. En effet, si le nombre (d'agents infectieux) = (pouvant être infecté) ?
+# diminue, les interactions menant à de nouveaux cas d'infections deviennent moins fréquentes, 
+# ce qui limite la propagation de la maladie et entraîne donc une diminution du nombre de décès 
+# observés. De plus, la comparaison directe des courbes d'infection et de mortalité permet de 
+# mieux visualiser leur relation temporelle, où le pic de mortalité suit celui des infections, 
+# ce qui reflète le délai entre l'infection et le décès dans le modèle (Figure ?). Cette interprétation est
+# en fait cohérente avec la littérature sur les modèles épidémiologiques, qui démontre que la 
+# croissance d'une épidémie ralentit quand les individus sont progressivement retirés du groupe
+# d'agents susceptibles, ce qui mène à un ralentissement progressif de la transmission 
+# @gomes2022individual. 
+
+# De plus, la difficulté à contrôler l'épidémie peut s'expliquer en grande partie par la 
+# faible efficacité des interventions qui ont été mises en place. La Figure 1 montre que le 
+# nombre d'individus infectieux reste relativement faible, mais que les individus détectés et 
+# protégés par la vaccination sont presque nuls. Cette observation est renforcée par la Figure 3,
+# où les courbes des agents détectés et des agents avec un vaccin actif restent très faibles et presque constantes.
+# Cela indique que très peu d'individus sont effectivement identifiés ou protégés. Cette inefficacité
+# peut s'expliquer par le caractère asymptomatique de la maladie simulée, rendant la détection des
+# cas plus difficile en l'absence de dépistage systématique. De plus, l'échantillonage aléatoire
+# des individus pour tester réduit la probabilité de cibler les individus infectés ou même les 
+# zones à risque. Ce résultat est cohérent avec les données de la littérature, selon lesquelles
+# une proportion importante des infections peut rester asymptomatique, rendant leur détection
+# plus difficile, tandis que les stratégies ciblées réduisent la transmission plus que des
+# approches non ciblées @kucharski2020effectiveness.
+
+# Cette limitation du dépistage est également illustrée par la Figure 6, où les tests sont 
+# administrés seulement à un moment tardif dans la simulation, puis diminuent rapidement, indiquant
+# une intervention à la fois tardive et de courte durée[Ce n'est pas tardif !] . De manière cohérente, la Figure 7 montre que
+# le nombre d'agents vaccinés reste presque nul pendant la majorité de la simulation, ce qui reflète
+# le faible nombre de cas détectés et limite fortement la protection de la popilation. Ainsi, le 
+# manque de détection précoce et le nombre très limité d'agents vaccinés contribuent directement à
+# l'échec du contrôle de l'épidémie. Cette idée rejoint aussi les travaux de Hellewell et al. (2020),
+# qui montrent que le contrôle d'une épidémie devient plus difficile lorsque l'identification des cas
+# est tardive et qu'une faible proportion des individus infectés est détectée @hellewell2020feasibility.
+
+# En parallèle, la forte propagation observée s'explique également par la transmissibilité élevée de
+# la maladie. La Figure 4 montre que chaque individu infecté transmet la maladie à un nombre relativement
+# élevé d'autres individus, avec une moyenne d'environ 10 infections par agent. Cette capacité de 
+# tranmission favorise une diffusion rapide de l'infection dans la population, ce qui contribue à la
+# diminution importante du nombre d'individus susceptibles ainsi qu'à la mortalité élevée observée.
+# Cela est aussi cohérent avec la littérature, qui montre que plus un individu infecté transmet la
+# maladie à un grand nombre d'autres individus, plus la propagation de l'épidémie est rapide et 
+# difficile à contrôler @avraam2025impact. 
+
+# Enfin, l'analyse spatiale apporte une compréhension complémentaire de la dynamique observée. La
+# Figure 8 montre que les infections sont largement dispersées dans l'espace, suggérant une propagation
+# progressive à l'ensemble de la population plutôt qu'une zone limitée. Cette dispersion est favorisée
+# par les déplacements aléatoires des agents, permettant à l'infection d'atteindre la majorité des
+# régions. Cela est appuyée par la littérature, qui identifie la mobilité comme un facteur important
+# de la propagation spatiale des épidémies @findlater2018human. La Figure 9 montre que les décès
+# suivent une distribution spatiale similaire, suggérant que les zones de forte transmission deviennent 
+# également des zones de forte mortalité, ce qui est cohérent avec la dynamique du modèle où les 
+# individus infectés finissent par mourir. Finalement, la Figure 10 met en évidence que les tests sont
+# distribués de manière inégale dans l'espace et le temps, indiquant une couverture
+# insuffisante du dépistage. Cette absence de couverture homogène permet à certaines zones de tranmission
+# d'échapper à la détection, favorisant ainsi la persistance et la diffusion de l'épidémie dans l'ensemble
+# de l'espace étudié.
+
 
 # # Conclusion
 
