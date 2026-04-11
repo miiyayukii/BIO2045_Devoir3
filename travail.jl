@@ -323,6 +323,7 @@ function finance!(vacc)
 end
 
 # On vérifie plusieurs information à propos de l'état de l'agent :
+
 # s'il est infecté
 
 """
@@ -465,6 +466,7 @@ NotProtected(pop::Population) = filter(not_actif, pop)
 Cette fonction simule un test de dépistage de la maladie. Si l'agent est
 infecté, le test a 95% de chance de renvoyer true et 5% de chance de faire un
 faux négatif. Si l'agent est sain le test est toujours fiable (renvoie false).
+La fontion enregistre aussie le fait qu'on ait fait un test et si le test est positif.
 'agent' doit être de type Agent. 'moment' doit etre de type Int.
 """
 function RAT!(agent::Agent, moment)
@@ -482,6 +484,10 @@ function RAT!(agent::Agent, moment)
             test = false
         else
             test = true
+            
+            ## Enregistrement des tests RAT positifs
+
+            push!(positif_test, TestPositif(moment, agent.id, agent.x, agent.y))
         end
     else
         test = false
@@ -577,6 +583,40 @@ function contagiant!(pop::Population, time)
     end
 end
 
+"""
+    group_vaccin(positif, time, pop)
+Cette fonction parcourt chaque agent de la population d'agent ayant un test RAT positif ('positif'), et
+vaccine tous ceux qui ne sont pas vaccinés en plus de vacciner leurs entourage (tout individus 
+dans leurs cellule donc à risque).
+'positif' et 'pop' doivent etre de type Population. 'time' doit etre un entier (la génération). 
+"""
+function group_vaccin(positif, time, pop)
+    for infecte in positif
+
+        ## on vaccine les personnes testés positif si elles ne
+        ## sont pas déja vaccinées seulement si on a l'argent
+        ## pour le vaccin
+
+        if (nonvaccinee(infecte)) & (budget_initiale >= cout_vaccin)
+            vaccinate!(infecte, time)
+        end
+
+        ## puis on trouve les personnes dans la même cellule spatiale
+        ## que les individus positif (zone à risque)
+
+        personnes = incell(infecte, pop)
+        for p in personnes
+
+            ## Si l'individu n'est pas encore vacciné,
+            ## on le vaccine s'il y a assez d'argent dans le budget
+
+            if (nonvaccinee(p)) & (budget_initiale >= cout_vaccin)
+                vaccinate!(p, time)
+            end
+
+        end
+    end
+end
 # ## Paramètres initiaux
 
 # Notez qu'on peut réutiliser notre _alias_ pour écrire une fonction beaucoup plus
@@ -753,44 +793,22 @@ while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serai
         populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
         for personne in populationAtester
 
-            ## On cére un vecteur avec les individus testés positifs après
-            ## vérification qu'on a le font nécessaire et on veut que le vecteur 
-            ## soit present en dehors de la boucle pour extraire les donnée qu'il contient
-
             if budget_initiale >= (cout_test * length(populationAtester))
 
                 global test_positif
 
+                ## On cére un vecteur avec les individus testés positifs après
+                ## vérification qu'on a le font nécessaire et on veut que le vecteur 
+                ## soit present en dehors de la boucle pour extraire les donnée qu'il contient
+
                 agent_test_positif = filter(x -> RAT!(personne, tick), populationAtester)
                 test_positif[tick] = length(agent_test_positif)
 
-                for infecte in agent_test_positif
+                ## On parcourt un à un les agents ayant un RAT positif et on les vaccinées
+                ## En plus de vacciner les agents à risques (présent dans leurs cellules) 
 
-                    push!(positif_test, TestPositif(tick, infecte.id, infecte.x, infecte.y))
-
-                    ## on vaccine les personnes testés positif si elles ne
-                    ## sont pas déja vaccinées seulement si on a l'argent
-                    ## pour le vaccin
-
-                    if (nonvaccinee(infecte)) & (budget_initiale >= cout_vaccin)
-                        vaccinate!(infecte, tick)
-                    end
-
-                    ## puis on trouve les personnes dans la même cellule spatiale
-                    ## que les individus positif (zone à risque)
-
-                    personnes = incell(infecte, population)
-                    for p in personnes
-
-                        ## Si l'individu n'est pas encore vacciné,
-                        ## on le vaccine s'il y a assez d'argent dans le budget
-
-                        if (nonvaccinee(p)) & (budget_initiale >= cout_vaccin)
-                            vaccinate!(p, tick)
-                        end
-
-                    end
-                end
+                group_vaccin(agent_test_positif, tick, population)
+ 
             end
         end
 
