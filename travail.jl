@@ -773,10 +773,6 @@ function simulation()
     ## l'épidémie. (possible par la mort des agents avant une nouvelle contagiant ou
     ## l'éradication de la maladie grâce aux vaccins)
 
-    ## On spécifie que nous utilisons les variables définies plus haut
-
-    global tick, population, test_positif, nb_tirage  
-
     while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serait peut-être une bonne idée de faire des fonctions pour simplifier ce code (plus tard)
 
         tick += 1
