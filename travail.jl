@@ -1135,5 +1135,17 @@ current_figure()
 
 # # Conclusion
 
+# En conclusion, cette étude montre que la stratégie ciblée de dépistage et de vaccinaation n'a pas permis
+# de contrôler efficacement la propagation de la maladie dans le contexte simulé, et doc ne soutient pas 
+# l'hypothèse initiale. Malgré l'implémentation de cette stratégie, les niveaux de transmission et mortalité
+# restent élevées, en raison notamment d'un dépistage insuffisant et d'une couverture vaccinale très limitée,
+# qui ne permet pas d'arrêter les chaînes de transmission. Les résultats mettent également en évidence l'importance
+# des processus stochastiques et de variabilité individuelle dans la dynamique de propagation, qui influencent la
+# distribution spatiale et l'intensité de l'épidémie même quand les conditions initiales sont identiques. Ainsi,
+# cette étude souligne que, pour être efficace, une stratégie d'intervention doit être non seulement ciblée, mais 
+# aussi suffisament intensive et adaptée aux zones à risque pour limiter efficacement la propagation de la maladie. 
+# Donc, l'ensemble de ces observations suggère que malgré les efforts de modélisation et de contrôle, une part
+# d'imprévisibilité reste toujours présente dans la propagation des maladies, influencée par la complexité
+# des interactions individuelles.
 
 
