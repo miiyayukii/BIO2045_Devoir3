@@ -662,7 +662,8 @@ end
 Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population avec $(length(p)) agents")
 
 # Stockage de tous les évènements importants pendant la
-# simulation, dans des types immutables :
+# simulation, dans des types immutables jouant le rôle de carnet de 
+# santé ou document officiel comparable :
 
 # Évenements d'infection
 
@@ -710,7 +711,7 @@ struct TestEvent
     y::Int64
 end
 
-# On crée les variable de ces types qu'on 
+# On crée les variables de ces types qu'on 
 # va remplir dans la simulation. Ces variables sont comme des fiches
 # qui permettront de tracer l'histoire de ce qui est arrivé dans la simulation. 
 
@@ -719,6 +720,11 @@ qui_meurt = MortEvent[]
 protegee = ProtectionEvent[]
 agent_teste = TestEvent[]
 positif_test = TestPositif[]
+
+# Afin de pouvoir répéter la simulation plusieurs fois 
+# elle est mise dans une fonction qu'on appellera à chaque itérations
+# Il est important de noter qu'avant de faire appel a nouveau à la simulation,
+# il faut réinitialiser les variable pour que ca marche.
 
 # ## Code simulation 
 
@@ -839,7 +845,8 @@ function simulation()
 
                     ## On cére un vecteur avec les individus testés positifs après
                     ## vérification qu'on a le font nécessaire et on veut que le vecteur 
-                    ## soit present en dehors de la boucle pour extraire les donnée qu'il contient
+                    ## soit present en dehors de la boucle pour extraire
+                    ## les données qu'il contient
 
                     agent_test_positif = filter(x -> RAT!(personne, tick), populationAtester)
                     test_positif[tick] = length(agent_test_positif)
@@ -852,8 +859,10 @@ function simulation()
                 end
             end
 
-            ##  Baisse du nombre de personne échantilloné aléatoirement pour le RAT,
-            ## tout en gardant un nombre entier (Int) grâce a l'arrondissement vers la valeur la plus proche:
+            ## Baisse du nombre de personne échantilloné aléatoirement pour le RAT,
+            ## tout en gardant un nombre entier (Int) grâce a l'arrondissement
+            ## vers la valeur la plus proche, action importante dans la mesure
+            ## où le budget est limité.
 
             nb_tirage = round(Int, nb_tirage * 0.2)
 
@@ -863,16 +872,17 @@ function simulation()
                 if tick == (personne.date_vaccin + 2)
                     activ_vaccin!(personne)
 
-                    ## on peut enregistrer l'activation du vaccin
+                    ## Enregistrement de l'activation du vaccin
 
                     push!(protegee, ProtectionEvent(tick, personne.id, personne.x, personne.y))
-                    println("activVac")
+
                 end
             end
         end
 
-        ## stockage du nombre de personnes guérie après vaccination 
-        ## (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
+        ## stockage du nombre de personnes guérie après vaccination,
+        ## donc le nombre de persone qui ont survécu
+        ## assez longtemps pour l'activation du vaccin et qui deviennent protégé
 
         retabli[tick] = length(protected(population))
 
@@ -886,7 +896,7 @@ function simulation()
     return S, I, PopulationRestant, retabli, mort
 end
 
-# ## Résultats 
+# ## Affichage des résultats 
 # ### Simulation 1
 
 S,I, PopulationRestant, retabli, mort = simulation();
@@ -1125,6 +1135,10 @@ dico_protegee = countmap([gueri.time for gueri in protegee]);
 
 length(dico_protegee)
 
+# et combien d'infection totale compté :
+
+length(infxn_by_uuid)
+
 # Combien de fois chaque nombre d'infections apparaît :
 
 nb_inxfn = countmap(values(infxn_by_uuid))
@@ -1220,8 +1234,9 @@ current_figure()
 # **Figure 14:** Suivi spatio-temporel des évenèments de mort.
 
 # ### Simulation 3 
-# ####Réinitialisation
+# #### Réinitialisation
 # De nouveau on remet tout au point 0 :
+
 # Variables
 
 budget_initiale = 21000
@@ -1439,6 +1454,11 @@ current_figure()
 
 # La taille finale de la population varie avec **783 agents** dans la 
 # simulation 2 et **974 agents** toujours vivant dans la dernière simulation.
+
+# Même chose pour le nombre total d'infection. 
+# Il y a eu **2967** cas dans la seconde simulation et **2776** dans la troisième.
+
+# On note aussi qu'il n'y a aucun vaccin et test positif dans ces simulations antérieurs.
 
 # _Dans la seconde simulation_ 
 
