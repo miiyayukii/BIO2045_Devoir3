@@ -1038,13 +1038,12 @@ current_figure()
 # la diminution importante de la taille totale de la population (agents encore vivants), ce qui
 # reflète indirectement une mortalité élevée puisque dans le modèle, les individus ne quittent la 
 # population qu'au moment de leur décès suite à l'infection. La Figure 2 précise cette dynamique en montrant que le
-# population qu'au moment de leur décès, suite à l'infection. La Figure 3 précise cette dynamique en montrant que le
 # nombre de décès augmente jusqu'à atteindre un certain pic, puis diminue progressivement. Cette évolution
 # suggère qu'il y a une diminution des nouveaux cas d'infections au cours du temps, ce qui est en lien avec la
 # réduction du nombre d'individus susceptibles. En effet, si le nombre d'agents pouvant être infectés
 # diminue, les interactions menant à de nouveaux cas d'infections deviennent moins fréquentes, 
 # ce qui limite la propagation de la maladie et entraîne donc une diminution du nombre de décès 
-# observés. De plus, la comparaison directe des courbes d'infection et de mortalité dans la Figure 3 permet de 
+# observés. De plus, la comparaison directe des courbes d'infection et de mortalité dans la Figure 2 permet de 
 # mieux visualiser leur relation temporelle, où le pic de mortalité suit celui des infections, 
 # ce qui reflète le délai entre l'infection et le décès dans le modèle. Cette interprétation est
 # en fait cohérente avec la littérature sur les modèles épidémiologiques, qui démontre que la 
@@ -1076,7 +1075,7 @@ current_figure()
 # une proportion suffisante des individus infectés @hellewell2020feasibility.
 
 # En parallèle, la forte propagation observée s'explique également par la transmissibilité élevée de
-# la maladie. La Figure 2 montre que chaque agent infecté transmet la maladie à un nombre relativement
+# la maladie. La Figure 3 montre que chaque agent infecté transmet la maladie à un nombre relativement
 # élevé d'autres agents, avec une moyenne d'environ 10 infections par individu. Cette capacité de 
 # tranmission favorise une diffusion rapide de l'infection dans la population, ce qui contribue à la
 # diminution importante du nombre d'individus susceptibles ainsi qu'à la mortalité élevée observée.
@@ -1116,22 +1115,36 @@ current_figure()
 # nécessaires. Ainsi, selon les trajectoires des agents et les interactions qui se produsent, certaines zones
 # peuvent être touchées plus rapidement ou intensément que d'autres. Ces différences se reflètent dans les 
 # figures associées aux simulations 2 et 3, où on observe de légères variations dans l'évolution des courbes 
-# de la population, du nombre d'infectés et de la mortalité (Figures 1 et 3). D'un point de vue biologique,
+# de la population, du nombre d'infectés et de la mortalité (Figures 9, 11, 15 et 17). D'un point de vue biologique,
 # cela reflète la variabilité naturelle des interactions entre individus au sein d'une population, où
 # les contacts ne sont pas parfaitement prévisibles. De même, les distributions
-# du nombre d'infections par individu (Figure 2) restent globalement similaires entre les simulations, mais
+# du nombre d'infections par individu (Figures 10 et 16) restent globalement similaires entre les simulations, mais
 # présentent quelques fluctuations dans la fréquence des agents qui transmettent fortement la maladie, ce
 # qui correspond à l'existence d'une hétérogénéité individuelle dans la transmission. En effet, 
 # certains individus peuvent infecter un grand nombre d'agents, tandis que d'autres infectent très peu Cela est
 # un phénomène souvent associé aux événements de « super-propagation », où les variations individuelles
 # de transmission jouent un rôle majeur dans la dynamique de propagation de l'épidémie @nielsen2023conterintuitive.
-# Enfin les figures spatiales (Figures 5, 6 et 7) montrent que la localisation
+# Enfin les figures spatiales (Figures 13, 14 et 18) montrent que la localisation
 # et l'intensité des zones d'infection varient d'une simulation à l'autre, malgré une propagation comparable.
 # Biologiquement, cela traduit le fait que la propagation d'une maladie dépend fortement des mouvements individuels 
 # et des contacts locaux, qui peuvent coréer des zones d'infections distinctes dans l'espace @findlater2018human. 
 # Donc, même en présence de paramètres identiques, les dynamiques locales peuvent varier en fonction des
 # interactions aléatoires entre individus, ce qui influence la formation et la dispersion des zones de 
 # transmission.
+
+# De plus, l'analyse spatiale met en évidence une incohérence marquée entre les zones de dépistages et les
+# zones de transmission active, ce qui réduit fortement l'efficacité de la stratégie. En effet, la superposition
+# des tests et des événements d'infection (Figures 8, 13 et 18) démontre que les tests sont rarement réalisés au
+# même endroit et au même moment que les zones d'infection. Ce manque de concordance spatio-temporelle cause 
+# une très faible détection des individus infectés. Dans le modèle, la vaccination dépend directement de 
+# l'identification des cas positifs, et en l'absence de détection des agents infectieux, aucune intervention 
+# ciblée ne peut être mise en place. Cette limitation est particulièrement évidente dans les simulations 2 et 3,
+# où aucun agent n'est détecté positif et où aucune protection vaccinale n'est observée malgré un noombre
+# élevé de tests réalisés. Cela suggèrre que l'échantillonage aléatoire est peu efficace pour cibler les zones 
+# à forte transmission, surtout dans un contexte où la maladie est asymptomatique. Ainsi, même en présence 
+# d'un effort de dépistage important, l'absence de ciblage spatial limite l'activation de la stratégie de vaccination, 
+# contribuant directement à l'échec du contrôle de l'épidémie.
+
 
 
 # # Conclusion
