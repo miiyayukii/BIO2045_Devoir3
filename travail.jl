@@ -1207,12 +1207,7 @@ current_figure()
 # **Figure 14:** Suivi spatio-temporel des évenèments de mort.
 
 # ### Simulation 3 #######################################################
-
-# Pour cette dernière simulation on redéfini un nouveau point de depart 
-
-Random.seed!(100)
-
-# ### Réinitialisation
+# ####Réinitialisation
 # De nouveau on remet tout au point 0 :
 # #### Variables
 
@@ -1222,13 +1217,15 @@ cout_test = 4
 sum_vacc_prix = 0
 sum_rat_prix = 0
 
-# #### evenements
+# #### Les évenements
 
 events = InfectionEvent[]
 qui_meurt = MortEvent[]
 protegee = ProtectionEvent[]
 agent_teste = TestEvent[]
 positif_test = TestPositif[]
+
+# Simulation 
 
 S,I, PopulationRestant, retabli, mort = simulation();
 
@@ -1242,7 +1239,7 @@ retabli = retabli[1:tick];
 test_positif = test_positif[1:tick];
 PopulationRestant = PopulationRestant[1:tick];
 
-#
+# Nombre d'infection par agent :
 
 infxn_by_uuid = countmap([event.from for event in events]);
 
@@ -1257,7 +1254,7 @@ dico_mort = countmap([corp.time for corp in qui_meurt]);
 dico_protegee = countmap([gueri.time for gueri in protegee]);
 dico_test = countmap([rat.time for rat in agent_teste]);
 
-# À combien de génération il y a eu une intervention pour tester les agents :
+# À combien de génération il y a eu une activation de vaccin :
 
 length(dico_protegee)
 
@@ -1289,19 +1286,17 @@ current_figure()
 # encore à risque, des infectés, des morts, des agents malade detecté et des agents 
 # guéri par le vaccin. 
 
-# 
+# Figure de nombre de transmission moyenne :
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
 f
 
-# **Figure 2:** Courbe du nombre d'agent infectieux en fonction du nombre
+# **Figure 16:** Courbe du nombre d'agent infectieux en fonction du nombre
 # d'agent qu'ils infectent.
 
-# La courbe de la figure 4 possède une distribution normale.
-# L'analyse du nombre de contagiant par agent montre qu'une grande partie
-# des agents malades (un peu plus de 400) contaminent 9-11 autres personnes. 
+# Comparaison entre les évènements d'infection et de mort :
 
 f = Figure()
 ax = Axis(f[2, 1]; xlabel="génération", ylabel="Nombre de mort")
@@ -1310,20 +1305,10 @@ lines!(ax1, 1:tick, I, label="Infectieux", color=:red)
 lines!(ax, 1:tick, mort, label="mort", color=:black)
 f
 
-# **Figure 3:** Courbe du nombre de mort et infectieux en fonction du temps.
+# **Figure 17:** Courbe du nombre de mort et infectieux en fonction du temps.
 
-# La comparaison entre le nombre d'infection et le nombre de mort dans la 
-# figure 5 montre que la courbe représentant la population morte fluctue beaucoup
-# au cours du temps, mais qu'elle présente un pic plus import vers la 250ème generation. 
-# Suit la même tendance que la courbe d'individus infectieux mais avec une amplitude
-# moindre. Le nombre d'infection atteignant presque les 300 agents alors
-# que le nombre de mort restant inférieur à 30 agents. Le nombre de mort est
-# donc 10 fois plus faible que le nombre d'infection. 
-
-# ## Hotspots
-# Nous allons nous intéresser maintenant à la propagation spatio-temporelle de
-# l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
-# position de chaque infection et mort, puis les représenter dans un graphique:
+# #### Hotspots
+# Propagation spatio-temporelle de l'épidémie et des tests effectués :
 
 t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
@@ -1339,7 +1324,7 @@ Colorbar(f[1, 2], hm, label="Time")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 8:** Suivi spatio-temporel des test effectués superposé
+# **Figure 18:** Suivi spatio-temporel des test effectués superposé
 # au évènements d'inection.
 
 # # Analyse des résultats
