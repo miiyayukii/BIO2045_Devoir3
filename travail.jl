@@ -9,7 +9,7 @@
 #    - nom: Nadler
 #      prenom: Christina
 #      matricule: 20313890
-#      github: DeuxiAut
+#      github: ChristinaN31
 #    - nom: Auteur
 #      prenom: troiseme
 #      matricule: XXXXXXXX
