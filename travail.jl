@@ -5,7 +5,7 @@
 #    - nom: Ben Brahim
 #      prenom: Dorra
 #      matricule: 20302117
-#      github: premierAuteur
+#      github: BB-dorra
 #    - nom: Nadler
 #      prenom: Christina
 #      matricule: 20313890
