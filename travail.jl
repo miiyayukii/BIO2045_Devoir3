@@ -1065,6 +1065,12 @@ current_figure()
 
 # ### Simulation 2 ##################################################################
 
+# #### Réinitialisation des variables
+# Afin de pouvoir retester la simulation pour voir si la stratégie choisi donne 
+# les mêmes résultats à chaque fois, il est important de remettre les compteurs 
+# au même point de départ (exception pour le Random.seed vu que c'est cet aléatoir 
+# qui est recherché).
+
 budget_initiale = 21000
 cout_vaccin = 17
 cout_test = 4
@@ -1079,9 +1085,8 @@ positif_test = TestPositif[]
 
 S,I, PopulationRestant, retabli, mort = simulation();
 
-# ### Série temporelle
-# Avant toute chose, nous allons couper les séries temporelles au moment de la
-# dernière génération:
+# #### Série temporelle
+# Les séries temporelles sont encore coupés à la dernière génération:
 
 S = S[1:tick];
 I = I[1:tick];
@@ -1090,50 +1095,35 @@ retabli = retabli[1:tick];
 test_positif = test_positif[1:tick];
 PopulationRestant = PopulationRestant[1:tick];
 
-# ### Nombre de cas par individu infectieux
-# Nous allons ensuite observer la distribution du nombre de cas créés par chaque
-# individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
-# combien de fois chaque individu est représenté dans le champ `from`: parcourt
-# tous les event dans le vecteur events et extrait .from de chaque élément,
-# formant un nouveau vecteur des valeurs event.from 
-# + countmap() prend ce vecteur et renvoie un dictionnaire Dict qui compte
-#   combien de fois chaque valeur apparaît
+# #### Nombre de cas par individu infectieux
+# Observation de la distribution du nombre de cas créés par chaque
+# individus.
 
 infxn_by_uuid = countmap([event.from for event in events]);
 
-# La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
-# nombre de fois ou il apparaît:
-# Notez que ceci nous indique combien d'individus ont été infectieux au total:
-
-length(infxn_by_uuid)
-
-# On compte également combien de personne meurt et combien sont protégés par le vaccin 
+# On compte également combien de personne meurt et combien sont protégés 
+# par le vaccin encore :
 
 dico_mort = countmap([corp.time for corp in qui_meurt]);
-dico_protegee = countmap([gueri.time for gueri in protegee]);
 dico_test = countmap([rat.time for rat in agent_teste]);
+dico_protegee = countmap([gueri.time for gueri in protegee]);
 
-# À combien de génération il y a eu une intervention pour tester les agents :
+# À combien de génération il y a eu une activation du vaccin et protection des agents :
 
-length(dico_test)
+length(dico_protegee)
 
-# Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
-# utiliser `countmap` une deuxième fois:
+# Combien de fois chaque nombre d'infections apparaît :
 
 nb_inxfn = countmap(values(infxn_by_uuid))
+
+# affichage des informations pertinantes :
 
 println("Le nombre d'agent encore vivant est ", length(population))
 println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
 println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
 println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
 
-# Après l'application de la stratégie de tests aléatoirs et de vaccin ciblée,
-# La taille de la population finale obtenue est de **792** agents uniquement.
-
-# Et le budget initialement fixé à 21000$ est épuisé
-# laissant uniquement 9$ dans le porte-feuille. Le suivi des dépenses montre 
-# que l'argent est presque totalement déboursé dans les tests RAT et peu dans
-# les vaccins avec 20940$ alloué aux tests contre uniquqment 51$ pour les vaccins.
+# Figure globale de l'évolution des populations :
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
@@ -1146,41 +1136,22 @@ stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
 current_figure()
 
-# **Figure 1:** Courbes de suivi de la taille des populations des agents sains mais 
+# **Figure 9:** Courbes de suivi de la taille des populations des agents sains mais 
 # encore à risque, des infectés, des morts, des agents malade detecté et des agents 
 # guéri par le vaccin. 
 
-# La Figure 1 montre des courbes de suivis du nombre d'individus dans différents type de groupement. 
-# L'évolution de la population d'agent naïf au cours du temps est représenté par 
-# une courbe sigmoïde. Après un léger delais, la taille de cette population
-# commence à décroitre de plus en plus rapidement au fil du temps jusqu'à environ 
-# la 250 ème génération où la vitesse de décroissance diminue peu à peu. 
-# Enfin, la taille de ce goupe se stabiliser plus ou moins au delas de la 670 ème générations à 792 agents.
-# Simultanément au début de la baisse du nombre d'agent susceptibles, une 
-# augmentation dans la population d'agent infectieux est noté. Le nombre d'individus
-# malade continue d'augmenter jusqu'à atteindre un maximum vers environ la 250ème génération.
-# Après, la taille de la population fluctue en baissant jusqu'à atteindre 0, signant la 
-# fin de la simulation.
-
-# L'évolution de la taille de la population totale d'agent toujours vivant suit 
-# également une sigmoide, le nombre d'agent commençant à baisser après un delais 
-# et atteignant un plateau à la fin de la simulation.
-
-# Les autres courbes présent dans la figure étant trop faible comparé aux
-# population infecté et Susceptibles, il faudrait une échelle plus grande
-# pour voir ce qui ce passe.
+# De nouveau on voudrais savoir la moyenne de contamination par agent :
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
 f
 
-# **Figure 2:** Courbe du nombre d'agent infectieux en fonction du nombre
+# **Figure 10:** Courbe du nombre d'agent infectieux en fonction du nombre
 # d'agent qu'ils infectent.
 
-# La courbe de la figure 4 possède une distribution normale.
-# L'analyse du nombre de contagiant par agent montre qu'une grande partie
-# des agents malades (un peu plus de 400) contaminent 9-11 autres personnes. 
+# Pour voir s'il y a des changement dans l'évolution de l'infection / mort
+# la figure suivante est réalisé 
 
 f = Figure()
 ax = Axis(f[2, 1]; xlabel="génération", ylabel="Nombre de mort")
