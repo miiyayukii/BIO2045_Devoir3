@@ -1354,85 +1354,85 @@ current_figure()
 # ## _Après l'intervention_ :
 # ### Simulation 1 :
 
-# Après l'application de la stratégie de tests aléatoirs et de vaccin ciblée,
+# Après l'application de la stratégie de tests aléatoires et de vaccin ciblé,
 # La taille de la population finale obtenue est de **792** agents uniquement.
 # Avec **2959** individus infecté au total.
 
-# Et le budget initialement fixé à 21000$ est épuisé
+# Le budget est initialement fixé à 21000$ est épuisé,
 # laissant uniquement 9$ dans le porte-feuille. Le suivi des dépenses montre 
 # que l'argent est presque totalement déboursé dans les tests RAT et peu dans
-# les vaccins avec 20940$ alloué aux tests contre uniquqment 51$ pour les vaccins.
+# les vaccins, avec 20940$ alloué aux tests contre uniquqment 51$ pour les vaccins.
 
-# l'examination des courbes dans la figure 1, montre que l'évolution de 
+# L'examination des courbes dans la Figure 1, montre que l'évolution de 
 # la population d'agent naïf au cours du temps est représenté par 
 # une sigmoïde. Après un léger delais, la taille de cette population
 # commence à décroitre de plus en plus rapidement au fil du temps jusqu'à environ 
 # la 250 ème génération où la vitesse de décroissance diminue peu à peu. 
-# Enfin, la taille de ce goupe se stabiliser plus ou moins au delas de la 670 ème générations à 792 agents.
+# Enfin, la taille de ce goupe se stabiliser plus ou moins au delas de la 670 ème génération à 792 agents.
 # Simultanément au début de la baisse du nombre d'agent susceptibles, une 
 # augmentation dans la population d'agent infectieux est noté. Le nombre d'individus
 # malade continue d'augmenter jusqu'à atteindre un maximum vers environ la 250ème génération.
 # Après, la taille des infectieux continue de fluctuer en baissant jusqu'à atteindre 0, signant la 
 # fin de la simulation. 
 
-# Cette figure montre égalemnt que la taille de la population d'agent
-# encore vivant suit la meme tendance que la courbe des agents suceptible. 
-# On note cependant un léger décalage entre les deux coube, la 
-# population totale contenant un peu plus d'agent au milieu de la simulation.
+# Cette figure montre également que la taille de la population d'agent
+# encore vivant suit la même tendance que la courbe des agents suceptibles. 
+# On note cependant un léger décalage entre les deux courbes, la 
+# population totale contenant un peu plus d'agents au milieu de la simulation.
 # Cette difference de taille étant minime voir nulle, au début et à
 # la fin de la simulation.
 
 # L'évolution de la taille de la population totale d'agent toujours vivant suit 
-# également une sigmoide, le nombre d'agent commençant à baisser après un delais 
+# également une sigmoide, le nombre d'agents commençant à baisser après un delais 
 # et atteignant un plateau à la fin de la simulation.
 
-# D'autres courbes suivant les autres goupes d'agent sont présent dans
-# la figure mais ont une amplitude tès faible voir nulle.
+# D'autres courbes suivant les autres groupes d'agents sont présent dans
+# la figure, mais ont une amplitude très faible voir nulle.
 
-# L'augmentaiton de l'échelle dans la figure 2 permet le suivi du nombre de mort
+# L'augmentation de l'échelle dans la Figure 2 permet le suivi du nombre de mort
 # plus clairement. La courbe de la population morte est polymodale. Elle présente
 # une importante fluctuation au cours du temps,
-# mais vers la 250ème generation un pic plus import de décès est noté atteignant
+# mais vers la 250ème generation un pic plus important de décès est noté, atteignant
 # presque 30 morts, suivi d'un second pic mais ayant une amplitude moins importante. 
 
-# La courbe suit la même tendance que la courbe d'individus infectieux
+# La courbe suit la même tendance que la courbe d'individus infectieux,
 # qui a également plusieurs modes locaux et un maximum global vers 
-# la 250ème génération. Le nombre d'infection atteignant presque les 300 agents
+# la 250ème génération. Le nombre d'infection atteignent presque les 300 agents
 # à ce moment. 
 
-# La courbe de la figure 3 possède une distribution normale,
+# Ensuite, la courbe de la Figure 3 possède une distribution normale, et
 # l'analyse du nombre de contagiant par agent montre qu'en effet une grande partie
 # des agents malades (un peu plus de 400) contaminent 9-11 autres personnes. 
 
-# La figure 4 montre que les tests sont effectué durant 4 générations uniquement.
+# De plus, la Figure 4 montre que les tests sont effectués durant 4 générations uniquement.
 # Plus de 4000 tests sont effectués en une fois (pic à la génération 21)
 # puis à la génération suivante le nombre baisse drastiquement en dessous de 1000. 
-# Et le suivi des individus protégés par le vaccin montre que rien ne se passe avant la
+# Le suivi des individus protégés par le vaccin montre aussi que rien ne se passe avant la
 # génération 26, où 3 agents ont eu leurs vaccins activés.
 
-# La figure 5 montre que l'infection s'est déclanché dans la partie 
+# La Figure 5 montre que l'infection s'est déclanché dans la partie 
 # centrale de la moitié supérieur de la lattice (couleur plus foncé).
-# Puis, s'est propagée de proche en proche de 
-# façon cerculaire jusqu'à atteindre le bord inferieur de la lattice.
+# Puis, il s'est propagée de proche en proche de 
+# façon circulaire jusqu'à atteindre le bord inférieur de la lattice.
 
-# La figure 6 montre les évènements de mort suivent le même patron de 
+# Ensuite, la Figure 6 montre les évènements de mort suivent le même patron de 
 # propagation que celui des infections (points de la même
-# couleur présent au meme endroits). Cependant,
+# couleur présent au même endroits). Cependant,
 # les points sont plus espacés sur la lattice.
 
-# Le suivi spatio-temporel des tests effectués (figure 7),
-# montre que les testes sont fait un peu partout sur la lattice
+# Le suivi spatio-temporel des tests effectués (Figure 7),
+# montre que les testes sont effectués un peu partout sur la lattice
 # mais à des moments différents, laissant certaines zones non échantilloné.
-# à la génération 25 par exemple, un seul point est présent dans le 
-# coin gauche suppérieur de la lattice.
+# Par exemple à la génération 25, un seul point est présent dans le 
+# coin gauche supérieur de la lattice.
 
-# La figure 8 montre que très peu de tests sont effectué 
+# De plus, la Figure 8 montre que très peu de tests sont effectués 
 # au même endroit et moment que les foyers d'infection.
 
 # ### Réplication de la simulation :
 
 # La répétition de la simulation montre que tout le budget 
-# a été investi dans des tests dans les simulation 2 et 3
+# a été investi dans des tests dans les simulations 2 et 3,
 # laissant uniquement 4$ à la fin. 
 
 # La taille finale de la population varie avec **783 agents** dans la 
@@ -1440,69 +1440,69 @@ current_figure()
 
 # _Dans la seconde simulation_ 
 
-# Les courbes de la figure 9 montrent que la baisse du nombre total
+# Les courbes de la Figure 9 montrent que la baisse du nombre total
 # d'agent est plutôt linéaire dans l'ensemble.
-# Et que le nombre d'infection augmente également de façon linaire 
-# même si la pente de sa courbe est faible. On peut voir qu'environ à 
-# la génération 450 le nombre d'Infectieux chute rapidement et n'augmente
+# Le nombre d'infections augmente également de façon linéaire, 
+# même si la pente de sa courbe est faible. On peut voir qu'à environ  
+# la génération 450, le nombre d'infectieux chute rapidement et n'augmente
 # plus de manière notable.
 
-# L'examination de la figure 10 montre 
+# L'examination de la Figure 10 montre 
 # que la courbe de contamination suit une loi normale, avec un mode 
-# de 10 contaminations par malade. 
+# de 10 contaminations par agent infectieux. 
 
-# Le suivi des évènements de decès par comparaison aux infections (figure 11)
-# montre que la mortalité suit la tendance globale des infections avec
+# Le suivi des évènements de décès par comparaison aux infections (Figure 11)
+# montre que la mortalité suit la tendance globale des infections, avec
 # une plus grande variabilité et fluctuation dans le nombre d'agents ressencé.
 
-# le nombre de test effectué (figure 12) reste le même que présent
-# à la figure 4, mais cette fois aucun vaccins ne s'est activé (étant 
+# Aussi, le nombre de tests effectué (Figure 12) reste le même que celui présenté
+# à la Figure 4, mais cette fois aucun vaccins ne s'est activé (étant 
 # donnée qu'aucun vaccin n'est fait).
 
-# A la figure 13, il est possible de voir que l'épidémie
-# s'est déclaré dans le coin gauche de la partie inferieur de 
-# la lattice puis s'est propagée de façon circulaire 
+# À la Figure 13, il est possible de voir que l'épidémie
+# s'est déclaré dans le coin gauche de la partie inférieur de 
+# la lattice, puis s'est propagée de façon circulaire 
 # jusqu'au coin opposé. La superposition des tests effectués
 # sur cette lattice montre qu'aucun n'a la même couleur que 
 # le fond sur lequel il est positionné.
 
-# Encore une fois, le suivi des évenèments de mort (fig 14)
-# montre comme à la figure 6 des points plus ou moins 
-# espacés entre eux et ayant les meme couleur (temps de l'enregistrement)
-# que les évenements d'infection associés.
+# Encore une fois, le suivi des évenèments de mort (Figure 14)
+# montre comme à la Figure 6, des points plus ou moins 
+# espacés entre eux et ayant les mêmes couleurs (temps de l'enregistrement)
+# que les évenements d'infections associés.
 
 # _Dans la troisième simulation_ 
 
-# La figure globale de taille des population (fig 15)
+# La figure globale de taille des population (Figure 15)
 # montre que la baisse du nombre global de la population 
 # est plus linéaire avec de léger fluctuation, par exemple 
 # début de stabilisation de la taille un peu
 # avant la génération 200.
 
-# Dans cette figure le nombre d'agent infectieux 
-# est polymodale, une premiere augmentation puis baisse 
-# est noté entr la generation 0 et 150. Puis d'autre 
-# pics sont noté avec un maximum d'Infectieux vers 
-# les generation 300.
+# Dans cette figure, le nombre d'agents infectieux 
+# est polymodale, une première augmentation puis baisse 
+# est noté entre la generation 0 et 150. D'autres 
+# pics sont notés avec un maximum d'infectieux vers 
+# les générations 300.
 
-# La figure 16 montre que la propagation de la maladie
-# dans cette simulation est une courbe unimodale, 
+# La Figure 16 montre que la propagation de la maladie
+# dans cette simulation est une courbe unimodale, où
 # plus de 400 agents infectieux contamine environ 10 personnes
 # saines chacun. 
 
-# Les courbes dans la figure 17, fluctuent beaucoup au 
-# fils des générations. Plusieurs modes sont présents
-# avec un pic plus important entre les generaton 200 et 400.
-# Une baisse des infections et presque éradication des la mortalité
-# est noté vers les génération 150 mais cette baisse est suivi 
-# d'une augmentaion rapide en escalier des infection puis mort.
+# Ensuite, les courbes dans la Figure 17, fluctuent beaucoup au 
+# fils des générations. Plusieurs modes sont présents,
+# avec un pic plus important entre les générations 200 et 400.
+# Une baisse des infections et presque éradication de la mortalité
+# est noté vers la génération 150, mais cette baisse est suivi 
+# d'une augmentaion rapide en escalier des infections puis décès.
 
-# A la figure 18 il est possible de voir que l'infection s'été
-# déclanché en bas de la lattice et que le dernier endroit
-# touché été le coin droit suppérieur.
-# Les points tests montre que plusieurs endroit n'ont pas été 
-# échantilloné. Et que les test ne se sont pas fait tout au longtemps
-# de la simulation mais à peu de générations bien spécifique.
+# Enfin à la Figure 18, il est possible de voir que l'infection s'été
+# déclanché en bas de la lattice, et que le dernier endroit
+# touché été le coin supérieur à droit.
+# Les points tests montre que plusieurs endroits n'ont pas été 
+# échantillonés, et que les tests ne se sont pas fait tout au long
+# de la simulation, mais à peu de générations bien spécifiques.
 
 # # Discussion
 
