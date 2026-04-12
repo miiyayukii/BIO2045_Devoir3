@@ -751,7 +751,7 @@ function simulation()
 
     nb_tirage = 900
 
-    # ## Simulation
+    ## Simulation
 
     ## La simulation continue de tourner simulant le temps qui passe (un pas de temps
     ## = une generation) La simulation s'arrête si on atteint le nombre max de
@@ -1350,7 +1350,6 @@ length(dico_test)
 # utiliser `countmap` une deuxième fois:
 
 nb_inxfn = countmap(values(infxn_by_uuid))
-
 
 println("Le nombre d'agent encore vivant est ", length(population))
 println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
