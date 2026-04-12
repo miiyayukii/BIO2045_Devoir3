@@ -1024,7 +1024,7 @@ current_figure()
 # # Discussion
 
 # Pour rappel, l'objectif de cette étude était d'évaluer l'efficacité d'une stratégie ciblée de 
-# dépistage et de vaccination pour limiter la propagation d'une maladie infectieuse dans un contexte
+# vaccination après dépistage aléatoire, pour limiter la propagation d'une maladie infectieuse dans un contexte
 # de ressources limitées. L'hypothèse initiale était que cette approche permettrait de réduire le  
 # nombre d'infections ainsi que la mortalité. Toutefois, les résultats obtenus suggèrent que 
 # cette stratégie n'a pas permis de réduire ou de contrôler efficacement l'épidémie, 
@@ -1037,7 +1037,7 @@ current_figure()
 # infectée puis retirée de la population par mortalité. Cette tendance est confirmée aussi par 
 # la diminution importante de la taille totale de la population (agents encore vivants), ce qui
 # reflète indirectement une mortalité élevée puisque dans le modèle, les individus ne quittent la 
-# population qu'au moment de leur décès suite à l'infection. La Figure 3 précise cette dynamique en montrant que le
+# population qu'au moment de leur décès suite à l'infection. La Figure 2 précise cette dynamique en montrant que le
 # nombre de décès augmente jusqu'à atteindre un certain pic, puis diminue progressivement. Cette évolution
 # suggère une diminution des nouveaux cas d'infections au cours du temps, en lien avec la
 # diminution du nombre d'individus susceptibles. En effet, si le nombre d'agents pouvant être infectés
