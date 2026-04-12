@@ -1400,30 +1400,34 @@ current_figure()
 # la 250ème génération. Le nombre d'infection atteignant presque les 300 agents
 # à ce moment. 
 
-# La courbe de la figure 3 possède une distribution normale.
-# L'analyse du nombre de contagiant par agent montre qu'une grande partie
+# La courbe de la figure 3 possède une distribution normale,
+# l'analyse du nombre de contagiant par agent montre qu'en effet une grande partie
 # des agents malades (un peu plus de 400) contaminent 9-11 autres personnes. 
 
 # La figure 4 montre que les tests sont effectué durant 4 générations uniquement.
 # Plus de 4000 tests sont effectués en une fois (pic à la génération 21)
 # puis à la génération suivante le nombre baisse drastiquement en dessous de 1000. 
-
-# Le suivi des individus protégés par le vaccin montre que rien ne se passe avant la
+# Et le suivi des individus protégés par le vaccin montre que rien ne se passe avant la
 # génération 26, où 3 agents ont eu leurs vaccins activés.
 
 # La figure 5 montre que l'infection s'est déclanché dans la partie 
-# centrale de la moitié supérieur de la lattice. Puis, s'est propagée de proche en proche de 
+# centrale de la moitié supérieur de la lattice (couleur plus foncé).
+# Puis, s'est propagée de proche en proche de 
 # façon cerculaire jusqu'à atteindre le bord inferieur de la lattice.
 
-# La figure 6 montre les evènements de mort suivent le même patron de 
-# propagation que les infections. Cependant, les morts ont une densité
-# moins importante que les infections.
+# La figure 6 montre les évènements de mort suivent le même patron de 
+# propagation que celui des infections (points de la même
+# couleur présent au meme endroits). Cependant,
+# les points sont plus espacés sur la lattice.
 
-# La figure 7 montre que les testes sont fait un peu partout sur la lattice
+# Le suivi spatio-temporel des tests effectués (figure 7),
+# montre que les testes sont fait un peu partout sur la lattice
 # mais à des moments différents, laissant certaines zones non échantilloné.
+# à la génération 25 par exemple, un seul point est présent dans le 
+# coin gauche suppérieur de la lattice.
 
 # La figure 8 montre que très peu de tests sont effectué 
-# au même endroit des foyers d'infection.
+# au même endroit et moment que les foyers d'infection.
 
 # # Discussion
 
