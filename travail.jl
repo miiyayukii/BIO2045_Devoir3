@@ -1,5 +1,5 @@
 # ---
-# title: Devoir 3 : Dynamique épidémique et campagne de vaccination 
+# title: Devoir 3 - Dynamique épidémique et campagne de vaccination 
 # repository: tpoisot/BIO245-modele
 # auteurs:
 #    - nom: Ben Brahim
@@ -588,6 +588,7 @@ function contagiant!(pop::Population, time)
             end
         end
     end
+    return nothing
 end
 
 # Une fois un agent infectieux détécté, la statégie choisi est de le vacciner.
