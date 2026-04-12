@@ -784,7 +784,7 @@ function simulation()
 
     global tick, population, test_positif, nb_tirage  
 
-    while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serait peut-être une bonne idée de faire des fonctions pour simplifier ce code (plus tard)
+    while (length(infectious(population)) != 0) & (tick < maxlength) 
 
         tick += 1
 
@@ -889,7 +889,7 @@ end
 
 S,I, PopulationRestant, retabli, mort = simulation();
 
-# ### Série temporelle
+# #### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
 # dernière génération:
 
@@ -900,7 +900,7 @@ retabli = retabli[1:tick];
 test_positif = test_positif[1:tick];
 PopulationRestant = PopulationRestant[1:tick];
 
-# ### Nombre de cas par individu infectieux
+# #### Nombre de cas par individu infectieux
 # Nous allons ensuite observer la distribution du nombre de cas créés par chaque
 # individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
 # combien de fois chaque individu est représenté dans le champ `from`: parcourt
@@ -998,7 +998,7 @@ f
 
 # **Figure 4:** Courbe de suivi des tests effectués et des vaccins activés.
 
-# ## Hotspots
+# #### Hotspots
 # Nous allons nous intéresser maintenant à la propagation spatio-temporelle de
 # l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
 # position de chaque infection et mort, puis les représenter dans un graphique:
@@ -1070,7 +1070,7 @@ current_figure()
 # **Figure 8:** Suivi spatio-temporel des test effectués superposé
 # au évènements d'inection.
 
-# ### Simulation 2 ##################################################################
+# ### Simulation 2 
 
 # #### Réinitialisation des variables
 # Afin de pouvoir retester la simulation pour voir si la stratégie choisi donne 
@@ -1084,11 +1084,15 @@ cout_test = 4
 sum_vacc_prix = 0
 sum_rat_prix = 0
 
+# Recréation de fiches suivis vides
+
 events = InfectionEvent[]
 qui_meurt = MortEvent[]
 protegee = ProtectionEvent[]
 agent_teste = TestEvent[]
 positif_test = TestPositif[]
+
+# exécution de la simulation
 
 S,I, PopulationRestant, retabli, mort = simulation();
 
@@ -1179,7 +1183,7 @@ f
 
 # **Figure 12:** Courbe de suivi des tests effectués et des vaccins activés.
 
-# ### Hotspots
+# #### Hotspots
 # Propagation spatio-temporelle de l'épidémie et des tests effectués:
 
 t = [event.time for event in events];
@@ -1213,10 +1217,10 @@ current_figure()
 
 # **Figure 14:** Suivi spatio-temporel des évenèments de mort.
 
-# ### Simulation 3 #######################################################
+# ### Simulation 3 
 # ####Réinitialisation
 # De nouveau on remet tout au point 0 :
-# #### Variables
+# Variables
 
 budget_initiale = 21000
 cout_vaccin = 17
@@ -1224,7 +1228,7 @@ cout_test = 4
 sum_vacc_prix = 0
 sum_rat_prix = 0
 
-# #### Les évenements
+# Les évenements
 
 events = InfectionEvent[]
 qui_meurt = MortEvent[]
