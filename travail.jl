@@ -1447,6 +1447,18 @@ current_figure()
 # la génération 450 le nombre d'Infectieux chute rapidement et n'augmente
 # plus de manière notable.
 
+# L'examination de la figure 10 montre 
+# que la courbe de contamination suit une loi normale, avec un mode 
+# de 10 contaminations par malade. 
+
+# Le suivi des évènements de decès par comparaison aux infections (figure 11)
+# montre que la mortalité suit la tendance globale des infections avec
+# une plus grande variabilité et fluctuation dans le nombre d'agents ressencé.
+
+# le nombre de test effectué (figure 12) reste le même que présent
+# à la figure 4, mais cette fois aucun vaccins ne s'est activé (étant 
+# donnée qu'aucun vaccin n'est fait).
+
 # # Discussion
 
 # Pour rappel, l'objectif de cette étude était d'évaluer l'efficacité d'une stratégie ciblée de 
