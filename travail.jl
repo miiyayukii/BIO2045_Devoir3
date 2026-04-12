@@ -1038,9 +1038,10 @@ current_figure()
 # la diminution importante de la taille totale de la population (agents encore vivants), ce qui
 # reflète indirectement une mortalité élevée puisque dans le modèle, les individus ne quittent la 
 # population qu'au moment de leur décès suite à l'infection. La Figure 2 précise cette dynamique en montrant que le
+# population qu'au moment de leur décès, suite à l'infection. La Figure 3 précise cette dynamique en montrant que le
 # nombre de décès augmente jusqu'à atteindre un certain pic, puis diminue progressivement. Cette évolution
-# suggère une diminution des nouveaux cas d'infections au cours du temps, en lien avec la
-# diminution du nombre d'individus susceptibles. En effet, si le nombre d'agents pouvant être infectés
+# suggère qu'il y a une diminution des nouveaux cas d'infections au cours du temps, ce qui est en lien avec la
+# réduction du nombre d'individus susceptibles. En effet, si le nombre d'agents pouvant être infectés
 # diminue, les interactions menant à de nouveaux cas d'infections deviennent moins fréquentes, 
 # ce qui limite la propagation de la maladie et entraîne donc une diminution du nombre de décès 
 # observés. De plus, la comparaison directe des courbes d'infection et de mortalité dans la Figure 3 permet de 
@@ -1053,7 +1054,7 @@ current_figure()
 
 # De plus, la difficulté à contrôler l'épidémie peut s'expliquer en grande partie par la 
 # faible efficacité des interventions qui ont été mises en place. La Figure 1 montre que le 
-# nombre d'individus infectieux reste relativement faible, mais que les individus détectés et 
+# nombre d'agents infectieux reste relativement faible, mais que les individus détectés et 
 # protégés par la vaccination sont presque nuls.
 # Cela indique que très peu d'individus sont effectivement identifiés ou protégés. Cette inefficacité
 # peut s'expliquer par le caractère asymptomatique de la maladie simulée, rendant la détection des
@@ -1075,8 +1076,8 @@ current_figure()
 # une proportion suffisante des individus infectés @hellewell2020feasibility.
 
 # En parallèle, la forte propagation observée s'explique également par la transmissibilité élevée de
-# la maladie. La Figure 2 montre que chaque individu infecté transmet la maladie à un nombre relativement
-# élevé d'autres individus, avec une moyenne d'environ 10 infections par agent. Cette capacité de 
+# la maladie. La Figure 2 montre que chaque agent infecté transmet la maladie à un nombre relativement
+# élevé d'autres agents, avec une moyenne d'environ 10 infections par individu. Cette capacité de 
 # tranmission favorise une diffusion rapide de l'infection dans la population, ce qui contribue à la
 # diminution importante du nombre d'individus susceptibles ainsi qu'à la mortalité élevée observée.
 # Cela est aussi cohérent avec la littérature, qui montre que plus un individu infecté transmet la
@@ -1100,7 +1101,7 @@ current_figure()
 # transmission. Ainsi, le dépistage ne cible pas efficacement les zones d'infection, ce qui limite son
 # impact sur la réduction de la propagation de la maladie. 
 
-# Pour tenir compte de la variabilité liée à aux processus aléatoires du modèle, trois simulations
+# Pour tenir compte de la variabilité liée aux processus aléatoires du modèle, trois simulations
 # indépendantes ont été réalisées dans les mêmes conditions. Dans l'ensemble, la comparaison de ces
 # trois simulations met en évidence des résultats similaires, caractérisés par une mortalité élevée et 
 # une proportion faible d'individus protégés, malgré des légères variations. Cette cohérence suggère que
@@ -1121,7 +1122,7 @@ current_figure()
 # du nombre d'infections par individu (Figure 2) restent globalement similaires entre les simulations, mais
 # présentent quelques fluctuations dans la fréquence des agents qui transmettent fortement la maladie, ce
 # qui correspond à l'existence d'une hétérogénéité individuelle dans la transmission. En effet, 
-# certains individus peuvent infecter un grand nombre d'agents, tandis que d'autres infectent très peu,
+# certains individus peuvent infecter un grand nombre d'agents, tandis que d'autres infectent très peu Cela est
 # un phénomène souvent associé aux événements de « super-propagation », où les variations individuelles
 # de transmission jouent un rôle majeur dans la dynamique de propagation de l'épidémie @nielsen2023conterintuitive.
 # Enfin les figures spatiales (Figures 5, 6 et 7) montrent que la localisation
