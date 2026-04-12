@@ -1429,6 +1429,24 @@ current_figure()
 # La figure 8 montre que très peu de tests sont effectué 
 # au même endroit et moment que les foyers d'infection.
 
+# ### Réplication de la simulation :
+
+# La répétition de la simulation montre que tout le budget 
+# a été investi dans des tests dans les simulation 2 et 3
+# laissant uniquement 4$ à la fin. 
+
+# La taille finale de la population varie avec **783 agents** dans la 
+# simulation 2 et **974 agents** toujours vivant dans la dernière simulation.
+
+# _Dans la seconde simulation_ 
+
+# Les courbes de la figure 9 montrent que la baisse du nombre total
+# d'agent est plutôt linéaire dans l'ensemble.
+# Et que le nombre d'infection augmente également de façon linaire 
+# même si la pente de sa courbe est faible. On peut voir qu'environ à 
+# la génération 450 le nombre d'Infectieux chute rapidement et n'augmente
+# plus de manière notable.
+
 # # Discussion
 
 # Pour rappel, l'objectif de cette étude était d'évaluer l'efficacité d'une stratégie ciblée de 
