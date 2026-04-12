@@ -772,6 +772,10 @@ function simulation()
     ## génération, ou si le nombre d'infecté devient nul, signifier la fin de
     ## l'épidémie. (possible par la mort des agents avant une nouvelle contagiant ou
     ## l'éradication de la maladie grâce aux vaccins)
+    
+    ## On spécifie que nous utilisons les variables définies plus haut
+
+    global tick, population, test_positif, nb_tirage  
 
     while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serait peut-être une bonne idée de faire des fonctions pour simplifier ce code (plus tard)
 
@@ -814,7 +818,8 @@ function simulation()
         if length(population) < 3750
 
             ## Stratégie utilisé : 
-            ## On tire alétoirement un nombre d'agent qu'on va tester      
+            ## On tire alétoirement un nombre d'agent qu'on va tester
+            ## puisqu'on n'a aucune idée d'où pourrait être les foyers d'infection.  
 
             populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
             for personne in populationAtester
