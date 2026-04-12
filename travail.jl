@@ -176,14 +176,6 @@ import UUIDs
 
 Random.seed!(123456)
 
-# ## Variables
-
-budget_initiale = 21000
-cout_vaccin = 17
-cout_test = 4
-sum_vacc_prix = 0
-sum_rat_prix = 0
-
 # Puisque nous allons identifier des agents, nous utiliserons des UUIDs pour
 # leur donner un indentifiant unique: UUIDs.uuid4()
 
@@ -636,6 +628,13 @@ function group_vaccin(positif, time, pop)
     end
 end
 # ## Paramètres initiaux
+# ### Variables
+
+budget_initiale = 21000
+cout_vaccin = 17
+cout_test = 4
+sum_vacc_prix = 0
+sum_rat_prix = 0
 
 # Notez qu'on peut réutiliser notre _alias_ pour écrire une fonction beaucoup plus
 # expressive pour générer une population:
@@ -1084,6 +1083,33 @@ current_figure()
 
 Random.seed!(100)
 
+budget_initiale = 21000
+cout_vaccin = 17
+cout_test = 4
+sum_vacc_prix = 0
+sum_rat_prix = 0
+
+population = Population(L, 3750)
+rand(population).infectious = true
+
+S = zeros(Int64, maxlength);
+I = zeros(Int64, maxlength);
+PopulationRestant = zeros(Int64, maxlength);
+mort = zeros(Int64, maxlength);
+retabli = zeros(Int64, maxlength);
+test_positif = zeros(Int64, maxlength);
+
+tick = 0
+maxlength = 2000
+
+nb_tirage = 900
+
+events = InfectionEvent[]
+qui_meurt = MortEvent[]
+protegee = ProtectionEvent[]
+agent_teste = TestEvent[]
+positif_test = TestPositif[]
+
 simulation();
 
 # ### Série temporelle
@@ -1294,6 +1320,33 @@ current_figure()
 # ### Simulation 3 
 
 Random.seed!(8)
+
+budget_initiale = 21000
+cout_vaccin = 17
+cout_test = 4
+sum_vacc_prix = 0
+sum_rat_prix = 0
+
+population = Population(L, 3750)
+rand(population).infectious = true
+
+S = zeros(Int64, maxlength);
+I = zeros(Int64, maxlength);
+PopulationRestant = zeros(Int64, maxlength);
+mort = zeros(Int64, maxlength);
+retabli = zeros(Int64, maxlength);
+test_positif = zeros(Int64, maxlength);
+
+tick = 0
+maxlength = 2000
+
+nb_tirage = 900
+
+events = InfectionEvent[]
+qui_meurt = MortEvent[]
+protegee = ProtectionEvent[]
+agent_teste = TestEvent[]
+positif_test = TestPositif[]
 
 simulation();
 
