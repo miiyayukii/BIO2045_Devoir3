@@ -845,7 +845,7 @@ function simulation()
                     ## On parcourt un à un les agents ayant un RAT positif et on les vaccinées
                     ## En plus de vacciner les agents à risques (présent dans leurs cellules) 
 
-                    group_vaccin(agent_test_positif, tick, population)
+                    group_vaccin!(agent_test_positif, tick, population)
     
                 end
             end
