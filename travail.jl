@@ -266,7 +266,7 @@ end
 # simplifier la rédaction du code. 
 
 # D'abord, on a besoin de suivre les dépenses pour ne pas dépasser le budget
-# initialement fixé 
+# initialement fixé, on crée donc une fonction qui gère le budget 
 
 """
     finance!(vacc)
@@ -318,9 +318,9 @@ function finance!(vacc)
     return nothing
 end
 
-# On vérifie plusieurs information à propos de l'état de l'agent :
+# vérification des information à propos de l'état de l'agent :
 
-# s'il est infecté
+# s'il est infecté :
 
 """
     isinfectious(agent::Agent)
@@ -391,7 +391,7 @@ const Population = Vector{Agent}
 
 # Pour faciliter le groupement d'agents ayant certains trait en commun 
 # on va créer des fonctions qui trie puis regroupe les agents en des population 
-# avec des caractéristique prédéfini. 
+# avec des caractéristique prédéfinis. 
 
 # Population d'agents infectieux :
 
@@ -598,13 +598,13 @@ end
 # limitation de la propagation.
 
 """
-    group_vaccin(positif, time, pop)
+    group_vaccin!(positif, time, pop)
 Cette fonction parcourt chaque agent de la population d'agent ayant un test RAT positif ('positif'), et
 vaccine tous ceux qui ne sont pas vaccinés en plus de vacciner leurs entourage (tout individus 
 dans leurs cellule donc à risque).
 'positif' et 'pop' doivent etre de type Population. 'time' doit etre un entier (la génération). 
 """
-function group_vaccin(positif, time, pop)
+function group_vaccin!(positif, time, pop)
     for infecte in positif
 
         ## on vaccine les personnes testés positif si elles ne
@@ -630,10 +630,11 @@ function group_vaccin(positif, time, pop)
 
         end
     end
+    return nothing
 end
 
 # ## Paramètres initiaux
-# ### Variables
+# Variables
 
 budget_initiale = 21000
 cout_vaccin = 17
@@ -658,7 +659,7 @@ end
 
 Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population avec $(length(p)) agents")
 
-# Nous allons aussi stocker tous les évènements importants pendant la
+# Stockage de tous les évènements importants pendant la
 # simulation, dans des types immutables :
 
 # Évenements d'infection
@@ -716,6 +717,8 @@ qui_meurt = MortEvent[]
 protegee = ProtectionEvent[]
 agent_teste = TestEvent[]
 positif_test = TestPositif[]
+
+# ## Code simulation 
 
 """
     simulation()
