@@ -54,7 +54,9 @@
 # la réduction de la propagation de la maladie. 
 
 # Dans ce contexe, nous adoptons une stratégie ciblée inspirée du traçage des
-# contacts et de la vaccination en anneau. À partir du premier décès, les interventions
+# contacts et de la vaccination en anneau. À partir du premier décès, étant donné
+# que la maladie est asymptomatique, un groupe d'agent est tiré aléatoirement de la
+# population afin d'être tester. Ensuite, les interventions
 # sont concentrées dans les cellules spatiales contenant des individus infectés, 
 # considérées comme des zones à risque de transmission. Les individus présents dans
 # ces cellules sont directement vaccinés par prévention et cure pour ne pas gaspiller
