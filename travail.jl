@@ -5,15 +5,11 @@
 #    - nom: Ben Brahim
 #      prenom: Dorra
 #      matricule: 20302117
-#      github: premierAuteur
+#      github: BB-dorra
 #    - nom: Nadler
 #      prenom: Christina
 #      matricule: 20313890
 #      github: ChristinaN31
-#    - nom: Auteur
-#      prenom: troiseme
-#      matricule: XXXXXXXX
-#      github: TroisiAut
 # ---
 
 # # Introduction
@@ -58,7 +54,9 @@
 # la réduction de la propagation de la maladie. 
 
 # Dans ce contexe, nous adoptons une stratégie ciblée inspirée du traçage des
-# contacts et de la vaccination en anneau. À partir du premier décès, les interventions
+# contacts et de la vaccination en anneau. À partir du premier décès, étant donné
+# que la maladie est asymptomatique, un groupe d'agent est tiré aléatoirement de la
+# population afin d'être tester. Ensuite, les interventions
 # sont concentrées dans les cellules spatiales contenant des individus infectés, 
 # considérées comme des zones à risque de transmission. Les individus présents dans
 # ces cellules sont directement vaccinés par prévention et cure pour ne pas gaspiller
@@ -79,8 +77,8 @@
 # permet de mieux comprendre comment différents décisions d'intervention influencent
 # l’évolution d’une épidémie.
 
-# L'hypothèse est qu'une stratégie ciblée de
-# dépistage et de vaccination, concentrée sur les zones à risques définies par
+# L'hypothèse est qu'une stratégie ciblée 
+# de vaccination, concentrée sur les zones à risques définies par
 # la présence d'individus infectés, permettra de réduire plus efficacement la
 # mortalité qu'une stratégie aléatoire @henao2015efficacy.
 
@@ -95,12 +93,14 @@
 # Le modèle utilisé est un modèle épidémique. Le code simule la propagation d'une infection dans une 
 # population de 3750 agents non immunisés. Ces agents se déplacent de façon aléatoire sur une lattice 
 # carrée à 2 dimensions, de 100 x 100 cellules. 
-# Au début de la simulation un seul agent, choisi aléatoirement, est rendu malade. Cet agent infecté
-# a 40% de chance de contaminer chaque individu sain présent dans la même cellule de la lattice.
-# Le temps dans la simulation est détérminé par les déplacements des agents, tandis qu'yne génération
+
+# Au début de la simulation un seul agent, choisi aléatoirement, est rendu malade. Cet agent infecté,
+# a 40% de chance de contaminer chaque individu sain présent dans la même cellule de la lattice que lui.
+
+# Le temps dans la simulation est détérminé par les déplacements des agents, une génération
 # est égale à un mouvement pour tous les agents.
 # Lorsqu'un agent a été infecté depuis 21 générations, il est retiré de la population et donc de la lattice.
-# Il est alors considéré comme mort des suites de l'infection. 
+# Il est considéré comme mort suites à l'infection. 
 
 # Après la mort du premier agent, donc à la diminution de la taille de la population, des tests RAT sont réalisés
 # sur un nombre d'agents pris aléatoirement dans la population. Un test RAT détecte l'état de l'agent, soit 
@@ -112,7 +112,7 @@
 
 # Un budget_initiale est fixé, et chacun des vaccins et des tests a un coût qui est déduit de ce budget 
 # à chaque utilisation. Si une intervention est demandée et que le budget n'est pas suffisant,
-# un message est affiché pour indiquer quel traitement doit être exécuter. Ce message permet
+# un message est affiché pour indiquer quel traitement essaie d'être exécuter sans l'argent suffisant. Ce message permet
 # l'ajuster le code afin qu'une intervention soit réalisée uniquement si les fonds disponibles sont suffisants.
 
 # Les variations de la taille de la population, le budget restant ainsi que les évenèments de contaminations,
@@ -179,14 +179,6 @@ import UUIDs
 # ### Initiation du point de départ
 
 Random.seed!(123456)
-
-# ## Variables
-
-budget_initiale = 21000
-cout_vaccin = 17
-cout_test = 4
-sum_vacc_prix = 0
-sum_rat_prix = 0
 
 # Puisque nous allons identifier des agents, nous utiliserons des UUIDs pour
 # leur donner un indentifiant unique: UUIDs.uuid4()
@@ -274,7 +266,7 @@ end
 # simplifier la rédaction du code. 
 
 # D'abord, on a besoin de suivre les dépenses pour ne pas dépasser le budget
-# initialement fixé 
+# initialement fixé, on crée donc une fonction qui gère le budget 
 
 """
     finance!(vacc)
@@ -296,36 +288,39 @@ function finance!(vacc)
 
         sum_vacc_prix += cout_vaccin
 
-        ## Pour être sur de pas vacciner si le budget ne le permet pas 
-        ## un message apparaît pour nous signaler que le code doit être révisé 
-        ## pour vérifier les fond avant d'initier la vaccination
-
-        if budget_initiale < 17
-            println("pas assez de fond pour vaccin")
-        end
-
     end
-    if (budget_initiale >= cout_test) & vacc == false
+
+    ## Pour être sur de pas vacciner si le budget ne le permet pas 
+    ## un message apparaît pour nous signaler que le code doit être révisé 
+    ## pour vérifier les fond avant d'initier la vaccination
+    
+    if (budget_initiale < 17) & vacc
+        println("pas assez de fond pour un vaccin")
+    end
+
+    if (budget_initiale >= cout_test) & (vacc == false)
         budget_initiale -= cout_test
 
         ## on enregistre dans quel produit les dépenses sont faites
         
         sum_rat_prix += cout_test
 
-        ## Pour être sur de pas faire de test RAT si le budget ne le permet pas 
-        ## un message apparaît pour nous signaler que le code doit être révisé 
-        ## pour vérifier les fonds avant d'initier un test 
+    end
 
-        if budget_initiale < 4
-            println("pas assez de fond pour test")
-        end
+    ## Pour être sur de pas faire de test RAT si le budget ne le permet pas 
+    ## un message apparaît pour nous signaler que le code doit être révisé 
+    ## pour vérifier les fonds avant d'initier un test
 
+    if (budget_initiale < 4) & (vacc == false)
+        println("pas assez de fond pour un test")
+        
     end
     return nothing
 end
 
-# On vérifie plusieurs information à propos de l'état de l'agent :
-# s'il est infecté
+# vérification des information à propos de l'état de l'agent :
+
+# s'il est infecté :
 
 """
     isinfectious(agent::Agent)
@@ -394,6 +389,10 @@ not_actif(agent::Agent) = !vac_actif(agent)
 
 const Population = Vector{Agent}
 
+# Pour faciliter le groupement d'agents ayant certains trait en commun 
+# on va créer des fonctions qui trie puis regroupe les agents en des population 
+# avec des caractéristique prédéfinis. 
+
 # Population d'agents infectieux :
 
 """
@@ -418,7 +417,7 @@ healthy(pop::Population) = filter(ishealthy, pop)
 
 
 # Population d'agents ayant un vaccin actif 
-# donc protégé des infections / mort par la maldie 
+# donc protégé des infections / mort par la maldie :
 
 """
     protected(pop::Population)
@@ -428,7 +427,7 @@ type Population.
 """
 protected(pop::Population) = filter(vac_actif, pop)
 
-# Population avec les agents vaccinés
+# Population avec les agents vaccinés :
 
 """
     vaccinated(pop::Population)
@@ -437,7 +436,7 @@ Cette fonction permet de créer un vecteur contenant les individus vaccinés.
 """
 vaccinated(pop::Population) = filter(vaccineee, pop)
 
-# Population avec les agents non vacciné
+# Population avec les agents non vacciné :
 
 """
     notVaccinated(pop::Population)
@@ -446,7 +445,7 @@ Cette fonction permet de créer un vecteur contenant les individus non vaccinés
 """
 notVaccinated(pop::Population) = filter(nonvaccinee, pop)
 
-# Et enfin, population avec les agents n'ayant pas un vaccin actif
+# Et enfin, population avec les agents n'ayant pas un vaccin actif :
 
 """
     NotProtected(pop::Population)
@@ -467,6 +466,7 @@ NotProtected(pop::Population) = filter(not_actif, pop)
 Cette fonction simule un test de dépistage de la maladie. Si l'agent est
 infecté, le test a 95% de chance de renvoyer true et 5% de chance de faire un
 faux négatif. Si l'agent est sain le test est toujours fiable (renvoie false).
+La fontion enregistre aussie le fait qu'on ait fait un test et si le test est positif.
 'agent' doit être de type Agent. 'moment' doit etre de type Int.
 """
 function RAT!(agent::Agent, moment)
@@ -484,6 +484,10 @@ function RAT!(agent::Agent, moment)
             test = false
         else
             test = true
+            
+            ## Enregistrement des tests RAT positifs
+
+            push!(positif_test, TestPositif(moment, agent.id, agent.x, agent.y))
         end
     else
         test = false
@@ -551,7 +555,9 @@ sont dans la même cellule qu'un agent donné.
 incell(target::Agent, pop::Population) = filter(ag -> (ag.x, ag.y) == (target.x, target.y), pop)
 
 # La contagiant n'étant pas systématique, cette fonction permet d'ajouter un peu d'aléatoir
-# dans quel agent contractera la maladie après exposition à un malade
+# dans quel agent contractera la maladie après exposition à un malade. Cela permet de simuler 
+# la différence entre les individus, certains sont vite contaminé tandis que d'autre
+# ayant une santé moins fragile réussissent à ne pas être affécté.
 
 """
     contagiant!(pop::Population, time)
@@ -563,6 +569,10 @@ la maladie après son contact avec l'agent malade.
 """
 function contagiant!(pop::Population, time)
     for agent in Random.shuffle(infectious(pop))
+
+        ## Les voisins pouvant être contaminés sont ceux 
+        ## n'ayant pas un vaccin actif 
+
         neighbors = NotProtected(incell(agent, pop))
         for neighbor in neighbors
 
@@ -579,7 +589,58 @@ function contagiant!(pop::Population, time)
     end
 end
 
+# Une fois un agent infectieux détécté, la statégie choisi est de le vacciner.
+# Même si on ignore combien de jour il lui reste, il est important de réduire tout risque de propagation de l'infection par
+# le cas identifié. Des doses de vaccins sont également administrés aux voisins directes du malade par prévention.
+# s'ils ont été contaminé, leurs propagation de la maladie à leurs tour sera limité, s'ils sont sains ils deviennent protégés, et
+# s'ils étaient déjà malade, cela revient à la même stratégie utilisé pour l'agent détecté au début. 
+# Cette stratégie permettrait de cibler les agents à vacciner pour plus d'efficacité dans la 
+# limitation de la propagation.
+
+"""
+    group_vaccin!(positif, time, pop)
+Cette fonction parcourt chaque agent de la population d'agent ayant un test RAT positif ('positif'), et
+vaccine tous ceux qui ne sont pas vaccinés en plus de vacciner leurs entourage (tout individus 
+dans leurs cellule donc à risque).
+'positif' et 'pop' doivent etre de type Population. 'time' doit etre un entier (la génération). 
+"""
+function group_vaccin!(positif, time, pop)
+    for infecte in positif
+
+        ## on vaccine les personnes testés positif si elles ne
+        ## sont pas déja vaccinées seulement si on a l'argent
+        ## pour le vaccin
+
+        if (nonvaccinee(infecte)) & (budget_initiale >= cout_vaccin)
+            vaccinate!(infecte, time)
+        end
+
+        ## puis on trouve les personnes dans la même cellule spatiale
+        ## que les individus positif (zone à risque)
+
+        personnes = incell(infecte, pop)
+        for p in personnes
+
+            ## Si l'individu n'est pas encore vacciné,
+            ## on le vaccine s'il y a assez d'argent dans le budget
+
+            if (nonvaccinee(p)) & (budget_initiale >= cout_vaccin)
+                vaccinate!(p, time)
+            end
+
+        end
+    end
+    return nothing
+end
+
 # ## Paramètres initiaux
+# Variables
+
+budget_initiale = 21000
+cout_vaccin = 17
+cout_test = 4
+sum_vacc_prix = 0
+sum_rat_prix = 0
 
 # Notez qu'on peut réutiliser notre _alias_ pour écrire une fonction beaucoup plus
 # expressive pour générer une population:
@@ -598,36 +659,7 @@ end
 
 Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population avec $(length(p)) agents")
 
-# Et on génère notre population initiale:
-
-population = Population(L, 3750)
-
-# Pour commencer la simulation, il faut identifier un cas index, que nous allons
-# choisir au hasard dans la population un agent qui devient malade :
-
-rand(population).infectious = true
-
-# Nous initialisons la simulation au temps 0, et nous allons la laisser se
-# dérouler au plus 2000 pas de temps:
-
-tick = 0
-maxlength = 2000
-
-# Pour étudier les résultats de la simulation, nous allons stocker la taille de
-# populations à chaque pas de temps,
-# 'S' pour les individus pas encore infecté,
-# 'I' pour les agents malade, 'mort' pour les agents infectieux depuis plus de 21
-# jours, 'retabli' pour les agent ayant recu un vaccin qui s'est activé après 2
-# générations, et 'test_positif' pour les agents testé avec le RAT et qui ont été
-# declarés malade : 
-
-S = zeros(Int64, maxlength);
-I = zeros(Int64, maxlength);
-mort = zeros(Int64, maxlength);
-retabli = zeros(Int64, maxlength);
-test_positif = zeros(Int64, maxlength);
-
-# Mais nous allons aussi stocker tous les évènements importants pendant la
+# Stockage de tous les évènements importants pendant la
 # simulation, dans des types immutables :
 
 # Évenements d'infection
@@ -640,8 +672,6 @@ struct InfectionEvent
     y::Int64
 end
 
-events = InfectionEvent[]
-
 # Évènement de mort
 
 struct MortEvent
@@ -650,8 +680,6 @@ struct MortEvent
     x::Int64
     y::Int64
 end
-
-qui_meurt = MortEvent[]
 
 # Évenements d'activation de vaccin
 
@@ -662,7 +690,14 @@ struct ProtectionEvent
     y::Int64
 end
 
-protegee = ProtectionEvent[]
+# Évenements de test positif
+
+struct TestPositif
+    time::Int64
+    who::UUIDs.UUID
+    x::Int64
+    y::Int64
+end
 
 # Évenements de test RAT
 
@@ -673,160 +708,188 @@ struct TestEvent
     y::Int64
 end
 
+# On crée les variable de ces types qu'on 
+# va remplir dans la simulation. Ces variables sont comme des fiches
+# qui permettront de tracer l'histoire de ce qui est arrivé dans la simulation. 
+
+events = InfectionEvent[]
+qui_meurt = MortEvent[]
+protegee = ProtectionEvent[]
 agent_teste = TestEvent[]
-
-# Évenements de test positif
-
-struct TestPositif
-    time::Int64
-    who::UUIDs.UUID
-    x::Int64
-    y::Int64
-end
-
 positif_test = TestPositif[]
 
-# On defini le nombre de personne qui seront testés : 'nb_tirage'.
+# ## Code simulation 
 
-# Pour limiter la propagation de la maladie, 
-# on veut tester le plus de personnes possible pour avoir une idée de
-# la prévalence de la maladie, tout en ne dépassant pas
-# un budget fixé (environ la moitié du budget initiale) pour laisser assez
-# d'argent aux vaccins.
+"""
+    simulation()
+Cette fonction execute la simulation. Toute la première partie est l'initialtion des 
+paramètres et la seconde partie est le déroulement de la simulation.
+Ce type d'ordre permet une réplication de la simulation sans réécriture de toute la partie initiation à 
+chaque fois. A la fin, la fonction renvoi les vécteurs de populations qui se sont crée.
+"""
+function simulation()
 
-nb_tirage = 900
+    ## _Initiation_ :
 
-# ## Simulation
+    ## On génère notre population initiale:
 
-# La simulation continue de tourner simulant le temps qui passe (un pas de temps
-# = une generation) La simulation s'arrête si on atteint le nombre max de
-# génération, ou si le nombre d'infecté devient nul, signifier la fin de
-# l'épidémie. (possible par la mort des agents avant une nouvelle contagiant ou
-# l'éradication de la maladie grâce au vaccin)
+    population = Population(L, 3750)
 
-while (length(infectious(population)) != 0) & (tick < maxlength) ## TP: ce serait peut-être une bonne idée de faire des fonctions pour simplifier ce code (plus tard)
+    ## Pour commencer la simulation, il faut identifier un cas index, que nous allons
+    ## choisir au hasard dans la population un agent qui devient malade :
+
+    rand(population).infectious = true
+
+    ## Nous initialisons la simulation au temps 0, et nous allons la laisser se
+    ## dérouler au plus 2000 pas de temps:
+
+    tick = 0
+    maxlength = 2000
+
+    ## Pour étudier les résultats de la simulation, nous allons stocker la taille de
+    ## populations à chaque pas de temps,
+    ## 'S' pour les individus pas encore infecté donc naïf,
+    ## 'I' pour les agents malade, 'mort' pour les agents infectieux depuis plus de 21
+    ## jours, 'retabli' pour les agent ayant reçu un vaccin qui s'est activé après 2
+    ## générations, et 'test_positif' pour les agents testé avec le RAT et qui ont été
+    ## declarés malade : 
+
+    S = zeros(Int64, maxlength);
+    I = zeros(Int64, maxlength);
+    PopulationRestant = zeros(Int64, maxlength);
+    mort = zeros(Int64, maxlength);
+    retabli = zeros(Int64, maxlength);
+    test_positif = zeros(Int64, maxlength);
+
+
+    ## On defini le nombre de personne qui seront testés : 'nb_tirage'.
+
+    ## Pour limiter la propagation de la maladie, 
+    ## on veut tester le plus de personnes possible pour avoir une idée de
+    ## la prévalence de la maladie, tout en ne dépassant pas
+    ## un budget fixé (environ la moitié du budget initiale) pour laisser assez
+    ## d'argent aux vaccins.
+
+    nb_tirage = 900
+
+    ## _Simulation_ :
+
+    ## La simulation continue de tourner simulant le temps qui passe (un pas de temps
+    ## = une generation) La simulation s'arrête si on atteint le nombre max de
+    ## génération, ou si le nombre d'infecté devient nul, signifier la fin de
+    ## l'épidémie. (possible par la mort des agents avant une nouvelle contagiant ou
+    ## l'éradication de la maladie grâce aux vaccins)
 
     ## On spécifie que nous utilisons les variables définies plus haut
 
-    global tick, population, test_positif, nb_tirage
+    global tick, population, test_positif, nb_tirage  
 
-    tick += 1
+    while (length(infectious(population)) != 0) & (tick < maxlength) 
 
-    ## Movement
+        tick += 1
 
-    for agent in population
-        move!(agent, L; torus=false)
-    end
+        ## Movement
 
-    ## Infection
-
-    contagiant!(population, tick)
-
-    ## Change in survival
-
-    for agent in infectious(population)
-        agent.clock -= 1
-
-        ## Suivi des évènements de mort 
-
-        if agent.clock == 0
-            push!(qui_meurt, MortEvent(tick, agent.id, agent.x, agent.y))
+        for agent in population
+            move!(agent, L; torus=false)
         end
-    end
 
-    ## Enregistrement du nombre de mort 
+        ## Infection
 
-    deadagent = filter(x -> x.clock == 0, population)
-    mort[tick] = length(deadagent)
+        contagiant!(population, tick)
 
-    ## Remove agents that died
+        ## Change in survival
 
-    population = filter(x -> x.clock > 0, population)
+        for agent in infectious(population)
+            agent.clock -= 1
 
-    ## début compagne test et vaccination après le premier mort qui indique 
-    ## la présence de cette maladie asymptomatiques   
+            ## Suivi des évènements de mort 
 
-    if length(population) < 3750
+            if agent.clock == 0
+                push!(qui_meurt, MortEvent(tick, agent.id, agent.x, agent.y))
+            end
+        end
 
-        ## Stratégie utilisé : 
-        ## On tire alétoirement un nombre d'agent qu'on va tester      
+        ## Enregistrement du nombre de mort 
 
-        populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
-        for personne in populationAtester
+        deadagent = filter(x -> x.clock == 0, population)
+        mort[tick] = length(deadagent)
 
-            ## On cére un vecteur avec les individus testés positifs après
-            ## vérification qu'on a le font nécessaire et on veut que le vecteur 
-            ## soit present en dehors de la boucle pour extraire les donnée qu'il contient
+        ## Remove agents that died
 
-            if budget_initiale >= (cout_test * length(populationAtester))
+        population = filter(x -> x.clock > 0, population)
 
-                global test_positif
+        ## début compagne test et vaccination après le premier mort qui indique 
+        ## la présence de cette maladie asymptomatiques   
 
-                agent_test_positif = filter(x -> RAT!(personne, tick), populationAtester)
-                test_positif[tick] = length(agent_test_positif)
+        if length(population) < 3750
 
-                for infecte in agent_test_positif
+            ## Stratégie utilisé : 
+            ## On tire alétoirement un nombre d'agent qu'on va tester
+            ## puisqu'on n'a aucune idée d'où pourrait être les foyers d'infection.  
 
-                    push!(positif_test, TestPositif(tick, infecte.id, infecte.x, infecte.y))
+            populationAtester = StatsBase.sample(population, nb_tirage, replace=false)
+            for personne in populationAtester
 
-                    ## on vaccine les personnes testés positif si elles ne
-                    ## sont pas déja vaccinées seulement si on a l'argent
-                    ## pour le vaccin
+                if budget_initiale >= (cout_test * length(populationAtester))
 
-                    if (nonvaccinee(infecte)) & (budget_initiale >= cout_vaccin)
-                        vaccinate!(infecte, tick)
-                    end
+                    global test_positif
 
-                    ## puis on trouve les personnes dans la même cellule spatiale
-                    ## que les individus positif (zone à risque)
+                    ## On cére un vecteur avec les individus testés positifs après
+                    ## vérification qu'on a le font nécessaire et on veut que le vecteur 
+                    ## soit present en dehors de la boucle pour extraire les donnée qu'il contient
 
-                    personnes = incell(infecte, population)
-                    for p in personnes
+                    agent_test_positif = filter(x -> RAT!(personne, tick), populationAtester)
+                    test_positif[tick] = length(agent_test_positif)
 
-                        ## Si l'individu n'est pas encore vacciné,
-                        ## on le vaccine s'il y a assez d'argent dans le budget
+                    ## On parcourt un à un les agents ayant un RAT positif et on les vaccinées
+                    ## En plus de vacciner les agents à risques (présent dans leurs cellules) 
 
-                        if (nonvaccinee(p)) & (budget_initiale >= cout_vaccin)
-                            vaccinate!(p, tick)
-                        end
+                    group_vaccin!(agent_test_positif, tick, population)
+    
+                end
+            end
 
-                    end
+            ##  Baisse du nombre de personne échantilloné aléatoirement pour le RAT,
+            ## tout en gardant un nombre entier (Int) grâce a l'arrondissement vers la valeur la plus proche:
+
+            nb_tirage = round(Int, nb_tirage * 0.2)
+
+            ## activation du vaccin apres delais de 2 generation
+
+            for personne in vaccinated(population)
+                if tick == (personne.date_vaccin + 2)
+                    activ_vaccin!(personne)
+
+                    ## on peut enregistrer l'activation du vaccin
+
+                    push!(protegee, ProtectionEvent(tick, personne.id, personne.x, personne.y))
+                    println("activVac")
                 end
             end
         end
 
-        ##  Baisse du nombre de personne échantilloné aléatoirement pour le RAT,
-        ## tout en gardant un nombre entier (Int) grâce a l'arrondissement vers la valeur la plus proche:
+        ## stockage du nombre de personnes guérie après vaccination 
+        ## (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
 
-        nb_tirage = round(Int, nb_tirage * 0.2)
+        retabli[tick] = length(protected(population))
 
-        ## activation du vaccin apres delais de 2 generation
+        ## Store population size
 
-        for personne in vaccinated(population)
-            if tick == (personne.date_vaccin + 2)
-                activ_vaccin!(personne)
+        S[tick] = length(healthy(population))
+        I[tick] = length(infectious(population))
+        PopulationRestant[tick] = length(population)
 
-                ## on peut enregistrer l'activation du vaccin
-
-                push!(protegee, ProtectionEvent(tick, personne.id, personne.x, personne.y))
-                println("activVac")
-            end
-        end
     end
-
-    ## stockage du nombre de personnes guérie après vaccination 
-    ## (donc le nombre de persone qui ont survécu assez longtemps pour l'activation du vaccin)
-
-    retabli[tick] = length(protected(population))
-
-    ## Store population size
-
-    S[tick] = length(healthy(population))
-    I[tick] = length(infectious(population))
-
+    return S, I, PopulationRestant, retabli, mort
 end
 
-# ### Série temporelle
+# ## Résultats 
+# ### Simulation 1
+
+S,I, PopulationRestant, retabli, mort = simulation();
+
+# #### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
 # dernière génération:
 
@@ -835,8 +898,9 @@ I = I[1:tick];
 mort = mort[1:tick];
 retabli = retabli[1:tick];
 test_positif = test_positif[1:tick];
+PopulationRestant = PopulationRestant[1:tick];
 
-# ### Nombre de cas par individu infectieux
+# #### Nombre de cas par individu infectieux
 # Nous allons ensuite observer la distribution du nombre de cas créés par chaque
 # individus. Pour ceci, nous devons prendre le contenu de `events`, et vérifier
 # combien de fois chaque individu est représenté dans le champ `from`: parcourt
@@ -853,119 +917,91 @@ infxn_by_uuid = countmap([event.from for event in events]);
 
 length(infxn_by_uuid)
 
-# On compte également combien de personne meurt, est protégé par le vaccin 
-# et combien de test sont fait à chaque generation
+# On compte également combien de personne meurt et combien sont protégés par le vaccin 
 
 dico_mort = countmap([corp.time for corp in qui_meurt]);
 dico_protegee = countmap([gueri.time for gueri in protegee]);
 dico_test = countmap([rat.time for rat in agent_teste]);
 
-# À combien de génération il y a eu une intervention pour tester les agents 
-# Et combien de personne ont pu être sauvé grâce au vaccin :
+# À combien de génération il y a eu une intervention pour tester les agents :
 
 length(dico_test)
-length(dico_protegee)
 
 # Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
 # utiliser `countmap` une deuxième fois:
 
 nb_inxfn = countmap(values(infxn_by_uuid))
 
-# # Présentation des résultats
-
-# Au début de la simulaton la population est composé de **3750 agents**.
-
-# ## _Avant l'intervention pour controler la maladie_ :
-#
-# 1730 évènements d'infection se sont produit, 2894 agents meurt 
-# et la population finale contient seulement 856 agents encore
-# vivant.
-
-# ## _Après l'intervention_ :
-#
-# Affichage des informations pertinante :
-# Ce qui reste du budget initial, dans quoi l'argent 
-# a été investi et le nombre restant d'agents dans la population
+# On affiche les informations pertinante : 
+# D'abord, la taille finale de la population pour savoir combien il y a de survivant 
+# des 3750 agents de départ. Ensuite, l'argent non déboursé. Et finalement, 
+# la somme qui a été investie dans chacun des traitements (test RAT et vaccin) :
 
 println("Le nombre d'agent encore vivant est ", length(population))
 println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
 println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
 println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
 
-
-#-Courbe de suivis du nombre d'individus dans la population 
+# Pour avoir une idée générale de la proportions de chaque type d'agent 
+# (vivant, malade, mort ..) dans la population une figure générale est réalisé
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
+lines!(ax, 1:tick, PopulationRestant, label="agent encore vivant", color=:grey)
 stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
 stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
-stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:yellow)
+stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:blue)
 stairs!(ax, 1:tick, mort, label="mort", color=:black)
 stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
 current_figure()
 
-# **Figure 1:** Courbes de suivi de la taille des populations des agents sains mais 
+# **Figure 1:** Courbes de suivi de la taille des populations. Des agents sains mais 
 # encore à risque, des infectés, des morts, des agents malade detecté et des agents 
 # guéri par le vaccin. 
 
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="Génération", ylabel="taille population")
-lines!(ax, 1:tick, S, label="mort", color=:black)
-axislegend(ax)
-current_figure()
-
-# **Figure 2:** Courbe de l'évolution de la taille de la population au fils 
-# des génération.
-
+# Pour mieux voir comment l'infection est distribuée au cours du temps
+# et son influence sur la mortalité enregistré, l'échelle des axes y est adapté
 
 f = Figure()
-ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
-lines!(ax, 1:tick, test_positif, label="Malade détecté", color=:blue)
-lines!(ax, 1:tick, retabli, label="rétabli", color=:green)
-axislegend(ax)
-current_figure()
+ax = Axis(f[2, 1]; xlabel="génération", ylabel="Nombre de mort")
+ax1 = Axis(f[1, 1]; ylabel="Nombre d'infectieux")
+lines!(ax1, 1:tick, I, label="Infectieux", color=:red)
+lines!(ax, 1:tick, mort, label="mort", color=:black)
+f
 
-# **Figure 3:** Courbes du nombre d'agents malades détéctés 
-# et du nombre d'agent avec un vaccin actif au fil des générations.
+# **Figure 2:** Courbe du nombre de mort et infectieux en fonction du temps.
+
+# On s'interresse maintenent à la facon dont la maladie se propage,
+# poour savoir si un seul malade contamine plusieurs personnes saines ou peu 
+# on réalise la figure suivante. Ce graphique nous permettra d'avoir une idée  
+# de comment s'est propagée l'épidémie.
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
 scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
 f
 
-# **Figure 4:** Courbe du nombre d'agent infectieux en fonction du nombre
+# **Figure 3:** Courbe du nombre d'agent infectieux en fonction du nombre
 # d'agent qu'ils infectent.
 
-# => en moyenne les agents contaminent 10 autres personnes. 
-# (distribution normale)
+# Comme la révision des dépenses présente des cout investie dans la vaccination 
+# la figure suivante permettra le nombre de tests effectué au cours des
+# générations et combien de vaccins sont activé au fil du temps.
 
 f = Figure()
-ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de mort")
-lines!(ax, 1:tick, mort, label="mort", color=:black)
-f
-
-# **Figure 5:** Courbe du nombre de mortalité en fonction du temps.
-
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="génération", ylabel="Nombre de test")
+ax = Axis(f[1, 1]; ylabel="Nombre de test")
+ax1 = Axis(f[2, 1]; xlabel="générations", ylabel="activation de vaccin")
 scatterlines!(ax, [get(dico_test,i , 0) for i in Base.OneTo(maximum(keys(dico_test)))], color=:black)
+scatterlines!(ax1, [get(dico_protegee, i, 0) for i in Base.OneTo(maximum(keys(dico_protegee)))], color=:black)
 f
 
-# **Figure 6:** Courbe de suivi des tests effectués.
+# **Figure 4:** Courbe de suivi des tests effectués et des vaccins activés.
 
-nb_sauvé = countmap(values(dico_protegee))
-f = Figure()
-ax = Axis(f[1, 1]; xlabel="générations", ylabel="nombre de vaccin")
-scatterlines!(ax, [get(dico_protegee, i, 0) for i in Base.OneTo(maximum(keys(dico_protegee)))], color=:black)
-f
-
-# **Figure 6:** Suivi du nombre d'agent vacciné.
-
-# ## Hotspots
+# #### Hotspots
 # Nous allons nous intéresser maintenant à la propagation spatio-temporelle de
 # l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
-# position de chaque infection, puis les représenter dans un graphique:
+# position de chaque infection et mort, puis les représenter dans un graphique:
 
 t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
@@ -977,7 +1013,12 @@ Colorbar(f[1, 2], hm, label="Time of infection")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 8:** Propagation spatio-temporelle de l'infection.
+# **Figure 5:** Propagation spatio-temporelle de l'infection.
+
+# Il est également possible de suivre la position spatio-temporelle de la mort 
+# des agents infecté afin de les comparers avec les évènements d'infection et avoir
+# une idée de si les agents meurt au même endroit ou s'ils bougent beaucoup avant de
+# périre.
 
 quand = [jour.time for jour in qui_meurt];
 ou = [(jour.x, jour.y) for jour in qui_meurt];
@@ -989,7 +1030,11 @@ Colorbar(f[1, 2], hm, label="Time of death")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 9:** Suivi spatio-temporel des évenèments de mort.
+# **Figure 6:** Suivi spatio-temporel des évenèments de mort.
+
+# Étant donné que plusieurs tests ont été réalisé, il est important de voir 
+# où et à quel moment ils ont été fait. Cela permetterait de mieux évaluer
+# si les choix aléatoire ont bien réussi à tomber sur des cas infectieux ou pas.
 
 date_test = [ag_test.time for ag_test in agent_teste];
 endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
@@ -1001,7 +1046,12 @@ Colorbar(f[1, 2], hm, label="Time of test")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 10:** Suivi spatio-temporel des test effectués
+# **Figure 7:** Suivi spatio-temporel des test effectués
+
+# Enfin, pour avoir une idée plus clair sur si les tests ont pu cibler des infections 
+# ou pas, la figure avec les tests réalisé est suppérposé à celle avec les cas d'infection.
+# Si le point test est de la meme couleur que le fond, il y a de forte chance que ce test 
+# soit positif et detecte la maladie.
 
 t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
@@ -1012,14 +1062,447 @@ f = Figure()
 ax1 = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
 hm1 = scatter!(ax1, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=10)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=20)
 Colorbar(f[1, 2], hm, label="Time")
 hidedecorations!(ax)
 current_figure()
 
-# **Figure 10:** Suivi spatio-temporel des test effectués superposé
+# **Figure 8:** Suivi spatio-temporel des test effectués superposé
 # au évènements d'inection.
 
+# ### Simulation 2 
+
+# #### Réinitialisation des variables
+# Afin de pouvoir retester la simulation pour voir si la stratégie choisi donne 
+# les mêmes résultats à chaque fois, il est important de remettre les compteurs 
+# au même point de départ (exception pour le Random.seed vu que c'est cet aléatoir 
+# qui est recherché).
+
+budget_initiale = 21000
+cout_vaccin = 17
+cout_test = 4
+sum_vacc_prix = 0
+sum_rat_prix = 0
+
+# Recréation de fiches suivis vides
+
+events = InfectionEvent[]
+qui_meurt = MortEvent[]
+protegee = ProtectionEvent[]
+agent_teste = TestEvent[]
+positif_test = TestPositif[]
+
+# exécution de la simulation
+
+S,I, PopulationRestant, retabli, mort = simulation();
+
+# #### Série temporelle
+# Les séries temporelles sont encore coupés à la dernière génération:
+
+S = S[1:tick];
+I = I[1:tick];
+mort = mort[1:tick];
+retabli = retabli[1:tick];
+test_positif = test_positif[1:tick];
+PopulationRestant = PopulationRestant[1:tick];
+
+# #### Nombre de cas par individu infectieux
+# Observation de la distribution du nombre de cas créés par chaque
+# individus.
+
+infxn_by_uuid = countmap([event.from for event in events]);
+
+# On compte également combien de personne meurt et combien sont protégés 
+# par le vaccin encore :
+
+dico_mort = countmap([corp.time for corp in qui_meurt]);
+dico_test = countmap([rat.time for rat in agent_teste]);
+dico_protegee = countmap([gueri.time for gueri in protegee]);
+
+# À combien de génération il y a eu une activation du vaccin et protection des agents :
+
+length(dico_protegee)
+
+# Combien de fois chaque nombre d'infections apparaît :
+
+nb_inxfn = countmap(values(infxn_by_uuid))
+
+# affichage des informations pertinantes :
+
+println("Le nombre d'agent encore vivant est ", length(population))
+println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
+println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
+println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
+
+# Figure globale de l'évolution des populations :
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
+lines!(ax, 1:tick, PopulationRestant, label="agent encore vivant", color=:grey)
+stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
+stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
+stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:blue)
+stairs!(ax, 1:tick, mort, label="mort", color=:black)
+stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
+axislegend(ax)
+current_figure()
+
+# **Figure 9:** Courbes de suivi de la taille des populations des agents sains mais 
+# encore à risque, des infectés, des morts, des agents malade detecté et des agents 
+# guéri par le vaccin. 
+
+# De nouveau on voudrais savoir la moyenne de contamination par agent :
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
+scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
+f
+
+# **Figure 10:** Courbe du nombre d'agent infectieux en fonction du nombre
+# d'agent qu'ils infectent.
+
+# Pour voir s'il y a des changement dans l'évolution de l'infection / mort
+# la figure suivante est réalisé 
+
+f = Figure()
+ax = Axis(f[2, 1]; xlabel="génération", ylabel="Nombre de mort")
+ax1 = Axis(f[1, 1]; ylabel="Nombre d'infectieux")
+lines!(ax1, 1:tick, I, label="Infectieux", color=:red)
+lines!(ax, 1:tick, mort, label="mort", color=:black)
+f
+
+# **Figure 11:** Courbe du nombre de mort et infectieux en fonction du temps.
+
+# Étant donné qu'aucun agent n'a été protégé, on étudira uniquement
+# le nombre de tests effectué :
+
+f = Figure()
+ax = Axis(f[1, 1]; ylabel="Nombre de test")
+scatterlines!(ax, [get(dico_test,i , 0) for i in Base.OneTo(maximum(keys(dico_test)))], color=:black)
+f
+
+# **Figure 12:** Courbe de suivi des tests effectués et des vaccins activés.
+
+# #### Hotspots
+# Propagation spatio-temporelle de l'épidémie et des tests effectués:
+
+t = [event.time for event in events];
+pos = [(event.x, event.y) for event in events];
+date_test = [ag_test.time for ag_test in agent_teste];
+endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
+
+f = Figure()
+ax1 = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm1 = scatter!(ax1, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize = 6)
+ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize = 20)
+Colorbar(f[1, 2], hm, label="Time")
+hidedecorations!(ax)
+current_figure()
+
+# **Figure 13:** Suivi spatio-temporel des test effectués superposé
+# au évènements d'inection.
+
+# Suivi spatio-temporel des évenèments de decès :
+
+quand = [jour.time for jour in qui_meurt];
+ou = [(jour.x, jour.y) for jour in qui_meurt];
+
+f = Figure()
+ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm = scatter!(ax, ou, color=quand, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
+Colorbar(f[1, 2], hm, label="Time of death")
+hidedecorations!(ax)
+current_figure()
+
+# **Figure 14:** Suivi spatio-temporel des évenèments de mort.
+
+# ### Simulation 3 
+# ####Réinitialisation
+# De nouveau on remet tout au point 0 :
+# Variables
+
+budget_initiale = 21000
+cout_vaccin = 17
+cout_test = 4
+sum_vacc_prix = 0
+sum_rat_prix = 0
+
+# Les évenements
+
+events = InfectionEvent[]
+qui_meurt = MortEvent[]
+protegee = ProtectionEvent[]
+agent_teste = TestEvent[]
+positif_test = TestPositif[]
+
+# Simulation 
+
+S,I, PopulationRestant, retabli, mort = simulation();
+
+# #### Série temporelle
+# Découpage des séries temporelles à la dernière génération:
+
+S = S[1:tick];
+I = I[1:tick];
+mort = mort[1:tick];
+retabli = retabli[1:tick];
+test_positif = test_positif[1:tick];
+PopulationRestant = PopulationRestant[1:tick];
+
+# Nombre d'infection par agent :
+
+infxn_by_uuid = countmap([event.from for event in events]);
+
+
+# Nombre d'individus infectieux total:
+
+length(infxn_by_uuid)
+
+# On compte également combien de personne meurt et combien sont protégés par le vaccin 
+
+dico_mort = countmap([corp.time for corp in qui_meurt]);
+dico_protegee = countmap([gueri.time for gueri in protegee]);
+dico_test = countmap([rat.time for rat in agent_teste]);
+
+# À combien de génération il y a eu une activation de vaccin :
+
+length(dico_protegee)
+
+# Combien de fois chaque nombre d'infections apparaît:
+
+nb_inxfn = countmap(values(infxn_by_uuid));
+
+# affichage des informations pertinantes :
+
+println("Le nombre d'agent encore vivant est ", length(population))
+println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
+println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
+println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
+
+# Figure globale pour voir s'il y a du changement dans la composition des populations.
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
+lines!(ax, 1:tick, PopulationRestant, label="agent encore vivant", color=:grey)
+stairs!(ax, 1:tick, S, label="Susceptibles", color=:orange)
+stairs!(ax, 1:tick, I, label="Infectieux", color=:red)
+stairs!(ax, 1:tick, test_positif, label="Malade détecté", color=:blue)
+stairs!(ax, 1:tick, mort, label="mort", color=:black)
+stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
+axislegend(ax)
+current_figure()
+
+# **Figure 15:** Courbes de suivi de la taille des populations des agents sains mais 
+# encore à risque, des infectés, des morts, des agents malade detecté et des agents 
+# guéri par le vaccin. 
+
+# Figure de nombre de transmission moyenne :
+
+f = Figure()
+ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
+scatterlines!(ax, [get(nb_inxfn, i, 0) for i in Base.OneTo(maximum(keys(nb_inxfn)))], color=:black)
+f
+
+# **Figure 16:** Courbe du nombre d'agent infectieux en fonction du nombre
+# d'agent qu'ils infectent.
+
+# Comparaison entre les évènements d'infection et de mort :
+
+f = Figure()
+ax = Axis(f[2, 1]; xlabel="génération", ylabel="Nombre de mort")
+ax1 = Axis(f[1, 1]; ylabel="Nombre d'infectieux")
+lines!(ax1, 1:tick, I, label="Infectieux", color=:red)
+lines!(ax, 1:tick, mort, label="mort", color=:black)
+f
+
+# **Figure 17:** Courbe du nombre de mort et infectieux en fonction du temps.
+
+# #### Hotspots
+# Propagation spatio-temporelle de l'épidémie et des tests effectués :
+
+t = [event.time for event in events];
+pos = [(event.x, event.y) for event in events];
+date_test = [ag_test.time for ag_test in agent_teste];
+endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
+
+f = Figure()
+ax1 = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm1 = scatter!(ax1, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
+ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=19)
+Colorbar(f[1, 2], hm, label="Time")
+hidedecorations!(ax)
+current_figure()
+
+# **Figure 18:** Suivi spatio-temporel des test effectués superposé
+# au évènements d'inection.
+
+# # Analyse des résultats
+
+# Au début de la simulaton la population est composé de **3750 agents**.
+
+# ## _Avant l'intervention pour controler la maladie_ :
+
+# **1730** évènements d'infection se sont produit,
+
+# **2894** agents meurt 
+
+# et la population finale contient **856** agents encore
+# vivant.
+
+# ## _Après l'intervention_ :
+# ### Simulation 1 :
+
+# Après l'application de la stratégie de tests aléatoires et de vaccin ciblé,
+# La taille de la population finale obtenue est de **792** agents uniquement.
+# Avec **2959** individus infecté au total.
+
+# Le budget est initialement fixé à 21000$ est épuisé,
+# laissant uniquement 9$ dans le porte-feuille. Le suivi des dépenses montre 
+# que l'argent est presque totalement déboursé dans les tests RAT et peu dans
+# les vaccins, avec 20940$ alloué aux tests contre uniquqment 51$ pour les vaccins.
+
+# L'examination des courbes dans la Figure 1, montre que l'évolution de 
+# la population d'agent naïf au cours du temps est représenté par 
+# une sigmoïde. Après un léger delais, la taille de cette population
+# commence à décroitre de plus en plus rapidement au fil du temps jusqu'à environ 
+# la 250 ème génération où la vitesse de décroissance diminue peu à peu. 
+# Enfin, la taille de ce goupe se stabiliser plus ou moins au delas de la 670 ème génération à 792 agents.
+# Simultanément au début de la baisse du nombre d'agent susceptibles, une 
+# augmentation dans la population d'agent infectieux est noté. Le nombre d'individus
+# malade continue d'augmenter jusqu'à atteindre un maximum vers environ la 250ème génération.
+# Après, la taille des infectieux continue de fluctuer en baissant jusqu'à atteindre 0, signant la 
+# fin de la simulation. 
+
+# Cette figure montre également que la taille de la population d'agent
+# encore vivant suit la même tendance que la courbe des agents suceptibles. 
+# On note cependant un léger décalage entre les deux courbes, la 
+# population totale contenant un peu plus d'agents au milieu de la simulation.
+# Cette difference de taille étant minime voir nulle, au début et à
+# la fin de la simulation.
+
+# L'évolution de la taille de la population totale d'agent toujours vivant suit 
+# également une sigmoide, le nombre d'agents commençant à baisser après un delais 
+# et atteignant un plateau à la fin de la simulation.
+
+# D'autres courbes suivant les autres groupes d'agents sont présent dans
+# la figure, mais ont une amplitude très faible voir nulle.
+
+# L'augmentation de l'échelle dans la Figure 2 permet le suivi du nombre de mort
+# plus clairement. La courbe de la population morte est polymodale. Elle présente
+# une importante fluctuation au cours du temps,
+# mais vers la 250ème generation un pic plus important de décès est noté, atteignant
+# presque 30 morts, suivi d'un second pic mais ayant une amplitude moins importante. 
+
+# La courbe suit la même tendance que la courbe d'individus infectieux,
+# qui a également plusieurs modes locaux et un maximum global vers 
+# la 250ème génération. Le nombre d'infection atteignent presque les 300 agents
+# à ce moment. 
+
+# Ensuite, la courbe de la Figure 3 possède une distribution normale, et
+# l'analyse du nombre de contagiant par agent montre qu'en effet une grande partie
+# des agents malades (un peu plus de 400) contaminent 9-11 autres personnes. 
+
+# De plus, la Figure 4 montre que les tests sont effectués durant 4 générations uniquement.
+# Plus de 4000 tests sont effectués en une fois (pic à la génération 21)
+# puis à la génération suivante le nombre baisse drastiquement en dessous de 1000. 
+# Le suivi des individus protégés par le vaccin montre aussi que rien ne se passe avant la
+# génération 26, où 3 agents ont eu leurs vaccins activés.
+
+# La Figure 5 montre que l'infection s'est déclanché dans la partie 
+# centrale de la moitié supérieur de la lattice (couleur plus foncé).
+# Puis, il s'est propagée de proche en proche de 
+# façon circulaire jusqu'à atteindre le bord inférieur de la lattice.
+
+# Ensuite, la Figure 6 montre les évènements de mort suivent le même patron de 
+# propagation que celui des infections (points de la même
+# couleur présent au même endroits). Cependant,
+# les points sont plus espacés sur la lattice.
+
+# Le suivi spatio-temporel des tests effectués (Figure 7),
+# montre que les testes sont effectués un peu partout sur la lattice
+# mais à des moments différents, laissant certaines zones non échantilloné.
+# Par exemple à la génération 25, un seul point est présent dans le 
+# coin gauche supérieur de la lattice.
+
+# De plus, la Figure 8 montre que très peu de tests sont effectués 
+# au même endroit et moment que les foyers d'infection.
+
+# ### Réplication de la simulation :
+
+# La répétition de la simulation montre que tout le budget 
+# a été investi dans des tests dans les simulations 2 et 3,
+# laissant uniquement 4$ à la fin. 
+
+# La taille finale de la population varie avec **783 agents** dans la 
+# simulation 2 et **974 agents** toujours vivant dans la dernière simulation.
+
+# _Dans la seconde simulation_ 
+
+# Les courbes de la Figure 9 montrent que la baisse du nombre total
+# d'agent est plutôt linéaire dans l'ensemble.
+# Le nombre d'infections augmente également de façon linéaire, 
+# même si la pente de sa courbe est faible. On peut voir qu'à environ  
+# la génération 450, le nombre d'infectieux chute rapidement et n'augmente
+# plus de manière notable.
+
+# L'examination de la Figure 10 montre 
+# que la courbe de contamination suit une loi normale, avec un mode 
+# de 10 contaminations par agent infectieux. 
+
+# Le suivi des évènements de décès par comparaison aux infections (Figure 11)
+# montre que la mortalité suit la tendance globale des infections, avec
+# une plus grande variabilité et fluctuation dans le nombre d'agents ressencé.
+
+# Aussi, le nombre de tests effectué (Figure 12) reste le même que celui présenté
+# à la Figure 4, mais cette fois aucun vaccins ne s'est activé (étant 
+# donnée qu'aucun vaccin n'est fait).
+
+# À la Figure 13, il est possible de voir que l'épidémie
+# s'est déclaré dans le coin gauche de la partie inférieur de 
+# la lattice, puis s'est propagée de façon circulaire 
+# jusqu'au coin opposé. La superposition des tests effectués
+# sur cette lattice montre qu'aucun n'a la même couleur que 
+# le fond sur lequel il est positionné.
+
+# Encore une fois, le suivi des évenèments de mort (Figure 14)
+# montre comme à la Figure 6, des points plus ou moins 
+# espacés entre eux et ayant les mêmes couleurs (temps de l'enregistrement)
+# que les évenements d'infections associés.
+
+# _Dans la troisième simulation_ 
+
+# La figure globale de taille des population (Figure 15)
+# montre que la baisse du nombre global de la population 
+# est plus linéaire avec de léger fluctuation, par exemple 
+# début de stabilisation de la taille un peu
+# avant la génération 200.
+
+# Dans cette figure, le nombre d'agents infectieux 
+# est polymodale, une première augmentation puis baisse 
+# est noté entre la generation 0 et 150. D'autres 
+# pics sont notés avec un maximum d'infectieux vers 
+# les générations 300.
+
+# La Figure 16 montre que la propagation de la maladie
+# dans cette simulation est une courbe unimodale, où
+# plus de 400 agents infectieux contamine environ 10 personnes
+# saines chacun. 
+
+# Ensuite, les courbes dans la Figure 17, fluctuent beaucoup au 
+# fils des générations. Plusieurs modes sont présents,
+# avec un pic plus important entre les générations 200 et 400.
+# Une baisse des infections et presque éradication de la mortalité
+# est noté vers la génération 150, mais cette baisse est suivi 
+# d'une augmentaion rapide en escalier des infections puis décès.
+
+# Enfin à la Figure 18, il est possible de voir que l'infection s'été
+# déclanché en bas de la lattice, et que le dernier endroit
+# touché été le coin supérieur à droit.
+# Les points tests montre que plusieurs endroits n'ont pas été 
+# échantillonés, et que les tests ne se sont pas fait tout au long
+# de la simulation, mais à peu de générations bien spécifiques.
 
 # # Discussion
 
