@@ -1305,9 +1305,9 @@ endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
 
 f = Figure()
 ax1 = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm1 = scatter!(ax1, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
+hm1 = scatter!(ax1, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize = 6)
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=10)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize = 20)
 Colorbar(f[1, 2], hm, label="Time")
 hidedecorations!(ax)
 current_figure()
@@ -1460,73 +1460,10 @@ f
 # que le nombre de mort restant inférieur à 30 agents. Le nombre de mort est
 # donc 10 fois plus faible que le nombre d'infection. 
 
-f = Figure()
-ax = Axis(f[1, 1]; ylabel="Nombre de test")
-ax1 = Axis(f[2, 1]; xlabel="générations", ylabel="activation de vaccin")
-scatterlines!(ax, [get(dico_test,i , 0) for i in Base.OneTo(maximum(keys(dico_test)))], color=:black)
-scatterlines!(ax1, [get(dico_protegee, i, 0) for i in Base.OneTo(maximum(keys(dico_protegee)))], color=:black)
-f
-
-# **Figure 4:** Courbe de suivi des tests effectués et des vaccins activés.
-
-# La courbe 6 montre que les tests sont effectué durant 4 générations uniquement.
-# Plus de 4000 tests sont effectués en une fois (pic à la génération 21)
-# puis à la génération suivante le nombre baisse drastiquement en dessous de 1000. 
-
-# Le suivi des individus protégés par le vaccin montre que rien ne se passe avant la
-# génération 26, où 3 agents ont eu leurs vaccins activés.
-
 # ## Hotspots
 # Nous allons nous intéresser maintenant à la propagation spatio-temporelle de
 # l'épidémie. Pour ceci, nous allons extraire l'information sur le temps et la
 # position de chaque infection et mort, puis les représenter dans un graphique:
-
-t = [event.time for event in events];
-pos = [(event.x, event.y) for event in events];
-
-f = Figure()
-ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm = scatter!(ax, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
-Colorbar(f[1, 2], hm, label="Time of infection")
-hidedecorations!(ax)
-current_figure()
-
-# **Figure 5:** Propagation spatio-temporelle de l'infection.
-
-# La figure 8 montre que l'infection s'est déclanché dans la partie 
-# centrale de la moitié supérieur de la lattice. Puis, s'est propagée de proche en proche de 
-# façon cerculaire jusqu'à atteindre le bord inferieur de la lattice.
-
-quand = [jour.time for jour in qui_meurt];
-ou = [(jour.x, jour.y) for jour in qui_meurt];
-
-f = Figure()
-ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm = scatter!(ax, ou, color=quand, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
-Colorbar(f[1, 2], hm, label="Time of death")
-hidedecorations!(ax)
-current_figure()
-
-# **Figure 6:** Suivi spatio-temporel des évenèments de mort.
-
-# La figure 9 montre les evènements de mort suivent le même patron de 
-# propagation que les infections. Cependant, les morts ont une densité
-# moins importante que les infections.
-
-date_test = [ag_test.time for ag_test in agent_teste];
-endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
-
-f = Figure()
-ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(20, 26), markersize=20)
-Colorbar(f[1, 2], hm, label="Time of test")
-hidedecorations!(ax)
-current_figure()
-
-# **Figure 7:** Suivi spatio-temporel des test effectués
-
-# Cette figure montre que les testes sont fait un peu partout sur la lattice
-# mais à des moments différents, laissant certaines zones non échantilloné.
 
 t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
@@ -1537,7 +1474,7 @@ f = Figure()
 ax1 = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
 hm1 = scatter!(ax1, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=10)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=19)
 Colorbar(f[1, 2], hm, label="Time")
 hidedecorations!(ax)
 current_figure()
