@@ -1081,8 +1081,6 @@ current_figure()
 
 # ### Simulation 2 ##################################################################
 
-Random.seed!(100)
-
 budget_initiale = 21000
 cout_vaccin = 17
 cout_test = 4
@@ -1360,6 +1358,30 @@ mort = mort[1:tick];
 retabli = retabli[1:tick];
 test_positif = test_positif[1:tick];
 PopulationRestant = PopulationRestant[1:tick];
+
+infxn_by_uuid = countmap([event.from for event in events]);
+
+# La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
+# nombre de fois ou il apparaît:
+# Notez que ceci nous indique combien d'individus ont été infectieux au total:
+
+length(infxn_by_uuid)
+
+# On compte également combien de personne meurt et combien sont protégés par le vaccin 
+
+dico_mort = countmap([corp.time for corp in qui_meurt]);
+dico_protegee = countmap([gueri.time for gueri in protegee]);
+dico_test = countmap([rat.time for rat in agent_teste]);
+
+# À combien de génération il y a eu une intervention pour tester les agents :
+
+length(dico_test)
+
+# Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
+# utiliser `countmap` une deuxième fois:
+
+nb_inxfn = countmap(values(infxn_by_uuid))
+
 
 println("Le nombre d'agent encore vivant est ", length(population))
 println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
