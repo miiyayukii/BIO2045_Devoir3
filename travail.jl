@@ -1137,7 +1137,7 @@ current_figure()
 # # Conclusion
 
 # En conclusion, cette étude montre que la stratégie ciblée de dépistage et de vaccinaation n'a pas permis
-# de contrôler efficacement la propagation de la maladie dans le contexte simulé, et doc ne soutient pas 
+# de contrôler efficacement la propagation de la maladie dans le contexte simulé, et donc ne soutient pas 
 # l'hypothèse initiale. Malgré l'implémentation de cette stratégie, les niveaux de transmission et mortalité
 # restent élevées, en raison notamment d'un dépistage insuffisant et d'une couverture vaccinale très limitée,
 # qui ne permet pas d'arrêter les chaînes de transmission. Les résultats mettent également en évidence l'importance
