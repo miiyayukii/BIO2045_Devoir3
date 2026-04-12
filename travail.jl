@@ -627,6 +627,7 @@ function group_vaccin(positif, time, pop)
         end
     end
 end
+
 # ## Paramètres initiaux
 # ### Variables
 
@@ -653,7 +654,7 @@ end
 
 Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population avec $(length(p)) agents")
 
-# Mais nous allons aussi stocker tous les évènements importants pendant la
+# Nous allons aussi stocker tous les évènements importants pendant la
 # simulation, dans des types immutables :
 
 # Évenements d'infection
@@ -702,15 +703,28 @@ struct TestEvent
     y::Int64
 end
 
+# On crée les variable de ces types qu'on 
+# va remplir dans la simulation. Ces variables sont comme des fiches
+# qui permettront de tracer l'histoire de ce qui est arrivé dans la simulation. 
+
 events = InfectionEvent[]
 qui_meurt = MortEvent[]
 protegee = ProtectionEvent[]
 agent_teste = TestEvent[]
 positif_test = TestPositif[]
 
+"""
+    simulation()
+Cette fonction execute la simulation. Toute la première partie est l'initialtion des 
+paramètres et la seconde partie est le déroulement de la simulation.
+Ce type d'ordre permet une réplication de la simulation sans réécriture de toute la partie initiation à 
+chaque fois. A la fin, la fonction renvoi les vécteurs de populations qui se sont crée.
+"""
 function simulation()
 
-    ## Et on génère notre population initiale:
+    ## _Initiation_ :
+
+    ## On génère notre population initiale:
 
     population = Population(L, 3750)
 
@@ -751,15 +765,13 @@ function simulation()
 
     nb_tirage = 900
 
-    ## Simulation
+    ## _Simulation_ :
 
     ## La simulation continue de tourner simulant le temps qui passe (un pas de temps
     ## = une generation) La simulation s'arrête si on atteint le nombre max de
     ## génération, ou si le nombre d'infecté devient nul, signifier la fin de
     ## l'épidémie. (possible par la mort des agents avant une nouvelle contagiant ou
     ## l'éradication de la maladie grâce aux vaccins)
-
-
 
     ## On spécifie que nous utilisons les variables définies plus haut
 
