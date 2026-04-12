@@ -1128,9 +1128,9 @@ current_figure()
 # et l'intensité des zones d'infection varient d'une simulation à l'autre, malgré une propagation comparable.
 # Biologiquement, cela traduit le fait que la propagation d'une maladie dépend fortement des mouvements individuels 
 # et des contacts locaux, qui peuvent coréer des zones d'infections distinctes dans l'espace @findlater2018human. 
-# Donc, même en présence de paramètres indentiques, les dynamiques locales peuvent varier en fonction des
+# Donc, même en présence de paramètres identiques, les dynamiques locales peuvent varier en fonction des
 # interactions aléatoires entre individus, ce qui influence la formation et la dispersion des zones de 
-# tranmission.
+# transmission.
 
 
 # # Conclusion
