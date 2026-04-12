@@ -473,6 +473,7 @@ La fontion enregistre aussie le fait qu'on ait fait un test et si le test est po
 function RAT!(agent::Agent, moment)
 
     ## frais du test
+    ## et enregistrement du test
 
     finance!(false)
     push!(agent_teste, TestEvent(moment, agent.id, agent.x, agent.y))
@@ -621,15 +622,14 @@ function group_vaccin!(positif, time, pop)
         ## que les individus positif (zone à risque)
 
         personnes = incell(infecte, pop)
-        for p in personnes
+        for person in personnes
 
             ## Si l'individu n'est pas encore vacciné,
             ## on le vaccine s'il y a assez d'argent dans le budget
 
-            if (nonvaccinee(p)) & (budget_initiale >= cout_vaccin)
-                vaccinate!(p, time)
+            if (nonvaccinee(person)) & (budget_initiale >= cout_vaccin)
+                vaccinate!(person, time)
             end
-
         end
     end
     return nothing
