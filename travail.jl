@@ -1208,13 +1208,21 @@ current_figure()
 
 # ### Simulation 3 #######################################################
 
+# Pour cette dernière simulation on redéfini un nouveau point de depart 
+
 Random.seed!(100)
+
+# ### Réinitialisation
+# De nouveau on remet tout au point 0 :
+# #### Variables
 
 budget_initiale = 21000
 cout_vaccin = 17
 cout_test = 4
 sum_vacc_prix = 0
 sum_rat_prix = 0
+
+# #### evenements
 
 events = InfectionEvent[]
 qui_meurt = MortEvent[]
@@ -1224,9 +1232,8 @@ positif_test = TestPositif[]
 
 S,I, PopulationRestant, retabli, mort = simulation();
 
-# ### Série temporelle
-# Avant toute chose, nous allons couper les séries temporelles au moment de la
-# dernière génération:
+# #### Série temporelle
+# Découpage des séries temporelles à la dernière génération:
 
 S = S[1:tick];
 I = I[1:tick];
@@ -1235,11 +1242,12 @@ retabli = retabli[1:tick];
 test_positif = test_positif[1:tick];
 PopulationRestant = PopulationRestant[1:tick];
 
+#
+
 infxn_by_uuid = countmap([event.from for event in events]);
 
-# La commande `countmap` renvoie un dictionnaire, qui associe chaque UUID au
-# nombre de fois ou il apparaît:
-# Notez que ceci nous indique combien d'individus ont été infectieux au total:
+
+# Nombre d'individus infectieux total:
 
 length(infxn_by_uuid)
 
@@ -1251,25 +1259,20 @@ dico_test = countmap([rat.time for rat in agent_teste]);
 
 # À combien de génération il y a eu une intervention pour tester les agents :
 
-length(dico_test)
+length(dico_protegee)
 
-# Pour savoir combien de fois chaque nombre d'infections apparaît, il faut
-# utiliser `countmap` une deuxième fois:
+# Combien de fois chaque nombre d'infections apparaît:
 
-nb_inxfn = countmap(values(infxn_by_uuid))
+nb_inxfn = countmap(values(infxn_by_uuid));
+
+# affichage des informations pertinantes :
 
 println("Le nombre d'agent encore vivant est ", length(population))
 println( "Ce qui reste du budget de 21 000 est : ", budget_initiale )
 println( "L'argent total dépensé dans des tests est:", sum_rat_prix )
 println( "L'argent total dépensé dans des vaccins est:", sum_vacc_prix )
 
-# Après l'application de la stratégie de tests aléatoirs et de vaccin ciblée,
-# La taille de la population finale obtenue est de **792** agents uniquement.
-
-# Et le budget initialement fixé à 21000$ est épuisé
-# laissant uniquement 9$ dans le porte-feuille. Le suivi des dépenses montre 
-# que l'argent est presque totalement déboursé dans les tests RAT et peu dans
-# les vaccins avec 20940$ alloué aux tests contre uniquqment 51$ pour les vaccins.
+# Figure globale pour voir s'il y a du changement dans la composition des populations.
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Génération", ylabel="Population")
@@ -1282,29 +1285,11 @@ stairs!(ax, 1:tick, retabli, label="rétabli", color=:green)
 axislegend(ax)
 current_figure()
 
-# **Figure 1:** Courbes de suivi de la taille des populations des agents sains mais 
+# **Figure 15:** Courbes de suivi de la taille des populations des agents sains mais 
 # encore à risque, des infectés, des morts, des agents malade detecté et des agents 
 # guéri par le vaccin. 
 
-# La Figure 1 montre des courbes de suivis du nombre d'individus dans différents type de groupement. 
-# L'évolution de la population d'agent naïf au cours du temps est représenté par 
-# une courbe sigmoïde. Après un léger delais, la taille de cette population
-# commence à décroitre de plus en plus rapidement au fil du temps jusqu'à environ 
-# la 250 ème génération où la vitesse de décroissance diminue peu à peu. 
-# Enfin, la taille de ce goupe se stabiliser plus ou moins au delas de la 670 ème générations à 792 agents.
-# Simultanément au début de la baisse du nombre d'agent susceptibles, une 
-# augmentation dans la population d'agent infectieux est noté. Le nombre d'individus
-# malade continue d'augmenter jusqu'à atteindre un maximum vers environ la 250ème génération.
-# Après, la taille de la population fluctue en baissant jusqu'à atteindre 0, signant la 
-# fin de la simulation.
-
-# L'évolution de la taille de la population totale d'agent toujours vivant suit 
-# également une sigmoide, le nombre d'agent commençant à baisser après un delais 
-# et atteignant un plateau à la fin de la simulation.
-
-# Les autres courbes présent dans la figure étant trop faible comparé aux
-# population infecté et Susceptibles, il faudrait une échelle plus grande
-# pour voir ce qui ce passe.
+# 
 
 f = Figure()
 ax = Axis(f[1, 1]; xlabel="Nombre d'infections", ylabel="Nombre d'agents")
