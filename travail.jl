@@ -1356,39 +1356,49 @@ current_figure()
 
 # Après l'application de la stratégie de tests aléatoirs et de vaccin ciblée,
 # La taille de la population finale obtenue est de **792** agents uniquement.
+# Avec **2959** individus infecté au total.
 
 # Et le budget initialement fixé à 21000$ est épuisé
 # laissant uniquement 9$ dans le porte-feuille. Le suivi des dépenses montre 
 # que l'argent est presque totalement déboursé dans les tests RAT et peu dans
 # les vaccins avec 20940$ alloué aux tests contre uniquqment 51$ pour les vaccins.
 
-# La Figure 1 montre des courbes de suivis du nombre d'individus dans différents type de groupement. 
-# L'évolution de la population d'agent naïf au cours du temps est représenté par 
-# une courbe sigmoïde. Après un léger delais, la taille de cette population
+# l'examination des courbes dans la figure 1, montre que l'évolution de 
+# la population d'agent naïf au cours du temps est représenté par 
+# une sigmoïde. Après un léger delais, la taille de cette population
 # commence à décroitre de plus en plus rapidement au fil du temps jusqu'à environ 
 # la 250 ème génération où la vitesse de décroissance diminue peu à peu. 
 # Enfin, la taille de ce goupe se stabiliser plus ou moins au delas de la 670 ème générations à 792 agents.
 # Simultanément au début de la baisse du nombre d'agent susceptibles, une 
 # augmentation dans la population d'agent infectieux est noté. Le nombre d'individus
 # malade continue d'augmenter jusqu'à atteindre un maximum vers environ la 250ème génération.
-# Après, la taille de la population fluctue en baissant jusqu'à atteindre 0, signant la 
-# fin de la simulation.
+# Après, la taille des infectieux continue de fluctuer en baissant jusqu'à atteindre 0, signant la 
+# fin de la simulation. 
+
+# Cette figure montre égalemnt que la taille de la population d'agent
+# encore vivant suit la meme tendance que la courbe des agents suceptible. 
+# On note cependant un léger décalage entre les deux coube, la 
+# population totale contenant un peu plus d'agent au milieu de la simulation.
+# Cette difference de taille étant minime voir nulle, au début et à
+# la fin de la simulation.
 
 # L'évolution de la taille de la population totale d'agent toujours vivant suit 
 # également une sigmoide, le nombre d'agent commençant à baisser après un delais 
 # et atteignant un plateau à la fin de la simulation.
 
-# Les autres courbes présent dans la figure étant trop faible comparé aux
-# population infecté et Susceptibles, il faudrait une échelle plus grande
-# pour voir ce qui ce passe.
+# D'autres courbes suivant les autres goupes d'agent sont présent dans
+# la figure mais ont une amplitude tès faible voir nulle.
 
-# La comparaison entre le nombre d'infection et le nombre de mort dans la 
-# figure 2 montre que la courbe représentant la population morte fluctue beaucoup
-# au cours du temps, mais qu'elle présente un pic plus import vers la 250ème generation. 
-# Suit la même tendance que la courbe d'individus infectieux mais avec une amplitude
-# moindre. Le nombre d'infection atteignant presque les 300 agents alors
-# que le nombre de mort restant inférieur à 30 agents. Le nombre de mort est
-# donc 10 fois plus faible que le nombre d'infection. 
+# L'augmentaiton de l'échelle dans la figure 2 permet le suivi du nombre de mort
+# plus clairement. La courbe de la population morte est polymodale. Elle présente
+# une importante fluctuation au cours du temps,
+# mais vers la 250ème generation un pic plus import de décès est noté atteignant
+# presque 30 morts, suivi d'un second pic mais ayant une amplitude moins importante. 
+
+# La courbe suit la même tendance que la courbe d'individus infectieux
+# qui a également plusieurs modes locaux et un maximum global vers 
+# la 250ème génération. Le nombre d'infection atteignant presque les 300 agents
+# à ce moment. 
 
 # La courbe de la figure 3 possède une distribution normale.
 # L'analyse du nombre de contagiant par agent montre qu'une grande partie
