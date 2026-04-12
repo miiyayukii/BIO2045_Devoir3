@@ -653,36 +653,6 @@ end
 
 Base.show(io::IO, ::MIME"text/plain", p::Population) = print(io, "Une population avec $(length(p)) agents")
 
-# Et on génère notre population initiale:
-
-population = Population(L, 3750)
-
-# Pour commencer la simulation, il faut identifier un cas index, que nous allons
-# choisir au hasard dans la population un agent qui devient malade :
-
-rand(population).infectious = true
-
-# Nous initialisons la simulation au temps 0, et nous allons la laisser se
-# dérouler au plus 2000 pas de temps:
-
-tick = 0
-maxlength = 2000
-
-# Pour étudier les résultats de la simulation, nous allons stocker la taille de
-# populations à chaque pas de temps,
-# 'S' pour les individus pas encore infecté donc naïf,
-# 'I' pour les agents malade, 'mort' pour les agents infectieux depuis plus de 21
-# jours, 'retabli' pour les agent ayant reçu un vaccin qui s'est activé après 2
-# générations, et 'test_positif' pour les agents testé avec le RAT et qui ont été
-# declarés malade : 
-
-S = zeros(Int64, maxlength);
-I = zeros(Int64, maxlength);
-PopulationRestant = zeros(Int64, maxlength);
-mort = zeros(Int64, maxlength);
-retabli = zeros(Int64, maxlength);
-test_positif = zeros(Int64, maxlength);
-
 # Mais nous allons aussi stocker tous les évènements importants pendant la
 # simulation, dans des types immutables :
 
@@ -696,8 +666,6 @@ struct InfectionEvent
     y::Int64
 end
 
-events = InfectionEvent[]
-
 # Évènement de mort
 
 struct MortEvent
@@ -706,8 +674,6 @@ struct MortEvent
     x::Int64
     y::Int64
 end
-
-qui_meurt = MortEvent[]
 
 # Évenements d'activation de vaccin
 
@@ -718,7 +684,14 @@ struct ProtectionEvent
     y::Int64
 end
 
-protegee = ProtectionEvent[]
+# Évenements de test positif
+
+struct TestPositif
+    time::Int64
+    who::UUIDs.UUID
+    x::Int64
+    y::Int64
+end
 
 # Évenements de test RAT
 
@@ -729,38 +702,64 @@ struct TestEvent
     y::Int64
 end
 
+events = InfectionEvent[]
+qui_meurt = MortEvent[]
+protegee = ProtectionEvent[]
 agent_teste = TestEvent[]
-
-# Évenements de test positif
-
-struct TestPositif
-    time::Int64
-    who::UUIDs.UUID
-    x::Int64
-    y::Int64
-end
-
 positif_test = TestPositif[]
 
-# On defini le nombre de personne qui seront testés : 'nb_tirage'.
-
-# Pour limiter la propagation de la maladie, 
-# on veut tester le plus de personnes possible pour avoir une idée de
-# la prévalence de la maladie, tout en ne dépassant pas
-# un budget fixé (environ la moitié du budget initiale) pour laisser assez
-# d'argent aux vaccins.
-
-nb_tirage = 900
-
-# ## Simulation
-
-# La simulation continue de tourner simulant le temps qui passe (un pas de temps
-# = une generation) La simulation s'arrête si on atteint le nombre max de
-# génération, ou si le nombre d'infecté devient nul, signifier la fin de
-# l'épidémie. (possible par la mort des agents avant une nouvelle contagiant ou
-# l'éradication de la maladie grâce aux vaccins)
-
 function simulation()
+
+    ## Et on génère notre population initiale:
+
+    population = Population(L, 3750)
+
+    ## Pour commencer la simulation, il faut identifier un cas index, que nous allons
+    ## choisir au hasard dans la population un agent qui devient malade :
+
+    rand(population).infectious = true
+
+    ## Nous initialisons la simulation au temps 0, et nous allons la laisser se
+    ## dérouler au plus 2000 pas de temps:
+
+    tick = 0
+    maxlength = 2000
+
+    ## Pour étudier les résultats de la simulation, nous allons stocker la taille de
+    ## populations à chaque pas de temps,
+    ## 'S' pour les individus pas encore infecté donc naïf,
+    ## 'I' pour les agents malade, 'mort' pour les agents infectieux depuis plus de 21
+    ## jours, 'retabli' pour les agent ayant reçu un vaccin qui s'est activé après 2
+    ## générations, et 'test_positif' pour les agents testé avec le RAT et qui ont été
+    ## declarés malade : 
+
+    S = zeros(Int64, maxlength);
+    I = zeros(Int64, maxlength);
+    PopulationRestant = zeros(Int64, maxlength);
+    mort = zeros(Int64, maxlength);
+    retabli = zeros(Int64, maxlength);
+    test_positif = zeros(Int64, maxlength);
+
+
+    ## On defini le nombre de personne qui seront testés : 'nb_tirage'.
+
+    ## Pour limiter la propagation de la maladie, 
+    ## on veut tester le plus de personnes possible pour avoir une idée de
+    ## la prévalence de la maladie, tout en ne dépassant pas
+    ## un budget fixé (environ la moitié du budget initiale) pour laisser assez
+    ## d'argent aux vaccins.
+
+    nb_tirage = 900
+
+    # ## Simulation
+
+    ## La simulation continue de tourner simulant le temps qui passe (un pas de temps
+    ## = une generation) La simulation s'arrête si on atteint le nombre max de
+    ## génération, ou si le nombre d'infecté devient nul, signifier la fin de
+    ## l'épidémie. (possible par la mort des agents avant une nouvelle contagiant ou
+    ## l'éradication de la maladie grâce aux vaccins)
+
+
 
     ## On spécifie que nous utilisons les variables définies plus haut
 
@@ -865,7 +864,7 @@ function simulation()
     return S, I, PopulationRestant, retabli, mort
 end
 
-simulation();
+S,I, PopulationRestant, retabli, mort = simulation();
 
 # ### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
@@ -1087,28 +1086,13 @@ cout_test = 4
 sum_vacc_prix = 0
 sum_rat_prix = 0
 
-population = Population(L, 3750)
-rand(population).infectious = true
-
-S = zeros(Int64, maxlength);
-I = zeros(Int64, maxlength);
-PopulationRestant = zeros(Int64, maxlength);
-mort = zeros(Int64, maxlength);
-retabli = zeros(Int64, maxlength);
-test_positif = zeros(Int64, maxlength);
-
-tick = 0
-maxlength = 2000
-
-nb_tirage = 900
-
 events = InfectionEvent[]
 qui_meurt = MortEvent[]
 protegee = ProtectionEvent[]
 agent_teste = TestEvent[]
 positif_test = TestPositif[]
 
-simulation();
+S,I, PopulationRestant, retabli, mort = simulation();
 
 # ### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
@@ -1325,28 +1309,13 @@ cout_test = 4
 sum_vacc_prix = 0
 sum_rat_prix = 0
 
-population = Population(L, 3750)
-rand(population).infectious = true
-
-S = zeros(Int64, maxlength);
-I = zeros(Int64, maxlength);
-PopulationRestant = zeros(Int64, maxlength);
-mort = zeros(Int64, maxlength);
-retabli = zeros(Int64, maxlength);
-test_positif = zeros(Int64, maxlength);
-
-tick = 0
-maxlength = 2000
-
-nb_tirage = 900
-
 events = InfectionEvent[]
 qui_meurt = MortEvent[]
 protegee = ProtectionEvent[]
 agent_teste = TestEvent[]
 positif_test = TestPositif[]
 
-simulation();
+S,I, PopulationRestant, retabli, mort = simulation();
 
 # ### Série temporelle
 # Avant toute chose, nous allons couper les séries temporelles au moment de la
