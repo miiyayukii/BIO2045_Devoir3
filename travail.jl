@@ -1026,7 +1026,8 @@ current_figure()
 # **Figure 6:** Suivi spatio-temporel des évenèments de mort.
 
 # Étant donné que plusieurs tests ont été réalisé, il est important de voir 
-# où et à quel moment ils ont été fait. Cela permetterait 
+# où et à quel moment ils ont été fait. Cela permetterait de mieux évaluer
+# si les choix aléatoire ont bien réussi à tomber sur des cas infectieux ou pas.
 
 date_test = [ag_test.time for ag_test in agent_teste];
 endroit = [(ag_test.x, ag_test.y) for ag_test in agent_teste];
@@ -1040,8 +1041,10 @@ current_figure()
 
 # **Figure 7:** Suivi spatio-temporel des test effectués
 
-# Cette figure montre que les testes sont fait un peu partout sur la lattice
-# mais à des moments différents, laissant certaines zones non échantilloné.
+# Enfin, pour avoir une idée plus clair sur si les tests ont pu cibler des infections 
+# ou pas, la figure avec les tests réalisé est suppérposé à celle avec les cas d'infection.
+# Si le point test est de la meme couleur que le fond, il y a de forte chance que ce test 
+# soit positif et detecte la maladie.
 
 t = [event.time for event in events];
 pos = [(event.x, event.y) for event in events];
@@ -1052,16 +1055,13 @@ f = Figure()
 ax1 = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
 hm1 = scatter!(ax1, pos, color=t, colormap=:navia, strokecolor=:black, strokewidth=1, colorrange=(0, tick), markersize=6)
 ax = Axis(f[1, 1]; aspect=1, backgroundcolor=:grey97)
-hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=10)
+hm = scatter!(ax, endroit, color=date_test, colormap=:navia, strokecolor=:white, strokewidth=1, colorrange=(0, tick), markersize=20)
 Colorbar(f[1, 2], hm, label="Time")
 hidedecorations!(ax)
 current_figure()
 
 # **Figure 8:** Suivi spatio-temporel des test effectués superposé
 # au évènements d'inection.
-
-# La figure 8 montre que très peu de tests sont effectué 
-# au même endroit des foyers d'infection.
 
 # ### Simulation 2 ##################################################################
 
@@ -1506,6 +1506,11 @@ current_figure()
 # propagation que les infections. Cependant, les morts ont une densité
 # moins importante que les infections.
 
+# La figure 7 montre que les testes sont fait un peu partout sur la lattice
+# mais à des moments différents, laissant certaines zones non échantilloné.
+
+# La figure 8 montre que très peu de tests sont effectué 
+# au même endroit des foyers d'infection.
 
 # # Discussion
 
