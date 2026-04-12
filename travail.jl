@@ -1,5 +1,5 @@
 # ---
-# title: Dynamique épidémique et campagne de vaccination 
+# title: Devoir 3 : Dynamique épidémique et campagne de vaccination 
 # repository: tpoisot/BIO245-modele
 # auteurs:
 #    - nom: Ben Brahim
@@ -106,6 +106,7 @@
 # sur un nombre d'agents pris aléatoirement dans la population. Un test RAT détecte l'état de l'agent, soit 
 # infectieux ou non. Si l'agent est malade, le test RAT le déclare positif dans 95% des cas, 
 # et fait un faux négatif dans 5% des cas. Sans tests, il n'est pas possible de savoir qui est infecté.
+
 # Si le RAT est positif, l'agent malade est vacciné. La vaccination change l'état 'vacciné' de l'agent de faux
 # à vrai, et inscrit le jour de l'injection de la dose. Après 2 jours du vaccin, l'agent est guéri
 # (s'il est toujours vivant) et ne peut plus être contaminés même en présence d'autres agents malades.
@@ -113,10 +114,10 @@
 # Un budget_initiale est fixé, et chacun des vaccins et des tests a un coût qui est déduit de ce budget 
 # à chaque utilisation. Si une intervention est demandée et que le budget n'est pas suffisant,
 # un message est affiché pour indiquer quel traitement essaie d'être exécuter sans l'argent suffisant. Ce message permet
-# l'ajuster le code afin qu'une intervention soit réalisée uniquement si les fonds disponibles sont suffisants.
+# d'ajuster le code afin qu'une intervention soit réalisée uniquement si les fonds disponibles sont suffisants.
 
 # Les variations de la taille de la population, le budget restant ainsi que les évenèments de contaminations,
-# de mortalité et de protection sont présentés à la fin de la simulation à l'aide de schémas et de courbes,
+# de mortalité et de protection sont présentés à la fin de la simulation à l'aide de figures
 # afin d'analyser l'évolution du système au cours de la simulation. 
 
 # # Implémentation
