@@ -1471,6 +1471,24 @@ current_figure()
 # espacés entre eux et ayant les meme couleur (temps de l'enregistrement)
 # que les évenements d'infection associés.
 
+# _Dans la troisième simulation_ 
+
+# La figure globale de taille des population (fig 15)
+# montre que la baisse du nombre global de la population 
+# est plus linéaire avec de léger fluctuation, par exemple 
+# début de stabilisation de la taille un peu
+# avant la génération 200.
+
+# Dans cette figure le nombre d'agent infectieux 
+# est polymodale, une premiere augmentation puis baisse 
+# est noté entr la generation 0 et 150. Puis d'autre 
+# pics sont noté avec un maximum d'Infectieux vers 
+# les generation 300.
+
+# La figure 16 montre que la propagation de la maladie
+# dans cette simulation est une courbe unimodale, 
+# plus de 400 agents infectieux contamine environ 10 personnes
+# saines chacun. 
 # # Discussion
 
 # Pour rappel, l'objectif de cette étude était d'évaluer l'efficacité d'une stratégie ciblée de 
