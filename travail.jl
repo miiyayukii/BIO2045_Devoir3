@@ -1459,6 +1459,18 @@ current_figure()
 # à la figure 4, mais cette fois aucun vaccins ne s'est activé (étant 
 # donnée qu'aucun vaccin n'est fait).
 
+# A la figure 13, il est possible de voir que l'épidémie
+# s'est déclaré dans le coin gauche de la partie inferieur de 
+# la lattice puis s'est propagée de façon circulaire 
+# jusqu'au coin opposé. La superposition des tests effectués
+# sur cette lattice montre qu'aucun n'a la même couleur que 
+# le fond sur lequel il est positionné.
+
+# Encore une fois, le suivi des évenèments de mort (fig 14)
+# montre comme à la figure 6 des points plus ou moins 
+# espacés entre eux et ayant les meme couleur (temps de l'enregistrement)
+# que les évenements d'infection associés.
+
 # # Discussion
 
 # Pour rappel, l'objectif de cette étude était d'évaluer l'efficacité d'une stratégie ciblée de 
