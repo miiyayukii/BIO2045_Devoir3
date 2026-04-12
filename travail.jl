@@ -77,8 +77,8 @@
 # permet de mieux comprendre comment différents décisions d'intervention influencent
 # l’évolution d’une épidémie.
 
-# L'hypothèse est qu'une stratégie ciblée de
-# dépistage et de vaccination, concentrée sur les zones à risques définies par
+# L'hypothèse est qu'une stratégie ciblée 
+# de vaccination, concentrée sur les zones à risques définies par
 # la présence d'individus infectés, permettra de réduire plus efficacement la
 # mortalité qu'une stratégie aléatoire @henao2015efficacy.
 
