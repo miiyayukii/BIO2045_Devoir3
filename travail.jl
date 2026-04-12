@@ -93,12 +93,14 @@
 # Le modèle utilisé est un modèle épidémique. Le code simule la propagation d'une infection dans une 
 # population de 3750 agents non immunisés. Ces agents se déplacent de façon aléatoire sur une lattice 
 # carrée à 2 dimensions, de 100 x 100 cellules. 
-# Au début de la simulation un seul agent, choisi aléatoirement, est rendu malade. Cet agent infecté
-# a 40% de chance de contaminer chaque individu sain présent dans la même cellule de la lattice.
-# Le temps dans la simulation est détérminé par les déplacements des agents, tandis qu'yne génération
+
+# Au début de la simulation un seul agent, choisi aléatoirement, est rendu malade. Cet agent infecté,
+# a 40% de chance de contaminer chaque individu sain présent dans la même cellule de la lattice que lui.
+
+# Le temps dans la simulation est détérminé par les déplacements des agents, une génération
 # est égale à un mouvement pour tous les agents.
 # Lorsqu'un agent a été infecté depuis 21 générations, il est retiré de la population et donc de la lattice.
-# Il est alors considéré comme mort des suites de l'infection. 
+# Il est considéré comme mort suites à l'infection. 
 
 # Après la mort du premier agent, donc à la diminution de la taille de la population, des tests RAT sont réalisés
 # sur un nombre d'agents pris aléatoirement dans la population. Un test RAT détecte l'état de l'agent, soit 
@@ -110,7 +112,7 @@
 
 # Un budget_initiale est fixé, et chacun des vaccins et des tests a un coût qui est déduit de ce budget 
 # à chaque utilisation. Si une intervention est demandée et que le budget n'est pas suffisant,
-# un message est affiché pour indiquer quel traitement doit être exécuter. Ce message permet
+# un message est affiché pour indiquer quel traitement essaie d'être exécuter sans l'argent suffisant. Ce message permet
 # l'ajuster le code afin qu'une intervention soit réalisée uniquement si les fonds disponibles sont suffisants.
 
 # Les variations de la taille de la population, le budget restant ainsi que les évenèments de contaminations,
