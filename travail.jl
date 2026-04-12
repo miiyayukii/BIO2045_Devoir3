@@ -1489,6 +1489,21 @@ current_figure()
 # dans cette simulation est une courbe unimodale, 
 # plus de 400 agents infectieux contamine environ 10 personnes
 # saines chacun. 
+
+# Les courbes dans la figure 17, fluctuent beaucoup au 
+# fils des générations. Plusieurs modes sont présents
+# avec un pic plus important entre les generaton 200 et 400.
+# Une baisse des infections et presque éradication des la mortalité
+# est noté vers les génération 150 mais cette baisse est suivi 
+# d'une augmentaion rapide en escalier des infection puis mort.
+
+# A la figure 18 il est possible de voir que l'infection s'été
+# déclanché en bas de la lattice et que le dernier endroit
+# touché été le coin droit suppérieur.
+# Les points tests montre que plusieurs endroit n'ont pas été 
+# échantilloné. Et que les test ne se sont pas fait tout au longtemps
+# de la simulation mais à peu de générations bien spécifique.
+
 # # Discussion
 
 # Pour rappel, l'objectif de cette étude était d'évaluer l'efficacité d'une stratégie ciblée de 
